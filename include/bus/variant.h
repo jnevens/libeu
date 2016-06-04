@@ -11,6 +11,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "bus/types.h"
+#include "bus/string.h"
 
 typedef enum
 {
@@ -27,6 +28,7 @@ typedef enum
 	VARIANT_TYPE_FLOAT,
 	VARIANT_TYPE_DOUBLE,
 	VARIANT_TYPE_CHAR,
+	VARIANT_TYPE_STRING,
 } variant_type_t;
 
 // create
@@ -37,7 +39,8 @@ void variant_destroy(variant_t *variant);
 
 // info
 variant_type_t variant_type(variant_t *variant);
-variant_t *variant_copy(variant_t *variant);
+bool variant_copy(variant_t *dest, variant_t *src);
+variant_t *variant_duplicate(variant_t *variant);
 
 // set
 bool variant_set_bool(variant_t *variant, bool data);
@@ -52,6 +55,7 @@ bool variant_set_uint64(variant_t *variant, uint64_t data);
 bool variant_set_float(variant_t *variant, float data);
 bool variant_set_double(variant_t *variant, double data);
 bool variant_set_char(variant_t *variant, const char *data);
+bool variant_set_string(variant_t *variant, const string_t *data);
 // todo: arrays, maps, strings
 
 // get
@@ -67,8 +71,10 @@ uint64_t variant_uint64(variant_t *variant);
 float variant_float(variant_t *variant);
 double variant_double(variant_t *variant);
 char *variant_char(variant_t *variant);
+string_t *variant_string(variant_t *variant);
 
 const char *variant_da_char(variant_t *variant);
+const string_t *variant_da_string(variant_t *variant);
 
 //debug
 void variant_print(variant_t *variant);

@@ -29,6 +29,7 @@ struct variant_s
 		float		f;
 		double		d;
 		char*		c;
+		string_t*	s;
 	} data;
 };
 
@@ -37,6 +38,9 @@ variant_t *variant_create(variant_type_t type)
 {
 	variant_t *variant = calloc(1, sizeof(variant_t));
 	variant->type = type;
+	if(type == VARIANT_TYPE_STRING) {
+		variant->data.s = string_create();
+	}
 	return variant;
 }
 
@@ -45,6 +49,8 @@ void variant_destroy(variant_t *variant)
 	if (variant) {
 		if (variant->type == VARIANT_TYPE_CHAR) {
 			free(variant->data.c);
+		} else if (variant->type == VARIANT_TYPE_STRING) {
+			string_destroy(variant->data.s);
 		}
 		free(variant);
 	}
@@ -55,17 +61,39 @@ variant_type_t variant_type(variant_t *variant)
 	return variant->type;
 }
 
-variant_t *variant_copy(variant_t *variant)
+bool variant_copy(variant_t *dest, variant_t *src)
 {
+	if(!dest || !src || dest->type != src->type) {
+		return false;
+	}
+
+	if(src->type == VARIANT_TYPE_CHAR) {
+		free(dest->data.c);
+		dest->data.c = strdup(src->data.c);
+	} else if (src->type == VARIANT_TYPE_STRING) {
+		string_copy(dest->data.s, src->data.s);
+	} else {
+		dest->data = src->data;
+	}
+
+	return true;
+}
+
+variant_t *variant_duplicate(variant_t *variant)
+{
+	variant_t *copy = NULL;
 	if (!variant) {
 		return NULL;
 	}
-	variant_t *copy = calloc(1, sizeof(variant_t));
-	if (!copy) {
-		return NULL;
+	copy = calloc(1, sizeof(variant_t));
+	if (copy) {
+		memcpy(copy, variant, sizeof(variant_t));
+		if(copy->type == VARIANT_TYPE_CHAR) {
+			copy->data.c = strdup(variant->data.c);
+		}
 	}
 
-	return memcpy(copy, variant, sizeof(variant_t));
+	return copy;
 }
 
 bool variant_set_bool(variant_t *variant, bool data)
@@ -202,6 +230,17 @@ bool variant_set_char(variant_t *variant, const char *data)
 	return true;
 }
 
+bool variant_set_string(variant_t *variant, const string_t *data)
+{
+	if (!variant || variant->type != VARIANT_TYPE_STRING) {
+		return false;
+	}
+
+	string_copy(variant->data.s, data);
+
+	return true;
+}
+
 bool variant_bool(variant_t *variant)
 {
 	return variant->data.b;
@@ -262,9 +301,19 @@ char *variant_char(variant_t *variant)
 	return strdup(variant->data.c);
 }
 
+string_t *variant_string(variant_t *variant)
+{
+	return (variant) ? string_duplicate(variant->data.s) : NULL;
+}
+
 const char *variant_da_char(variant_t *variant)
 {
-	return variant->data.c;
+	return (variant) ? variant->data.c : NULL;
+}
+
+const string_t *variant_da_string(variant_t *variant)
+{
+	return (variant) ? variant->data.s : NULL;
 }
 
 void variant_print(variant_t *variant)
@@ -305,6 +354,9 @@ void variant_print(variant_t *variant)
 			break;
 		case VARIANT_TYPE_CHAR:
 			printf("%s", variant->data.c);
+			break;
+		case VARIANT_TYPE_STRING:
+			printf("%s", string_to_da_char(variant->data.s));
 			break;
 		default:
 			printf("Not implemented!");

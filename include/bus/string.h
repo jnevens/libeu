@@ -17,10 +17,19 @@ void string_destroy(string_t *str);
 void string_cleanup(string_t *str);
 
 size_t string_copy(string_t *dest, const string_t *src);
+string_t *string_duplicate(const string_t *src);
 
-bool string_is_null(string_t *str);
-bool string_is_empty(string_t *str);
-size_t string_length(string_t *str);
+bool string_is_null(const string_t *str);
+bool string_is_empty(const string_t *str);
+size_t string_length(const string_t *str);
+
+size_t string_append(string_t *str, const string_t *data);
+size_t string_prepend(string_t *str, const string_t *data);
+size_t string_find(string_t *str, const string_t *data);
+size_t string_replace(string_t *str, const string_t *data);
+size_t string_to_upper(string_t *str, const string_t *data);
+size_t string_to_lower(string_t *str, const string_t *data);
+size_t string_trim(string_t *str, const string_t *data);
 
 size_t string_from_bool(string_t *string, const bool data);
 size_t string_from_char(string_t *string, const char *data);

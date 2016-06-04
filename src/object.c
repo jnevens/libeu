@@ -119,8 +119,11 @@ void object_destroy(object_t *obj)
 // parameters
 bool object_add_parameter(object_t *obj, parameter_t *param)
 {
+	if(!obj || !param) {
+		return false;
+	}
 	list_append(obj->parameters, param);
-	return false;
+	return true;
 }
 
 bool object_remove_parameter(object_t *obj, parameter_t *param)

@@ -78,14 +78,14 @@ bool parameter_set_value(parameter_t *param, variant_t *variant)
 
 	variant_destroy(param->value);
 
-	param->value = variant_copy(variant);
+	param->value = variant_duplicate(variant);
 
 	return (param->value) ? true : false;
 }
 
 variant_t *parameter_value(parameter_t *param)
 {
-	return variant_copy(param->value);
+	return variant_duplicate(param->value);
 }
 
 variant_t *parameter_da_value(parameter_t *param)

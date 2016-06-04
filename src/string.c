@@ -42,11 +42,22 @@ void string_destroy(string_t *str)
 
 size_t string_copy(string_t *dest, const string_t *src)
 {
-	// TODO
-	return 0;
+	size_t len = 0;
+	string_cleanup(dest);
+	if(!string_is_null(src)) {
+		len = string_from_char(dest, src->buf);
+	}
+	return len;
 }
 
-bool string_is_null(string_t *str)
+string_t *string_duplicate(const string_t *src)
+{
+	string_t *str = string_create();
+	string_copy(str, src);
+	return str;
+}
+
+bool string_is_null(const string_t *str)
 {
 	if (str && str->buf == NULL) {
 		return true;
@@ -55,7 +66,7 @@ bool string_is_null(string_t *str)
 	return false;
 }
 
-bool string_is_empty(string_t *str)
+bool string_is_empty(const string_t *str)
 {
 	if(!str) {
 		return false;
@@ -64,9 +75,44 @@ bool string_is_empty(string_t *str)
 	return (string_is_null(str) || strlen(str->buf) == 0) ? true : false;
 }
 
-size_t string_length(string_t *str)
+size_t string_length(const string_t *str)
 {
-	return (str != NULL) ? strlen(str->buf) : 0;
+	return (str != NULL && str->buf && *str->buf) ? strlen(str->buf) : 0;
+}
+
+size_t string_append(string_t *str, const string_t *data)
+{
+	return 0;
+}
+
+size_t string_prepend(string_t *str, const string_t *data)
+{
+	return 0;
+}
+
+size_t string_find(string_t *str, const string_t *data)
+{
+	return 0;
+}
+
+size_t string_replace(string_t *str, const string_t *data)
+{
+	return 0;
+}
+
+size_t string_to_upper(string_t *str, const string_t *data)
+{
+	return 0;
+}
+
+size_t string_to_lower(string_t *str, const string_t *data)
+{
+	return 0;
+}
+
+size_t string_trim(string_t *str, const string_t *data)
+{
+	return 0;
 }
 
 size_t string_from_bool(string_t *string, const bool data)
