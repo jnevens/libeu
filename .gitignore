@@ -35,7 +35,6 @@
 # tests
 tests/*.log
 test-driver
-tests/check_vsb
 check_frame
 tests/*.trs
 tests/check_*[!.*]
@@ -62,7 +61,6 @@ compile
 depcomp
 install-sh
 libtool
-libvsb.pc
 ltmain.sh
 missing
 stamp-h1
