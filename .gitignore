@@ -38,12 +38,14 @@ test-driver
 tests/check_vsb
 check_frame
 tests/*.trs
+tests/check_*[!.*]
 
 #coverage
 coverage.info
 coverage
 *.gcno
 *.gcov
+*.gcda
 
 # extra
 Makefile
@@ -72,3 +74,4 @@ m4/ltoptions.m4
 m4/ltsugar.m4
 m4/ltversion.m4
 m4/lt~obsolete.m4
+
