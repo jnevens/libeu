@@ -18,5 +18,6 @@ typedef struct list_node_s list_node_t;
 typedef struct event_s event_t;
 typedef struct event_timer_s event_timer_t;
 typedef struct string_s string_t;
+typedef struct socket_s socket_t;
 
 #endif /* INCLUDE_BUS_TYPES_H_ */
