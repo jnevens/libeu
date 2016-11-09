@@ -1,5 +1,9 @@
 SUBDIRS = include src
 
+if ENABLE_TOOLS
+SUBDIRS += tools
+endif
+
 if ENABLE_TESTS
 SUBDIRS += tests
 endif

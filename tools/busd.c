@@ -13,6 +13,7 @@
 #include <bus/daemon.h>
 #include <bus/log.h>
 #include <bus/socket.h>
+#include <bus/bus_message.h>
 
 /* Used by main to communicate with parse_opt. */
 struct arguments
@@ -68,18 +69,42 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state)
 
 static struct argp argp = { options, parse_opt, args_doc, doc };
 
+void busd_connection_handler(event_t *event, bus_message_t *msg)
+{
+	switch(msg->type) {
+		case REGISTER_PATH :
+			log_info("Register path: %s", (char *)msg->data);
+			break;
+		default:
+			log_err("Unsupported action: %d", msg->type);
+			break;
+	}
+}
+
 void busd_connection_callback(int fd, void *arg)
 {
-	uint8_t buf[256];
+	size_t msg_header_size = sizeof(bus_message_t);
+	bus_message_t *msg = calloc(1, msg_header_size);
 	socket_t *client = arg;
-	int rv = socket_read(client, buf, sizeof(buf));
+	event_t *event = socket_get_userdata(client);
+
+	// read header
+	int rv = socket_read(client, (uint8_t *)msg, msg_header_size);
+	if(rv != msg_header_size) {
+		log_err("Failed reading header!");
+	}
+	// read data
+	msg = realloc(msg, msg_header_size + msg->len);
+	rv = socket_read(client, &((uint8_t *)msg)[msg_header_size], msg->len);
+	if(rv != msg->len) {
+		log_err("Failed reading message data");
+	}
 
 	if(rv == 0) {
 		log_info("Connection closed!");
-		event_t *event = socket_get_userdata(client);
 		event_destroy(event);
 	} else {
-		log_info("[%d] %s", rv, (const char *)buf);
+		busd_connection_handler(event, msg);
 	}
 }
 
@@ -110,8 +135,14 @@ int main(int argc, char *argv[])
 	}
 
 	socket_t *server = socket_create_unix();
+	if(!server) {
+		log_err("Failed creating server socket!");
+		exit(-1);
+	}
 	unlink("/var/run/busd.sock");
-	socket_bind_unix(server, "/var/run/busd.sock");
+	if(!socket_bind_unix(server, "/var/run/busd.sock")) {
+		exit(-1);
+	}
 	socket_listen(server, 10);
 	log_debug("fd = %d", socket_get_fd(server));
 	event_add(socket_get_fd(server), busd_server_callback, NULL, server);

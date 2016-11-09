@@ -1,7 +1,7 @@
 # Versioning.
 m4_define([dc_version_major],[1])
-m4_define([dc_version_minor],[0])
-m4_define([dc_version_micro],[0])
+m4_define([dc_version_minor],[3])
+m4_define([dc_version_micro],[2])
 m4_define([dc_version_suffix],[devel])
 m4_define([dc_version],dc_version_major.dc_version_minor.dc_version_micro[]m4_ifset([dc_version_suffix],-[dc_version_suffix])) 
 # Libtool versioning.
@@ -28,6 +28,13 @@ m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
 LT_PREREQ([2.2.0])
 LT_INIT()
 LT_PROG_RC
+
+# Tool applications.
+AC_ARG_ENABLE([tools],
+        [AS_HELP_STRING([--enable-tools=@<:@yes/no@:>@],
+                [Build tools @<:@default=yes@:>@])],
+        [], [enable_tools=yes])
+AM_CONDITIONAL([ENABLE_TOOLS], [test "x$enable_tools" = "xyes"])
 
 # Tests
 AC_ARG_ENABLE([tests],
@@ -71,6 +78,7 @@ AC_CONFIG_FILES([
 	include/bus/Makefile
 	src/Makefile
 	tests/Makefile
+	tools/Makefile
 ])
 
 AC_OUTPUT

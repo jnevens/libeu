@@ -74,7 +74,7 @@ bool socket_bind_unix(socket_t *sock, const char *path)
 	server_un.sun_family = AF_UNIX;
 	strcpy(server_un.sun_path, path);
 	if (bind(sock->fd, (struct sockaddr *) &server_un, sizeof(struct sockaddr_un))) {
-		log_err("Cannot bind socket! error=%s\n", strerror(errno));
+		log_err("Cannot bind socket! error=%s", strerror(errno));
 		free(sock);
 		return false;
 	}

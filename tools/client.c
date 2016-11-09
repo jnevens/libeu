@@ -9,8 +9,8 @@
 #include <stdlib.h>
 
 #include <bus/event.h>
+#include <bus/client.h>
 #include <bus/log.h>
-#include <bus/socket.h>
 
 /* Used by main to communicate with parse_opt. */
 struct arguments
@@ -60,11 +60,6 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state)
 
 static struct argp argp = { options, parse_opt, args_doc, doc };
 
-void busd_connection_callback(int fd, void *arg)
-{
-	log_info("connection callback!");
-}
-
 int main(int argc, char *argv[])
 {
 	log_init("busd");
@@ -78,17 +73,15 @@ int main(int argc, char *argv[])
 		log_set_print_level(BLOG_DEBUG);
 	}
 
-	socket_t *client = socket_create_unix();
-	if(!socket_connect_unix(client, "/var/run/busd.sock")) {
-		log_err("Failed connecting socket!");
-		return -1;
+	if(!bus_connect()) {
+		log_err("Failed to connect to system bus");
 	}
-	log_debug("fd = %d", socket_get_fd(client));
-	socket_write(client, "test", 5);
-	//event_add(socket_get_fd(server), busd_connection_callback, NULL, NULL);
-
-	//event_loop();
-	//event_loop_cleanup();
+	object_t *root = bus_register_path("Devices");
+	if(!root) {
+		log_err("Failed to register object Devices");
+	}
+	event_loop();
+	event_loop_cleanup();
 	return 0;
 }
 
