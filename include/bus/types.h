@@ -20,5 +20,6 @@ typedef struct event_timer_s event_timer_t;
 typedef struct string_s string_t;
 typedef struct socket_s socket_t;
 typedef struct config_s config_t;
+typedef struct variant_map_s variant_map_t;
 
 #endif /* INCLUDE_BUS_TYPES_H_ */

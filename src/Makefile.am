@@ -18,5 +18,6 @@ libbus_la_SOURCES = \
 	socket.c \
 	string.c \
 	timer.c \
-	variant.c
+	variant.c \
+	variant_map.c
 

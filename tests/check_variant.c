@@ -265,7 +265,6 @@ START_TEST(test_variant_string)
 	string_destroy(res);
 }END_TEST
 
-
 int main(void)
 {
 	int number_failed;

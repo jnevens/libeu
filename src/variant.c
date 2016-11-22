@@ -30,6 +30,7 @@ struct variant_s
 		double		d;
 		char*		c;
 		string_t*	s;
+		variant_map_t *	m;
 	} data;
 };
 
@@ -51,6 +52,8 @@ void variant_destroy(variant_t *variant)
 			free(variant->data.c);
 		} else if (variant->type == VARIANT_TYPE_STRING) {
 			string_destroy(variant->data.s);
+		} else if (variant->type == VARIANT_TYPE_MAP) {
+			variant_map_destroy(variant->data.m);
 		}
 		free(variant);
 	}
@@ -241,79 +244,95 @@ bool variant_set_string(variant_t *variant, const string_t *data)
 	return true;
 }
 
-bool variant_bool(variant_t *variant)
+bool variant_set_map(variant_t *variant, variant_map_t *map)
+{
+	if (!variant || variant->type != VARIANT_TYPE_MAP) {
+		return false;
+	}
+
+	variant->data.m = map;
+
+	return true;
+}
+
+bool variant_bool(const variant_t *variant)
 {
 	return variant->data.b;
 }
 
-int8_t variant_int8(variant_t *variant)
+int8_t variant_int8(const variant_t *variant)
 {
 	return variant->data.i8;
 }
 
-uint8_t variant_uint8(variant_t *variant)
+uint8_t variant_uint8(const variant_t *variant)
 {
 	return variant->data.u8;
 }
 
-int16_t variant_int16(variant_t *variant)
+int16_t variant_int16(const variant_t *variant)
 {
 	return variant->data.i16;
 }
 
-uint16_t variant_uint16(variant_t *variant)
+uint16_t variant_uint16(const variant_t *variant)
 {
 	return variant->data.u16;
 }
 
-int32_t variant_int32(variant_t *variant)
+int32_t variant_int32(const variant_t *variant)
 {
 	return variant->data.i32;
 }
 
-uint32_t variant_uint32(variant_t *variant)
+uint32_t variant_uint32(const variant_t *variant)
 {
 	return variant->data.u32;
 }
 
-int64_t variant_int64(variant_t *variant)
+int64_t variant_int64(const variant_t *variant)
 {
 	return variant->data.i64;
 }
 
-uint64_t variant_uint64(variant_t *variant)
+uint64_t variant_uint64(const variant_t *variant)
 {
 	return variant->data.u64;
 }
 
-float variant_float(variant_t *variant)
+float variant_float(const variant_t *variant)
 {
 	return variant->data.f;
 }
 
-double variant_double(variant_t *variant)
+double variant_double(const variant_t *variant)
 {
 	return variant->data.d;
 }
 
-char *variant_char(variant_t *variant)
+char *variant_char(const variant_t *variant)
 {
 	return strdup(variant->data.c);
 }
 
-string_t *variant_string(variant_t *variant)
+string_t *variant_string(const variant_t *variant)
 {
 	return (variant) ? string_duplicate(variant->data.s) : NULL;
 }
 
-const char *variant_da_char(variant_t *variant)
+const char *variant_da_char(const variant_t *variant)
 {
 	return (variant) ? variant->data.c : NULL;
 }
 
-const string_t *variant_da_string(variant_t *variant)
+const string_t *variant_da_string(const variant_t *variant)
 {
 	return (variant) ? variant->data.s : NULL;
+}
+
+variant_map_t *variant_da_map(const variant_t *variant)
+{
+	return (variant) ? variant->data.m : NULL;
 }
 
 void variant_print(variant_t *variant)
