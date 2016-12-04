@@ -4,7 +4,7 @@ libdir=@libdir@
 includedir=@includedir@
 
 Name: libbus
-Description: A library for easy usage of a virtual serial bus.
+Description: C Utility library
 Version: @VERSION@
 Requires.private: @DEPENDENCIES@
 Libs: -L${libdir} -lbus
