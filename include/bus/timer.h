@@ -9,6 +9,7 @@
 #define INCLUDE_BUS_TIMER_H_
 
 #include <stdbool.h>
+#include "types.h"
 
 #define event_timer_continue	true
 #define event_timer_stop		false

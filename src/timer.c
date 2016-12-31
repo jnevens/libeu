@@ -11,6 +11,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <error.h>
+#include <errno.h>
 
 #include "bus/log.h"
 #include "bus/event.h"
@@ -25,7 +27,7 @@ struct event_timer_s
 	void *arg;
 };
 
-static void event_timer_callback(int fd, void *arg)
+static void event_timer_callback(int fd, short int revents, void *arg)
 {
 	event_timer_t *timer = arg;
 	bool keep_running = false;
@@ -33,7 +35,7 @@ static void event_timer_callback(int fd, void *arg)
 
 	ssize_t rv = read(timer->timerfd, &buf, sizeof(buf));
 	if (rv != 8) {
-		log_err("Problem reading timerfd!");
+		log_err("Problem reading timerfd! %d %s", rv, strerror(errno));
 	}
 
 	if (timer->callback) {
@@ -69,7 +71,7 @@ event_timer_t *event_timer_create(uint32_t timeout_ms, bool (*callback)(void *ar
 		perror("timerfd_settime");
 	}
 
-	timer->event = event_add(timer->timerfd, event_timer_callback, NULL, timer);
+	timer->event = event_add(timer->timerfd, POLLIN, event_timer_callback, NULL, timer);
 	timer->callback = callback;
 	timer->arg = arg;
 

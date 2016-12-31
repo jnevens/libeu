@@ -6,6 +6,7 @@
  */
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include <bus/client.h>
 #include <bus/socket.h>
@@ -16,7 +17,7 @@
 
 socket_t *conn = NULL;
 
-static void bus_connection_callback(int fd, void *arg)
+static void bus_connection_callback(int fd, short int revents, void *arg)
 {
 	log_info("connection callback!");
 }
@@ -30,7 +31,7 @@ bool bus_connect(void)
 	}
 	log_debug("fd = %d", socket_get_fd(conn));
 	//socket_write(client, "test", 5);
-	event_add(socket_get_fd(conn), bus_connection_callback, NULL, NULL);
+	event_add(socket_get_fd(conn), POLLIN, bus_connection_callback, NULL, NULL);
 
 	return true;
 }

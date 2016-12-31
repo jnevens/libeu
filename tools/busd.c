@@ -81,7 +81,7 @@ void busd_connection_handler(event_t *event, bus_message_t *msg)
 	}
 }
 
-void busd_connection_callback(int fd, void *arg)
+void busd_connection_callback(int fd, short int revents, void *arg)
 {
 	size_t msg_header_size = sizeof(bus_message_t);
 	bus_message_t *msg = calloc(1, msg_header_size);
@@ -108,12 +108,12 @@ void busd_connection_callback(int fd, void *arg)
 	}
 }
 
-void busd_server_callback(int fd, void *arg)
+void busd_server_callback(int fd, short int revents, void *arg)
 {
 	socket_t *server = arg;
 	log_info("server callback!");
 	socket_t *new = socket_accept(server);
-	event_t *event = event_add(socket_get_fd(new), busd_connection_callback, NULL, new);
+	event_t *event = event_add(socket_get_fd(new), POLLIN, busd_connection_callback, NULL, new);
 	socket_set_userdata(new, event);
 }
 
@@ -145,7 +145,7 @@ int main(int argc, char *argv[])
 	}
 	socket_listen(server, 10);
 	log_debug("fd = %d", socket_get_fd(server));
-	event_add(socket_get_fd(server), busd_server_callback, NULL, server);
+	event_add(socket_get_fd(server), POLLIN, busd_server_callback, NULL, server);
 
 	event_loop();
 	event_loop_cleanup();

@@ -8,6 +8,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <poll.h>
 
 #include "bus/list.h"
 #include "bus/event.h"
@@ -19,9 +20,11 @@ list_t *events;
 struct event_s
 {
 	int fd;
-	void (*callback)(int fd, void *arg);
-	void (*err_callback)(int fd, void *arg);
+	void (*callback)(int fd, short int events, void *arg);
+	void (*err_callback)(int fd, short int events, void *arg);
 	void *arg;
+	short int events;
+	int nfdn;
 	bool deleted;
 };
 
@@ -55,9 +58,9 @@ void event_loop_cleanup(void) {
 	events = NULL;
 }
 
-event_t *event_add(int fd,
-		void (*callback)(int fd, void *arg),
-		void (*err_callback)(int fd, void *arg),
+event_t *event_add(int fd, short int qevents,
+		void (*callback)(int fd, short int revents, void *arg),
+		void (*err_callback)(int fd, short int revents, void *arg),
 		void *arg)
 {
 	event_t *event = calloc(1, sizeof(event_t));
@@ -67,10 +70,10 @@ event_t *event_add(int fd,
 		event->err_callback = err_callback;
 		event->arg = arg;
 		event->deleted = false;
+		event->events = qevents;
+		event->nfdn = -1;
 		list_append(events, event);
 	}
-
-	log_debug("add event: fd=%d", event->fd);
 
 	return event;
 }
@@ -80,30 +83,23 @@ void event_destroy(event_t *event)
 	event->deleted = true;
 }
 
-
-
-static void fd_handlers_build_fd_set(fd_set *rfds)
+static int fd_handlers_count(void)
 {
-	list_node_t *node;
-	FD_ZERO(rfds);
-
-	list_for_each(node, events) {
-		event_t *event = list_node_data(node);
-		FD_SET(event->fd, rfds);
-	}
+	return (nfds_t)list_count(events);
 }
 
-static int fd_handlers_get_max_fd(fd_set *rfds)
+static void fd_handlers_build_fd_set(struct pollfd fdset[])
 {
 	list_node_t *node;
-	int maxfd = 0;
+	nfds_t n = 0;
 
 	list_for_each(node, events) {
 		event_t *event = list_node_data(node);
-		if(event->fd > maxfd)
-			maxfd = event->fd;
+		event->nfdn = n;
+		fdset[n].fd = event->fd;
+		fdset[n].events = event->events;
+		n++;
 	}
-	return maxfd;
 }
 
 void event_loop(void)
@@ -111,32 +107,40 @@ void event_loop(void)
 	keep_running = true;
 
 	while (keep_running) {
+		struct pollfd *fdset = NULL;
 		int rv;
-		fd_set rfds;
-
-		/* build fd set */
-		fd_handlers_build_fd_set(&rfds);
 
 		/* get max fd */
-		int max_fd = fd_handlers_get_max_fd(&rfds);
+		nfds_t nfds = fd_handlers_count();
+
+		/* create poll struct */
+		fdset = calloc(nfds, sizeof(struct pollfd));
+
+		/* build fdset */
+		fd_handlers_build_fd_set(fdset);
 
 		/* so select */
-		rv = select(max_fd + 1, &rfds, NULL, NULL, NULL);
+		rv = poll(fdset, nfds, 1000);
 
 		if (rv < 0) { /* select error! */
-			perror("select");
+			perror("poll");
 		} else if (rv > 0) { /* something happened! */
 			list_node_t *node;
 			list_for_each(node, events) {
 				event_t *event = list_node_data(node);
-				if (FD_ISSET(event->fd, &rfds)) {
-					if(event->callback) {
-						event->callback(event->fd, event->arg);
+
+				if (event->nfdn >= 0) {
+					if (fdset[event->nfdn].revents & event->events) {
+						if(!event->deleted && event->callback) {
+							event->callback(event->fd, fdset[event->nfdn].revents, event->arg);
+						}
 					}
 				}
+				event->nfdn = -1;
 			}
 		}
 		events_cleanup(false);
+		free(fdset);
 	}
 }
 
