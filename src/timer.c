@@ -80,6 +80,16 @@ event_timer_t *event_timer_create(uint32_t timeout_ms, bool (*callback)(void *ar
 	return timer;
 }
 
+void event_timer_set_userdata(event_timer_t *timer, void *arg)
+{
+	timer->arg = arg;
+}
+
+void *event_timer_get_userdata(event_timer_t *timer)
+{
+	return timer->arg;
+}
+
 void event_timer_destroy(event_timer_t *timer)
 {
 	event_destroy(timer->event);
