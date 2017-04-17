@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
 	eu_log_init("busd");
 	eu_event_loop_init();
 
-	log_info("client start!");
+	log_info("euctl start!");
 
 	argp_parse(&argp, argc, argv, 0, 0, &arguments);
 
