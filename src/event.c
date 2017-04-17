@@ -15,9 +15,9 @@
 #include "eu/log.h"
 
 static bool keep_running;
-list_t *events;
+eu_list_t *events;
 
-struct event_s
+struct eu_event_s
 {
 	int fd;
 	void (*callback)(int fd, short int events, void *arg);
@@ -41,9 +41,9 @@ bool event_loop_init(void)
 
 static void events_cleanup(bool all)
 {
-	list_node_t *node;
+	eu_list_node_t *node;
 	list_for_each(node, events) {
-		event_t *event = list_node_data(node);
+		eu_event_t *event = list_node_data(node);
 		if(event->deleted || all) {
 			list_remove_node(events, node);
 			free(event);
@@ -58,12 +58,12 @@ void event_loop_cleanup(void) {
 	events = NULL;
 }
 
-event_t *event_add(int fd, short int qevents,
+eu_event_t *event_add(int fd, short int qevents,
 		void (*callback)(int fd, short int revents, void *arg),
 		void (*err_callback)(int fd, short int revents, void *arg),
 		void *arg)
 {
-	event_t *event = calloc(1, sizeof(event_t));
+	eu_event_t *event = calloc(1, sizeof(eu_event_t));
 	if (event) {
 		event->fd = fd;
 		event->callback = callback;
@@ -78,7 +78,7 @@ event_t *event_add(int fd, short int qevents,
 	return event;
 }
 
-void event_destroy(event_t *event)
+void event_destroy(eu_event_t *event)
 {
 	event->deleted = true;
 }
@@ -90,11 +90,11 @@ static int fd_handlers_count(void)
 
 static void fd_handlers_build_fd_set(struct pollfd fdset[])
 {
-	list_node_t *node;
+	eu_list_node_t *node;
 	nfds_t n = 0;
 
 	list_for_each(node, events) {
-		event_t *event = list_node_data(node);
+		eu_event_t *event = list_node_data(node);
 		event->nfdn = n;
 		fdset[n].fd = event->fd;
 		fdset[n].events = event->events;
@@ -125,9 +125,9 @@ void event_loop(void)
 		if (rv < 0) { /* select error! */
 			perror("poll");
 		} else if (rv > 0) { /* something happened! */
-			list_node_t *node;
+			eu_list_node_t *node;
 			list_for_each(node, events) {
-				event_t *event = list_node_data(node);
+				eu_event_t *event = list_node_data(node);
 
 				if (event->nfdn >= 0) {
 					if (fdset[event->nfdn].revents & event->events) {

@@ -18,11 +18,11 @@ void event_loop(void);
 void event_loop_stop(void);
 void event_loop_cleanup(void);
 
-event_t *event_add(int fd, short int events,
+eu_event_t *event_add(int fd, short int events,
 		void (*callback)(int fd, short int revents, void *arg),
 		void (*err_callback)(int fd, short int revents, void *arg),
 		void *arg);
 
-void event_destroy(event_t *event);
+void event_destroy(eu_event_t *event);
 
 #endif /* INCLUDE_EVENT_H_ */

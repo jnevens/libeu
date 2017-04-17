@@ -11,7 +11,7 @@
 
 START_TEST(test_object_create_destroy)
 {
-	object_t *parent = object_create(NULL, "com");
+	eu_object_t *parent = object_create(NULL, "com");
 	ck_assert_ptr_ne(parent, NULL);
 	ck_assert_str_eq(object_name(parent), "com");
 	object_destroy(parent);
@@ -19,8 +19,8 @@ START_TEST(test_object_create_destroy)
 
 START_TEST(test_object_add_child)
 {
-	object_t *parent = object_create(NULL, "com");
-	object_t *child = object_create(parent, "linux");
+	eu_object_t *parent = object_create(NULL, "com");
+	eu_object_t *child = object_create(parent, "linux");
 
 	ck_assert_ptr_eq(object_get_first_child(parent), child);
 	ck_assert_ptr_eq(object_get_last_child(parent), child);
@@ -32,7 +32,7 @@ START_TEST(test_object_add_child)
 
 START_TEST(test_object_get_nonexisting_child)
 {
-	object_t *parent = object_create(NULL, "com");
+	eu_object_t *parent = object_create(NULL, "com");
 
 	ck_assert_ptr_eq(object_get_first_child(parent), NULL);
 	ck_assert_ptr_eq(object_get_last_child(parent), NULL);
@@ -43,12 +43,12 @@ START_TEST(test_object_get_nonexisting_child)
 
 START_TEST(test_object_big_test)
 {
-	object_t *parent = object_create(NULL, "com");
-	object_t *child1 = object_create(parent, "dell");
-	object_t *child2 = object_create(parent, "hp");
-	object_t *child3 = object_create(parent, "msi");
-	object_t *child4 = object_create(parent, "lenovo");
-	object_t *child2_1 = object_create(child2, "www");
+	eu_object_t *parent = object_create(NULL, "com");
+	eu_object_t *child1 = object_create(parent, "dell");
+	eu_object_t *child2 = object_create(parent, "hp");
+	eu_object_t *child3 = object_create(parent, "msi");
+	eu_object_t *child4 = object_create(parent, "lenovo");
+	eu_object_t *child2_1 = object_create(child2, "www");
 
 	parameter_create(child1, "https", PARAMETER_TYPE_BOOL);
 	object_parameter_set_bool(child1, "https", false);
@@ -64,7 +64,7 @@ START_TEST(test_object_big_test)
 	printf("parent: %s has %zu children\n", object_name(parent), object_children_count(parent));
 	printf("parent: %s has %zu children\n", object_name(parent), object_children_count(parent));
 
-	object_t *it = object_get_first_child(parent);
+	eu_object_t *it = object_get_first_child(parent);
 	printf("parent %s, list children asc:\n", object_name(parent));
 	do {
 		printf("child %s\n", object_name(it));
@@ -83,7 +83,7 @@ START_TEST(test_object_big_test)
 
 START_TEST(test_object_parameter_count)
 {
-	object_t *obj = object_create(NULL, "com");
+	eu_object_t *obj = object_create(NULL, "com");
 	parameter_create(obj, "https", PARAMETER_TYPE_BOOL);
 	parameter_create(obj, "http", PARAMETER_TYPE_BOOL);
 	parameter_create(obj, "auth", PARAMETER_TYPE_BOOL);
@@ -93,7 +93,7 @@ START_TEST(test_object_parameter_count)
 
 START_TEST(test_object_has_parameter)
 {
-	object_t *obj = object_create(NULL, "com");
+	eu_object_t *obj = object_create(NULL, "com");
 	parameter_create(obj, "https", PARAMETER_TYPE_BOOL);
 	parameter_create(obj, "http", PARAMETER_TYPE_BOOL);
 	parameter_create(obj, "auth", PARAMETER_TYPE_BOOL);
@@ -106,7 +106,7 @@ START_TEST(test_object_has_parameter)
 
 START_TEST(test_object_has_parameters)
 {
-	object_t *obj = object_create(NULL, "com");
+	eu_object_t *obj = object_create(NULL, "com");
 	parameter_create(obj, "https", PARAMETER_TYPE_BOOL);
 	parameter_create(obj, "http", PARAMETER_TYPE_BOOL);
 	parameter_create(obj, "auth", PARAMETER_TYPE_BOOL);

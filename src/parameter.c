@@ -12,12 +12,12 @@
 #include "eu/variant.h"
 #include "eu/parameter.h"
 
-struct parameter_s
+struct eu_parameter_s
 {
-	object_t *parent;
+	eu_object_t *parent;
 	char *name;
 	parameter_type_t type;
-	variant_t *value;
+	eu_variant_t *value;
 };
 
 //static variant_type_t param_type_to_variant_type_conversion[] = {
@@ -41,9 +41,9 @@ struct parameter_s
 //	return param_type_to_variant_type_conversion[param_type];
 //}
 
-parameter_t *parameter_create(object_t *obj, const char *name, parameter_type_t type)
+eu_parameter_t *parameter_create(eu_object_t *obj, const char *name, parameter_type_t type)
 {
-	parameter_t *param = calloc(1, sizeof(parameter_t));
+	eu_parameter_t *param = calloc(1, sizeof(eu_parameter_t));
 	param->name = strdup(name);
 	param->type = type;
 	param->parent = obj;
@@ -53,7 +53,7 @@ parameter_t *parameter_create(object_t *obj, const char *name, parameter_type_t 
 	return param;
 }
 
-void parameter_destroy(parameter_t *param)
+void parameter_destroy(eu_parameter_t *param)
 {
 	object_remove_parameter(param->parent, param);
 	variant_destroy(param->value);
@@ -61,7 +61,7 @@ void parameter_destroy(parameter_t *param)
 	free(param);
 }
 
-const char *parameter_name(parameter_t *param)
+const char *parameter_name(eu_parameter_t *param)
 {
 	if(param) {
 		return param->name;
@@ -70,7 +70,7 @@ const char *parameter_name(parameter_t *param)
 	return NULL;
 }
 
-bool parameter_set_value(parameter_t *param, variant_t *variant)
+bool parameter_set_value(eu_parameter_t *param, eu_variant_t *variant)
 {
 	if(!param || !variant) {
 		return false;
@@ -83,17 +83,17 @@ bool parameter_set_value(parameter_t *param, variant_t *variant)
 	return (param->value) ? true : false;
 }
 
-variant_t *parameter_value(parameter_t *param)
+eu_variant_t *parameter_value(eu_parameter_t *param)
 {
 	return variant_duplicate(param->value);
 }
 
-variant_t *parameter_da_value(parameter_t *param)
+eu_variant_t *parameter_da_value(eu_parameter_t *param)
 {
 	return param->value;
 }
 
-void parameter_print(parameter_t *param)
+void parameter_print(eu_parameter_t *param)
 {
 	object_print_path(param->parent);
 	printf(".%s=", param->name);

@@ -14,10 +14,10 @@
 #define event_timer_continue	true
 #define event_timer_stop		false
 
-event_timer_t *event_timer_create(uint32_t timeout_ms, bool (*callback)(void *arg), void *arg);
-void event_timer_set_userdata(event_timer_t *timer, void *arg);
-void *event_timer_get_userdata(event_timer_t *timer);
-void event_timer_destroy(event_timer_t *timer);
+eu_event_timer_t *event_timer_create(uint32_t timeout_ms, bool (*callback)(void *arg), void *arg);
+void event_timer_set_userdata(eu_event_timer_t *timer, void *arg);
+void *event_timer_get_userdata(eu_event_timer_t *timer);
+void event_timer_destroy(eu_event_timer_t *timer);
 
 long long time_ms(void);
 

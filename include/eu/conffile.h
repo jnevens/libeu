@@ -11,10 +11,10 @@
 #include <bus/types.h>
 
 
-config_t *config_init(const char *file);
-void config_destroy(config_t *config);
+eu_config_t *config_init(const char *file);
+void config_destroy(eu_config_t *config);
 
-variant_t *config_get_parameter(config_t *config, const char *name);
+eu_variant_t *config_get_parameter(eu_config_t *config, const char *name);
 
 
 

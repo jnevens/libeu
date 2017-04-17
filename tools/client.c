@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
 	if(!bus_connect()) {
 		log_err("Failed to connect to system bus");
 	}
-	object_t *root = bus_register_path("Devices");
+	eu_object_t *root = bus_register_path("Devices");
 	if(!root) {
 		log_err("Failed to register object Devices");
 	}

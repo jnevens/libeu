@@ -10,64 +10,64 @@
 
 #include "eu/list.h"
 
-struct list_node_s
+struct eu_list_node_s
 {
-	list_t *list;
-	struct list_node_s *next;
-	struct list_node_s *prev;
+	eu_list_t *list;
+	struct eu_list_node_s *next;
+	struct eu_list_node_s *prev;
 	void *element;
 };
 
-struct list_s
+struct eu_list_s
 {
 	size_t count;
-	list_node_t *head;
-	list_node_t *tail;
+	eu_list_node_t *head;
+	eu_list_node_t *tail;
 };
 
-static list_node_t *list_node_create(list_t *list, void *element)
+static eu_list_node_t *list_node_create(eu_list_t *list, void *element)
 {
-	list_node_t *node = calloc(1, sizeof(list_node_t));
+	eu_list_node_t *node = calloc(1, sizeof(eu_list_node_t));
 	node->element = element;
 	return node;
 }
 
-list_t *list_create(void)
+eu_list_t *list_create(void)
 {
-	list_t *list = calloc(1, sizeof(list_t));
+	eu_list_t *list = calloc(1, sizeof(eu_list_t));
 	list->count = 0;
 	return list;
 }
 
-void list_destroy(list_t *list)
+void list_destroy(eu_list_t *list)
 {
-	list_node_t *node = list->head;
+	eu_list_node_t *node = list->head;
 	while(node) {
-		list_node_t *next = node->next;
+		eu_list_node_t *next = node->next;
 		free(node);
 		node = next;
 	}
 	free(list);
 }
 
-void list_destroy_with_data(list_t *list, list_destroy_element_fn_t destroy_cb)
+void list_destroy_with_data(eu_list_t *list, list_destroy_element_fn_t destroy_cb)
 {
-	list_node_t *node = NULL;
+	eu_list_node_t *node = NULL;
 	list_for_each(node, list) {
 		destroy_cb(list_node_data(node));
 	}
 	list_destroy(list);
 }
 
-size_t list_count(list_t *list)
+size_t list_count(eu_list_t *list)
 {
 	return list->count;
 }
 
-void list_append(list_t *list, void *element)
+void list_append(eu_list_t *list, void *element)
 {
-	list_node_t *new = list_node_create(list, element);
-	list_node_t *last = list->tail;
+	eu_list_node_t *new = list_node_create(list, element);
+	eu_list_node_t *last = list->tail;
 	if(last) {
 		new->prev = last;
 		last->next = new;
@@ -78,10 +78,10 @@ void list_append(list_t *list, void *element)
 	list->count++;
 }
 
-void list_prepend(list_t *list, void *element)
+void list_prepend(eu_list_t *list, void *element)
 {
-	list_node_t *new = list_node_create(list, element);
-	list_node_t *first = list->head;
+	eu_list_node_t *new = list_node_create(list, element);
+	eu_list_node_t *first = list->head;
 	if(first) {
 		new->next = first;
 		first->prev = new;
@@ -92,19 +92,19 @@ void list_prepend(list_t *list, void *element)
 	list->count++;
 }
 
-list_node_t *list_first(list_t *list)
+eu_list_node_t *list_first(eu_list_t *list)
 {
 	return list->head;
 }
 
-list_node_t *list_last(list_t *list)
+eu_list_node_t *list_last(eu_list_t *list)
 {
 	return list->tail;
 }
 
-bool list_remove_node(list_t *list, list_node_t *node)
+bool list_remove_node(eu_list_t *list, eu_list_node_t *node)
 {
-	list_node_t *lnode = NULL;
+	eu_list_node_t *lnode = NULL;
 	bool found = false;
 
 	list_for_each(lnode, list)
@@ -138,7 +138,7 @@ bool list_remove_node(list_t *list, list_node_t *node)
 	return true;
 }
 
-bool list_remove_node_with_data(list_t *list, list_node_t *node, list_destroy_element_fn_t destroy_cb)
+bool list_remove_node_with_data(eu_list_t *list, eu_list_node_t *node, list_destroy_element_fn_t destroy_cb)
 {
 	if(destroy_cb) {
 		destroy_cb(list_node_data(node));
@@ -147,17 +147,17 @@ bool list_remove_node_with_data(list_t *list, list_node_t *node, list_destroy_el
 	return list_remove_node(list, node);
 }
 
-list_node_t *list_node_next(list_node_t *node)
+eu_list_node_t *list_node_next(eu_list_node_t *node)
 {
 	return (node) ? node->next : NULL;
 }
 
-list_node_t *list_node_prev(list_node_t *node)
+eu_list_node_t *list_node_prev(eu_list_node_t *node)
 {
 	return (node) ? node->prev : NULL;
 }
 
-void *list_node_data(list_node_t *node)
+void *list_node_data(eu_list_node_t *node)
 {
 	return node->element;
 }

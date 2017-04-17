@@ -15,7 +15,7 @@
 
 #include <eu/bus_message.h>
 
-socket_t *conn = NULL;
+eu_socket_t *conn = NULL;
 
 static void bus_connection_callback(int fd, short int revents, void *arg)
 {
@@ -36,7 +36,7 @@ bool bus_connect(void)
 	return true;
 }
 
-object_t *bus_register_path(const char *path)
+eu_object_t *bus_register_path(const char *path)
 {
 	bus_message_t *msg = bus_message_create(REGISTER_PATH, (uint8_t *)path, strlen(path) + 1);
 	socket_write(conn, msg, bus_message_size(msg));

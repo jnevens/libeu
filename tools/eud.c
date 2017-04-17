@@ -69,7 +69,7 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state)
 
 static struct argp argp = { options, parse_opt, args_doc, doc };
 
-void busd_connection_handler(event_t *event, bus_message_t *msg)
+void busd_connection_handler(eu_event_t *event, bus_message_t *msg)
 {
 	switch(msg->type) {
 		case REGISTER_PATH :
@@ -85,8 +85,8 @@ void busd_connection_callback(int fd, short int revents, void *arg)
 {
 	size_t msg_header_size = sizeof(bus_message_t);
 	bus_message_t *msg = calloc(1, msg_header_size);
-	socket_t *client = arg;
-	event_t *event = socket_get_userdata(client);
+	eu_socket_t *client = arg;
+	eu_event_t *event = socket_get_userdata(client);
 
 	// read header
 	int rv = socket_read(client, (uint8_t *)msg, msg_header_size);
@@ -110,10 +110,10 @@ void busd_connection_callback(int fd, short int revents, void *arg)
 
 void busd_server_callback(int fd, short int revents, void *arg)
 {
-	socket_t *server = arg;
+	eu_socket_t *server = arg;
 	log_info("server callback!");
-	socket_t *new = socket_accept(server);
-	event_t *event = event_add(socket_get_fd(new), POLLIN, busd_connection_callback, NULL, new);
+	eu_socket_t *new = socket_accept(server);
+	eu_event_t *event = event_add(socket_get_fd(new), POLLIN, busd_connection_callback, NULL, new);
 	socket_set_userdata(new, event);
 }
 
@@ -134,7 +134,7 @@ int main(int argc, char *argv[])
 		daemonize("/var/run/busd.pid");
 	}
 
-	socket_t *server = socket_create_unix();
+	eu_socket_t *server = socket_create_unix();
 	if(!server) {
 		log_err("Failed creating server socket!");
 		exit(-1);

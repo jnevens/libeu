@@ -12,7 +12,7 @@
 #include <eu/types.h>
 
 bool bus_connect(void);
-object_t *bus_register_path(const char *path);
+eu_object_t *bus_register_path(const char *path);
 
 
 #endif /* INCLUDE_BUS_CLIENT_H_ */

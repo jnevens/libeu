@@ -6,16 +6,16 @@
  */
 #include "../include/bus/conffile.h"
 
-config_t *config_init(const char *file)
+eu_config_t *config_init(const char *file)
 {
 	return NULL;
 }
-void config_destroy(config_t *config)
+void config_destroy(eu_config_t *config)
 {
 	free(config);
 }
 
-variant_t *config_get_parameter(config_t *config, const char *name)
+eu_variant_t *config_get_parameter(eu_config_t *config, const char *name)
 {
 	return NULL;
 }

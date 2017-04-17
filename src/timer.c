@@ -18,10 +18,10 @@
 #include "eu/event.h"
 #include "eu/timer.h"
 
-struct event_timer_s
+struct eu_event_timer_s
 {
 	uint32_t timeout_ms;
-	event_t *event;
+	eu_event_t *event;
 	int timerfd;
 	bool (*callback)(void *arg);
 	void *arg;
@@ -29,7 +29,7 @@ struct event_timer_s
 
 static void event_timer_callback(int fd, short int revents, void *arg)
 {
-	event_timer_t *timer = arg;
+	eu_event_timer_t *timer = arg;
 	bool keep_running = false;
 	long long unsigned buf = 0;
 
@@ -47,12 +47,12 @@ static void event_timer_callback(int fd, short int revents, void *arg)
 	}
 }
 
-event_timer_t *event_timer_create(uint32_t timeout_ms, bool (*callback)(void *arg), void *arg)
+eu_event_timer_t *event_timer_create(uint32_t timeout_ms, bool (*callback)(void *arg), void *arg)
 {
 	struct itimerspec timspec;
 	bzero(&timspec, sizeof(timspec));
 
-	event_timer_t *timer = calloc(1, sizeof(event_timer_t));
+	eu_event_timer_t *timer = calloc(1, sizeof(eu_event_timer_t));
 	if (!timer) {
 		log_err("Failed allocating timer!");
 		exit(-1);
@@ -80,17 +80,17 @@ event_timer_t *event_timer_create(uint32_t timeout_ms, bool (*callback)(void *ar
 	return timer;
 }
 
-void event_timer_set_userdata(event_timer_t *timer, void *arg)
+void event_timer_set_userdata(eu_event_timer_t *timer, void *arg)
 {
 	timer->arg = arg;
 }
 
-void *event_timer_get_userdata(event_timer_t *timer)
+void *event_timer_get_userdata(eu_event_timer_t *timer)
 {
 	return timer->arg;
 }
 
-void event_timer_destroy(event_timer_t *timer)
+void event_timer_destroy(eu_event_timer_t *timer)
 {
 	event_destroy(timer->event);
 	close(timer->timerfd);

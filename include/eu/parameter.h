@@ -28,20 +28,20 @@ typedef enum
 } parameter_type_t;
 
 // create
-parameter_t *parameter_create(object_t *obj, const char *name, parameter_type_t type);
+eu_parameter_t *parameter_create(eu_object_t *obj, const char *name, parameter_type_t type);
 
 // destroy
-void parameter_destroy(parameter_t *param);
+void parameter_destroy(eu_parameter_t *param);
 
 // info
-const char *parameter_name(parameter_t *param);
+const char *parameter_name(eu_parameter_t *param);
 
 // value
-bool parameter_set_value(parameter_t *param, variant_t *variant);
-variant_t *parameter_value(parameter_t *param);
-variant_t *parameter_da_value(parameter_t *param);
+bool parameter_set_value(eu_parameter_t *param, eu_variant_t *variant);
+eu_variant_t *parameter_value(eu_parameter_t *param);
+eu_variant_t *parameter_da_value(eu_parameter_t *param);
 
 // debug
-void parameter_print(parameter_t *param);
+void parameter_print(eu_parameter_t *param);
 
 #endif /* INCLUDE_BUS_PARAMETER_H_ */

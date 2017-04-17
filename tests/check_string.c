@@ -17,7 +17,7 @@
 
 START_TEST(test_string_create_destroy)
 {
-	string_t *str = string_create();
+	eu_string_t *str = string_create();
 	string_from_char(str, "test");
 	ck_assert_int_eq(string_length(str), 4);
 	ck_assert_str_eq(string_to_da_char(str), "test");
@@ -26,7 +26,7 @@ START_TEST(test_string_create_destroy)
 
 START_TEST(test_string_cleanup)
 {
-	string_t *str = string_create();
+	eu_string_t *str = string_create();
 	string_from_char(str, "test");
 	string_cleanup(str);
 	ck_assert_int_eq(string_length(str), 0);
@@ -38,8 +38,8 @@ START_TEST(test_string_cleanup)
 
 START_TEST(test_string_copy)
 {
-	string_t *str = string_create();
-	string_t *str2 = string_create();
+	eu_string_t *str = string_create();
+	eu_string_t *str2 = string_create();
 	string_from_char(str, "test");
 	ck_assert_int_eq(string_copy(str2, str), 4);
 	ck_assert_str_eq(string_to_da_char(str), "test");
@@ -50,8 +50,8 @@ START_TEST(test_string_copy)
 
 START_TEST(test_null_string_copy)
 {
-	string_t *str = string_create();
-	string_t *str2 = string_create();
+	eu_string_t *str = string_create();
+	eu_string_t *str2 = string_create();
 	ck_assert_int_eq(string_copy(str2, str), 0);
 	ck_assert_int_eq(string_is_null(str), 1);
 	ck_assert_int_eq(string_is_null(str2), 1);
