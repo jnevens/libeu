@@ -43,11 +43,11 @@ static void event_timer_callback(int fd, short int revents, void *arg)
 	}
 
 	if(!keep_running) {
-		event_timer_destroy(timer);
+		eu_event_timer_destroy(timer);
 	}
 }
 
-eu_event_timer_t *event_timer_create(uint32_t timeout_ms, bool (*callback)(void *arg), void *arg)
+eu_event_timer_t *eu_event_timer_create(uint32_t timeout_ms, bool (*callback)(void *arg), void *arg)
 {
 	struct itimerspec timspec;
 	bzero(&timspec, sizeof(timspec));
@@ -71,7 +71,7 @@ eu_event_timer_t *event_timer_create(uint32_t timeout_ms, bool (*callback)(void 
 		perror("timerfd_settime");
 	}
 
-	timer->event = event_add(timer->timerfd, POLLIN, event_timer_callback, NULL, timer);
+	timer->event = eu_event_add(timer->timerfd, POLLIN, event_timer_callback, NULL, timer);
 	timer->callback = callback;
 	timer->arg = arg;
 
@@ -80,24 +80,24 @@ eu_event_timer_t *event_timer_create(uint32_t timeout_ms, bool (*callback)(void 
 	return timer;
 }
 
-void event_timer_set_userdata(eu_event_timer_t *timer, void *arg)
+void eu_event_timer_set_userdata(eu_event_timer_t *timer, void *arg)
 {
 	timer->arg = arg;
 }
 
-void *event_timer_get_userdata(eu_event_timer_t *timer)
+void *eu_event_timer_get_userdata(eu_event_timer_t *timer)
 {
 	return timer->arg;
 }
 
-void event_timer_destroy(eu_event_timer_t *timer)
+void eu_event_timer_destroy(eu_event_timer_t *timer)
 {
-	event_destroy(timer->event);
+	eu_event_destroy(timer->event);
 	close(timer->timerfd);
 	free(timer);
 }
 
-long long time_ms(void)
+long long eu_time_ms(void)
 {
 	long long time = 0;
 	struct timespec spec;

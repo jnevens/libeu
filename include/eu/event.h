@@ -13,16 +13,16 @@
 #include <poll.h>
 #include "types.h"
 
-bool event_loop_init(void);
-void event_loop(void);
-void event_loop_stop(void);
-void event_loop_cleanup(void);
+bool eu_event_loop_init(void);
+void eu_event_loop(void);
+void eu_event_loop_stop(void);
+void eu_event_loop_cleanup(void);
 
-eu_event_t *event_add(int fd, short int events,
+eu_event_t *eu_event_add(int fd, short int events,
 		void (*callback)(int fd, short int revents, void *arg),
 		void (*err_callback)(int fd, short int revents, void *arg),
 		void *arg);
 
-void event_destroy(eu_event_t *event);
+void eu_event_destroy(eu_event_t *event);
 
 #endif /* INCLUDE_EVENT_H_ */

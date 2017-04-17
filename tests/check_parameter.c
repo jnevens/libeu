@@ -10,20 +10,20 @@
 
 START_TEST(test_parameter_create_destroy)
 {
-	eu_parameter_t *param = parameter_create(NULL, "https", PARAMETER_TYPE_BOOL);
+	eu_parameter_t *param = eu_parameter_create(NULL, "https", EU_PARAMETER_TYPE_BOOL);
 	ck_assert_ptr_ne(param, NULL);
-	ck_assert_str_eq(parameter_name(param), "https");
-	parameter_destroy(param);
+	ck_assert_str_eq(eu_parameter_name(param), "https");
+	eu_parameter_destroy(param);
 }END_TEST
 
 START_TEST(test_parameter_name)
 {
-	eu_parameter_t *param = parameter_create(NULL, "https", PARAMETER_TYPE_BOOL);
+	eu_parameter_t *param = eu_parameter_create(NULL, "https", EU_PARAMETER_TYPE_BOOL);
 	ck_assert_ptr_ne(param, NULL);
-	ck_assert_str_eq(parameter_name(param), "https");
-	parameter_destroy(param);
+	ck_assert_str_eq(eu_parameter_name(param), "https");
+	eu_parameter_destroy(param);
 
-	ck_assert_ptr_eq(parameter_name(NULL), NULL);
+	ck_assert_ptr_eq(eu_parameter_name(NULL), NULL);
 }END_TEST
 
 int main(void)

@@ -12,9 +12,9 @@
 
 
 
-bus_message_t *bus_message_create(bus_msg_type_t type, uint8_t *data, size_t datalen)
+eu_bus_message_t *eu_bus_message_create(eu_bus_msg_type_t type, uint8_t *data, size_t datalen)
 {
-	bus_message_t *msg = calloc(1, sizeof(bus_message_t) + datalen);
+	eu_bus_message_t *msg = calloc(1, sizeof(eu_bus_message_t) + datalen);
 	if(msg) {
 		msg->trans_id = (unsigned)((void *)data - NULL) ^ (unsigned)((void *)msg - NULL);
 		msg->type = type;
@@ -24,12 +24,12 @@ bus_message_t *bus_message_create(bus_msg_type_t type, uint8_t *data, size_t dat
 	return msg;
 }
 
-size_t bus_message_size(bus_message_t *msg)
+size_t eu_bus_message_size(eu_bus_message_t *msg)
 {
-	return sizeof(bus_message_t) + msg->len;
+	return sizeof(eu_bus_message_t) + msg->len;
 }
 
-void bus_message_destroy(bus_message_t *msg)
+void eu_bus_message_destroy(eu_bus_message_t *msg)
 {
 	if(msg) {
 		free(msg->data);

@@ -9,13 +9,13 @@
 
 #include "eu/log.h"
 
-static int log_print_lvl = BLOG_DEBUG;
-static int log_syslog_lvl = BLOG_ERR;
+static int log_print_lvl = EU_LOG_DEBUG;
+static int log_syslog_lvl = EU_LOG_ERR;
 
 /*
  * Initialize logging
  */
-int log_init(const char *name){
+int eu_log_init(const char *name){
 	setlogmask(LOG_UPTO (LOG_DEBUG));
 	openlog(name, LOG_CONS | LOG_PID | LOG_NDELAY, LOG_LOCAL1);
 	return 0;
@@ -24,19 +24,19 @@ int log_init(const char *name){
 /*
  * exit logging
  */
-int log_exit(void){
+int eu_log_exit(void){
 	closelog();
 	return 0;
 }
 
-int logs(int lvl, const char *func, int line, const char *fmt, ...){
+int eu_logs(int lvl, const char *func, int line, const char *fmt, ...){
 	va_list ap;
 	char *str,*strlog,lvlstr[12];
 	int rv = 0;
 	va_start(ap, fmt);
 	rv = vasprintf(&str,fmt,ap);
 	if(rv < 0){
-		Log(BLOG_ERR,"Could not allocate memory!");
+		EU_Log(EU_LOG_ERR,"Could not allocate memory!");
 	}
 	va_end(ap);
 
@@ -54,7 +54,7 @@ int logs(int lvl, const char *func, int line, const char *fmt, ...){
 
 	rv = asprintf(&strlog,"[%s] %s(%d): %s",lvlstr,func,line,str);
 	if(rv < 0){
-		Log(BLOG_ERR,"Could not allocate memory!");
+		EU_Log(EU_LOG_ERR,"Could not allocate memory!");
 	}
 	if(lvl <= log_print_lvl)
 		printf("%s\n",strlog);
@@ -68,10 +68,10 @@ int logs(int lvl, const char *func, int line, const char *fmt, ...){
 	return 0;
 }
 
-void log_set_print_level(int level){
+void eu_log_set_print_level(int level){
 	log_print_lvl = level;
 }
 
-void log_set_syslog_level(int level){
+void eu_log_set_syslog_level(int level){
 	log_syslog_lvl = level;
 }

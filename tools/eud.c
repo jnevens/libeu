@@ -69,7 +69,7 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state)
 
 static struct argp argp = { options, parse_opt, args_doc, doc };
 
-void busd_connection_handler(eu_event_t *event, bus_message_t *msg)
+void busd_connection_handler(eu_event_t *event, eu_bus_message_t *msg)
 {
 	switch(msg->type) {
 		case REGISTER_PATH :
@@ -83,26 +83,26 @@ void busd_connection_handler(eu_event_t *event, bus_message_t *msg)
 
 void busd_connection_callback(int fd, short int revents, void *arg)
 {
-	size_t msg_header_size = sizeof(bus_message_t);
-	bus_message_t *msg = calloc(1, msg_header_size);
+	size_t msg_header_size = sizeof(eu_bus_message_t);
+	eu_bus_message_t *msg = calloc(1, msg_header_size);
 	eu_socket_t *client = arg;
-	eu_event_t *event = socket_get_userdata(client);
+	eu_event_t *event = eu_socket_get_userdata(client);
 
 	// read header
-	int rv = socket_read(client, (uint8_t *)msg, msg_header_size);
+	int rv = eu_socket_read(client, (uint8_t *)msg, msg_header_size);
 	if(rv != msg_header_size) {
 		log_err("Failed reading header!");
 	}
 	// read data
 	msg = realloc(msg, msg_header_size + msg->len);
-	rv = socket_read(client, &((uint8_t *)msg)[msg_header_size], msg->len);
+	rv = eu_socket_read(client, &((uint8_t *)msg)[msg_header_size], msg->len);
 	if(rv != msg->len) {
 		log_err("Failed reading message data");
 	}
 
 	if(rv == 0) {
 		log_info("Connection closed!");
-		event_destroy(event);
+		eu_event_destroy(event);
 	} else {
 		busd_connection_handler(event, msg);
 	}
@@ -112,43 +112,43 @@ void busd_server_callback(int fd, short int revents, void *arg)
 {
 	eu_socket_t *server = arg;
 	log_info("server callback!");
-	eu_socket_t *new = socket_accept(server);
-	eu_event_t *event = event_add(socket_get_fd(new), POLLIN, busd_connection_callback, NULL, new);
-	socket_set_userdata(new, event);
+	eu_socket_t *new = eu_socket_accept(server);
+	eu_event_t *event = eu_event_add(eu_socket_get_fd(new), POLLIN, busd_connection_callback, NULL, new);
+	eu_socket_set_userdata(new, event);
 }
 
 int main(int argc, char *argv[])
 {
-	log_init("busd");
-	event_loop_init();
+	eu_log_init("busd");
+	eu_event_loop_init();
 
 	log_info("hello!");
 
 	argp_parse(&argp, argc, argv, 0, 0, &arguments);
 
 	if (arguments.verbose) {
-		log_set_print_level(BLOG_DEBUG);
+		eu_log_set_print_level(EU_LOG_DEBUG);
 	}
 
 	if (arguments.daemonize) {
-		daemonize("/var/run/busd.pid");
+		eu_daemonize("/var/run/busd.pid");
 	}
 
-	eu_socket_t *server = socket_create_unix();
+	eu_socket_t *server = eu_socket_create_unix();
 	if(!server) {
 		log_err("Failed creating server socket!");
 		exit(-1);
 	}
 	unlink("/var/run/busd.sock");
-	if(!socket_bind_unix(server, "/var/run/busd.sock")) {
+	if(!eu_socket_bind_unix(server, "/var/run/busd.sock")) {
 		exit(-1);
 	}
-	socket_listen(server, 10);
-	log_debug("fd = %d", socket_get_fd(server));
-	event_add(socket_get_fd(server), POLLIN, busd_server_callback, NULL, server);
+	eu_socket_listen(server, 10);
+	log_debug("fd = %d", eu_socket_get_fd(server));
+	eu_event_add(eu_socket_get_fd(server), POLLIN, busd_server_callback, NULL, server);
 
-	event_loop();
-	event_loop_cleanup();
+	eu_event_loop();
+	eu_event_loop_cleanup();
 	return 0;
 }
 

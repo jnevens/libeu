@@ -10,6 +10,6 @@
 
 #include <stdbool.h>
 
-bool daemonize(const char *pidfile);
+bool eu_daemonize(const char *pidfile);
 
 #endif /* DAEMON_H_ */

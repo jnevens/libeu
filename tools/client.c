@@ -62,26 +62,26 @@ static struct argp argp = { options, parse_opt, args_doc, doc };
 
 int main(int argc, char *argv[])
 {
-	log_init("busd");
-	event_loop_init();
+	eu_log_init("busd");
+	eu_event_loop_init();
 
 	log_info("client start!");
 
 	argp_parse(&argp, argc, argv, 0, 0, &arguments);
 
 	if (arguments.verbose) {
-		log_set_print_level(BLOG_DEBUG);
+		eu_log_set_print_level(EU_LOG_DEBUG);
 	}
 
-	if(!bus_connect()) {
+	if(!eu_bus_connect()) {
 		log_err("Failed to connect to system bus");
 	}
-	eu_object_t *root = bus_register_path("Devices");
+	eu_object_t *root = eu_bus_register_path("Devices");
 	if(!root) {
 		log_err("Failed to register object Devices");
 	}
-	event_loop();
-	event_loop_cleanup();
+	eu_event_loop();
+	eu_event_loop_cleanup();
 	return 0;
 }
 

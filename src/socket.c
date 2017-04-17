@@ -19,16 +19,16 @@
 #include <eu/socket.h>
 
 struct eu_socket_s {
-	socket_type_e	type;
+	eu_socket_type_e	type;
 	bool	copy;
 	int fd;
 	void *userdata;
 };
 
-eu_socket_t *socket_create_unix(void)
+eu_socket_t *eu_socket_create_unix(void)
 {
 	eu_socket_t *sock = calloc(1, sizeof(socket));
-	sock->type = SOCKET_TYPE_UNIX;
+	sock->type = EU_SOCKET_TYPE_UNIX;
 
 	sock->fd = socket(AF_UNIX, SOCK_STREAM, 0);
 	if (sock->fd < 0) {
@@ -52,21 +52,21 @@ static eu_socket_t *socket_duplicate(eu_socket_t *sock)
 	return new;
 }
 
-eu_socket_t *socket_create_tcp(void)
+eu_socket_t *eu_socket_create_tcp(void)
 {
 	eu_socket_t *socket = calloc(1, sizeof(socket));
-	socket->type = SOCKET_TYPE_TCP;
+	socket->type = EU_SOCKET_TYPE_TCP;
 	return socket;
 }
 
-eu_socket_t *socket_create_udp(void)
+eu_socket_t *eu_socket_create_udp(void)
 {
 	eu_socket_t *socket = calloc(1, sizeof(socket));
-	socket->type = SOCKET_TYPE_UDP;
+	socket->type = EU_SOCKET_TYPE_UDP;
 	return socket;
 }
 
-bool socket_bind_unix(eu_socket_t *sock, const char *path)
+bool eu_socket_bind_unix(eu_socket_t *sock, const char *path)
 {
 	unlink(path);
 	struct sockaddr_un server_un;
@@ -82,17 +82,17 @@ bool socket_bind_unix(eu_socket_t *sock, const char *path)
 	return true;
 }
 
-bool socket_bind_tcp(eu_socket_t *sock, uint16_t port)
+bool eu_socket_bind_tcp(eu_socket_t *sock, uint16_t port)
 {
 	return false;
 }
 
-bool socket_bind_udp(eu_socket_t *sock, uint16_t port)
+bool eu_socket_bind_udp(eu_socket_t *sock, uint16_t port)
 {
 	return false;
 }
 
-bool socket_connect_unix(eu_socket_t *sock, const char *path)
+bool eu_socket_connect_unix(eu_socket_t *sock, const char *path)
 {
 	struct sockaddr_un server_un;
 	server_un.sun_family = AF_UNIX;
@@ -107,37 +107,37 @@ bool socket_connect_unix(eu_socket_t *sock, const char *path)
 	return true;
 }
 
-bool socket_connect_tcp(eu_socket_t *sock, uint16_t port)
+bool eu_socket_connect_tcp(eu_socket_t *sock, uint16_t port)
 {
 	return false;
 }
 
-bool socket_connect_udp(eu_socket_t *sock, uint16_t port)
+bool eu_socket_connect_udp(eu_socket_t *sock, uint16_t port)
 {
 	return false;
 }
 
-bool socket_listen(eu_socket_t *sock, int n)
+bool eu_socket_listen(eu_socket_t *sock, int n)
 {
 	return (listen(sock->fd, n) == 0) ? true : false;
 }
 
-bool socket_is_copy(eu_socket_t *sock)
+bool eu_socket_is_copy(eu_socket_t *sock)
 {
 	return sock->copy;
 }
 
-int socket_get_fd(eu_socket_t *sock)
+int eu_socket_get_fd(eu_socket_t *sock)
 {
 	return sock->fd;
 }
 
-socket_type_e socket_get_type(eu_socket_t *socket)
+eu_socket_type_e eu_socket_get_type(eu_socket_t *socket)
 {
 	return socket->type;
 }
 
-bool socket_set_blocking(eu_socket_t *sock, bool blocking)
+bool eu_socket_set_blocking(eu_socket_t *sock, bool blocking)
 {
 	int flags = fcntl(sock->fd, F_GETFL, 0);
 
@@ -150,7 +150,7 @@ bool socket_set_blocking(eu_socket_t *sock, bool blocking)
 	return (fcntl(sock->fd, F_SETFL, flags) == 0) ? true : false;
 }
 
-eu_socket_t *socket_accept(eu_socket_t *sock)
+eu_socket_t *eu_socket_accept(eu_socket_t *sock)
 {
 	int fd = accept(sock->fd, NULL, NULL);
 
@@ -163,7 +163,7 @@ eu_socket_t *socket_accept(eu_socket_t *sock)
 	return new;
 }
 
-size_t socket_write(eu_socket_t *sock, uint8_t *data, size_t len)
+size_t eu_socket_write(eu_socket_t *sock, uint8_t *data, size_t len)
 {
 	// TODO loop until everything is written
 	int rv = write(sock->fd, data, len);
@@ -171,18 +171,18 @@ size_t socket_write(eu_socket_t *sock, uint8_t *data, size_t len)
 	return (rv == len) ? true : false;
 }
 
-ssize_t socket_read(eu_socket_t *sock, uint8_t *data, size_t len)
+ssize_t eu_socket_read(eu_socket_t *sock, uint8_t *data, size_t len)
 {
 	// TODO loop until everything is read
 	return read(sock->fd, data, len);
 }
 
-void socket_set_userdata(eu_socket_t *sock, void *userdata)
+void eu_socket_set_userdata(eu_socket_t *sock, void *userdata)
 {
 	sock->userdata = userdata;
 }
 
-void *socket_get_userdata(eu_socket_t *sock)
+void *eu_socket_get_userdata(eu_socket_t *sock)
 {
 	return sock->userdata;
 }

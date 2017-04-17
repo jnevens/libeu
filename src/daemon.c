@@ -31,7 +31,7 @@ static int daemon_remove_pidfile(const char *pidfile)
 	return (pidfile) ? unlink(pidfile) : -1;
 }
 
-bool daemonize(const char *pf)
+bool eu_daemonize(const char *pf)
 {
 	/* Our process ID and Session ID */
 	pid_t pid, sid;

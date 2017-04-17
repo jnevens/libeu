@@ -7,32 +7,32 @@
  * @author Jasper Nevens <jasper.nevens@emco-services.be>
  */
 
-#define Log(lvl, fmt, ...) logs(lvl, __func__ , __LINE__ , fmt, ##__VA_ARGS__)
+#define EU_Log(lvl, fmt, ...) eu_logs(lvl, __func__ , __LINE__ , fmt, ##__VA_ARGS__)
 
 /* Macro's for easy use of log */
-#define log_fatal(fmt, ...) Log(BLOG_FATAL, fmt, ##__VA_ARGS__)
-#define log_alert(fmt, ...) Log(BLOG_ALERT, fmt, ##__VA_ARGS__)
-#define log_crit(fmt, ...) Log(BLOG_CRIT, fmt, ##__VA_ARGS__)
-#define log_err(fmt, ...) Log(BLOG_ERR, fmt, ##__VA_ARGS__)
-#define log_warn(fmt, ...) Log(BLOG_WARNING, fmt, ##__VA_ARGS__)
-#define log_notice(fmt, ...) Log(BLOG_NOTICE, fmt, ##__VA_ARGS__)
-#define log_info(fmt, ...) Log(BLOG_INFO, fmt, ##__VA_ARGS__)
-#define log_debug(fmt, ...) Log(BLOG_DEBUG, fmt, ##__VA_ARGS__)
+#define eu_log_fatal(fmt, ...) EU_Log(EU_LOG_FATAL, fmt, ##__VA_ARGS__)
+#define log_alert(fmt, ...) EU_Log(EU_LOG_ALERT, fmt, ##__VA_ARGS__)
+#define log_crit(fmt, ...) EU_Log(EU_LOG_CRIT, fmt, ##__VA_ARGS__)
+#define log_err(fmt, ...) EU_Log(EU_LOG_ERR, fmt, ##__VA_ARGS__)
+#define log_warn(fmt, ...) EU_Log(EU_LOG_WARNING, fmt, ##__VA_ARGS__)
+#define log_notice(fmt, ...) EU_Log(EU_LOG_NOTICE, fmt, ##__VA_ARGS__)
+#define log_info(fmt, ...) EU_Log(EU_LOG_INFO, fmt, ##__VA_ARGS__)
+#define log_debug(fmt, ...) EU_Log(EU_LOG_DEBUG, fmt, ##__VA_ARGS__)
 
 /* 
  * Enumerate description of log level
  */
-enum log_levels
+enum eu_log_levels
 {
-	BLOG_NOLOG = -1,
-	BLOG_FATAL = 0,
-	BLOG_ALERT,
-	BLOG_CRIT,
-	BLOG_ERR,
-	BLOG_WARNING,
-	BLOG_NOTICE,
-	BLOG_INFO,
-	BLOG_DEBUG,
+	EU_LOG_NOLOG = -1,
+	EU_LOG_FATAL = 0,
+	EU_LOG_ALERT,
+	EU_LOG_CRIT,
+	EU_LOG_ERR,
+	EU_LOG_WARNING,
+	EU_LOG_NOTICE,
+	EU_LOG_INFO,
+	EU_LOG_DEBUG,
 };
 
 /*! init logging, open syslog connection etc...
@@ -40,7 +40,7 @@ enum log_levels
  * @param name syslog name
  * @return 0 on succes, 1 on failure
  */
-int log_init(const char *name);
+int eu_log_init(const char *name);
 
 /*! exit logging, close syslog connection etc...
  * @author Jasper Nevens <jasper.nevens@tass.be>
@@ -50,26 +50,26 @@ int log_exit(void);
 
 /*! make log entry
  * @author Jasper Nevens <jasper.nevens@tass.be>
- * @param lvl Importance of log message, from BLOG_FATAL downto BLOG_DEBUG
+ * @param lvl Importance of log message, from EU_LOG_FATAL downto EU_LOG_DEBUG
  * @param func name of the function to display in syslog
  * @param line number of the line in the src file
  * @param fmt format of the log message
  * @param ... all values from the log message
  * @return returns 0 on succes, -1 on failure!
  */
-int logs(int lvl, const char *func, int line, const char *fmt, ...);
+int eu_logs(int lvl, const char *func, int line, const char *fmt, ...);
 
 /*! set syslog log level
  * @author Jasper Nevens <jasper.nevens@tass.be>
  * @param level minimum syslog level (from logger_levels)
  */
-void log_set_syslog_level(int level);
+void eu_log_set_syslog_level(int level);
 
 /*! set print log level
  * @author Jasper Nevens <jasper.nevens@tass.be>
  * @param level minimum syslog level (from logger_levels)
  */
-void log_set_print_level(int level);
+void eu_log_set_print_level(int level);
 
 
 #endif

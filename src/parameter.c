@@ -16,7 +16,7 @@ struct eu_parameter_s
 {
 	eu_object_t *parent;
 	char *name;
-	parameter_type_t type;
+	eu_parameter_type_t type;
 	eu_variant_t *value;
 };
 
@@ -41,27 +41,27 @@ struct eu_parameter_s
 //	return param_type_to_variant_type_conversion[param_type];
 //}
 
-eu_parameter_t *parameter_create(eu_object_t *obj, const char *name, parameter_type_t type)
+eu_parameter_t *eu_parameter_create(eu_object_t *obj, const char *name, eu_parameter_type_t type)
 {
 	eu_parameter_t *param = calloc(1, sizeof(eu_parameter_t));
 	param->name = strdup(name);
 	param->type = type;
 	param->parent = obj;
 
-	object_add_parameter(obj, param);
+	eu_object_add_parameter(obj, param);
 
 	return param;
 }
 
-void parameter_destroy(eu_parameter_t *param)
+void eu_parameter_destroy(eu_parameter_t *param)
 {
-	object_remove_parameter(param->parent, param);
-	variant_destroy(param->value);
+	eu_object_remove_parameter(param->parent, param);
+	eu_variant_destroy(param->value);
 	free(param->name);
 	free(param);
 }
 
-const char *parameter_name(eu_parameter_t *param)
+const char *eu_parameter_name(eu_parameter_t *param)
 {
 	if(param) {
 		return param->name;
@@ -70,33 +70,33 @@ const char *parameter_name(eu_parameter_t *param)
 	return NULL;
 }
 
-bool parameter_set_value(eu_parameter_t *param, eu_variant_t *variant)
+bool eu_parameter_set_value(eu_parameter_t *param, eu_variant_t *variant)
 {
 	if(!param || !variant) {
 		return false;
 	}
 
-	variant_destroy(param->value);
+	eu_variant_destroy(param->value);
 
-	param->value = variant_duplicate(variant);
+	param->value = eu_variant_duplicate(variant);
 
 	return (param->value) ? true : false;
 }
 
-eu_variant_t *parameter_value(eu_parameter_t *param)
+eu_variant_t *eu_parameter_value(eu_parameter_t *param)
 {
-	return variant_duplicate(param->value);
+	return eu_variant_duplicate(param->value);
 }
 
-eu_variant_t *parameter_da_value(eu_parameter_t *param)
+eu_variant_t *eu_parameter_da_value(eu_parameter_t *param)
 {
 	return param->value;
 }
 
-void parameter_print(eu_parameter_t *param)
+void eu_parameter_print(eu_parameter_t *param)
 {
-	object_print_path(param->parent);
+	eu_object_print_path(param->parent);
 	printf(".%s=", param->name);
-	variant_print(param->value);
+	eu_variant_print(param->value);
 	printf("\n");
 }

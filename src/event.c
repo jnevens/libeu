@@ -28,9 +28,9 @@ struct eu_event_s
 	bool deleted;
 };
 
-bool event_loop_init(void)
+bool eu_event_loop_init(void)
 {
-	events = list_create();
+	events = eu_list_create();
 
 	if (!events) {
 		return false;
@@ -42,23 +42,23 @@ bool event_loop_init(void)
 static void events_cleanup(bool all)
 {
 	eu_list_node_t *node;
-	list_for_each(node, events) {
-		eu_event_t *event = list_node_data(node);
+	eu_list_for_each(node, events) {
+		eu_event_t *event = eu_list_node_data(node);
 		if(event->deleted || all) {
-			list_remove_node(events, node);
+			eu_list_remove_node(events, node);
 			free(event);
 			break;
 		}
 	}
 }
 
-void event_loop_cleanup(void) {
+void eu_event_loop_cleanup(void) {
 	events_cleanup(true);
-	list_destroy(events);
+	eu_list_destroy(events);
 	events = NULL;
 }
 
-eu_event_t *event_add(int fd, short int qevents,
+eu_event_t *eu_event_add(int fd, short int qevents,
 		void (*callback)(int fd, short int revents, void *arg),
 		void (*err_callback)(int fd, short int revents, void *arg),
 		void *arg)
@@ -72,20 +72,20 @@ eu_event_t *event_add(int fd, short int qevents,
 		event->deleted = false;
 		event->events = qevents;
 		event->nfdn = -1;
-		list_append(events, event);
+		eu_list_append(events, event);
 	}
 
 	return event;
 }
 
-void event_destroy(eu_event_t *event)
+void eu_event_destroy(eu_event_t *event)
 {
 	event->deleted = true;
 }
 
 static int fd_handlers_count(void)
 {
-	return (nfds_t)list_count(events);
+	return (nfds_t)eu_list_count(events);
 }
 
 static void fd_handlers_build_fd_set(struct pollfd fdset[])
@@ -93,8 +93,8 @@ static void fd_handlers_build_fd_set(struct pollfd fdset[])
 	eu_list_node_t *node;
 	nfds_t n = 0;
 
-	list_for_each(node, events) {
-		eu_event_t *event = list_node_data(node);
+	eu_list_for_each(node, events) {
+		eu_event_t *event = eu_list_node_data(node);
 		event->nfdn = n;
 		fdset[n].fd = event->fd;
 		fdset[n].events = event->events;
@@ -102,7 +102,7 @@ static void fd_handlers_build_fd_set(struct pollfd fdset[])
 	}
 }
 
-void event_loop(void)
+void eu_event_loop(void)
 {
 	keep_running = true;
 
@@ -126,8 +126,8 @@ void event_loop(void)
 			perror("poll");
 		} else if (rv > 0) { /* something happened! */
 			eu_list_node_t *node;
-			list_for_each(node, events) {
-				eu_event_t *event = list_node_data(node);
+			eu_list_for_each(node, events) {
+				eu_event_t *event = eu_list_node_data(node);
 
 				if (event->nfdn >= 0) {
 					if (fdset[event->nfdn].revents & event->events) {
@@ -144,6 +144,6 @@ void event_loop(void)
 	}
 }
 
-void event_loop_stop(void) {
+void eu_event_loop_stop(void) {
 	keep_running = false;
 }
