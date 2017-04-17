@@ -3,9 +3,9 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
 
-Name: libbus
-Description: C Utility library
+Name: libeu
+Description: C Embedded Utility library
 Version: @VERSION@
 Requires.private: @DEPENDENCIES@
-Libs: -L${libdir} -lbus
+Libs: -L${libdir} -leu
 Cflags: -I${includedir}

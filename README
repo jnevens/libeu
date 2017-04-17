@@ -10,13 +10,13 @@ library and utilities:
   $ make
   $ make install
 
-If you downloaded the libbus source code directly from the git
+If you downloaded the libeu source code directly from the git
 source code repository, then you need to create the configure script as
 the first step:
 
   $ autoreconf --install
 
-To uninstall libbus again, run:
+To uninstall libeu again, run:
 
   $ make uninstall
 
@@ -25,7 +25,7 @@ Support
 
 Please send bug reports, feedback or questions via github
 
-  https://github.com/jnevens/libbus
+  https://github.com/jnevens/libeu
 
 or contact me directly:
 
@@ -34,7 +34,7 @@ or contact me directly:
 License
 =======
 
-libbus is free software, released under the terms of the GNU
+libeu is free software, released under the terms of the GNU
 Lesser General Public License (LGPLv2.1).
 
 You can find a copy of the license in the file COPYING.

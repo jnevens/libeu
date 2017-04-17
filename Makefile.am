@@ -12,9 +12,9 @@ endif
 ACLOCAL_AMFLAGS = -I m4
 
 pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = libbus.pc
+pkgconfig_DATA = libeu.pc
 
 EXTRA_DIST = \
-	libbus.pc.in
+	libeu.pc.in
 
 include Makefile.am.coverage

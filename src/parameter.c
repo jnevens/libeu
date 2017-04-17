@@ -8,9 +8,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "bus/object.h"
-#include "bus/variant.h"
-#include "bus/parameter.h"
+#include "eu/object.h"
+#include "eu/variant.h"
+#include "eu/parameter.h"
 
 struct parameter_s
 {

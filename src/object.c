@@ -2,10 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "bus/object.h"
-#include "bus/list.h"
-#include "bus/parameter.h"
-#include "bus/variant.h"
+#include "eu/object.h"
+#include "eu/list.h"
+#include "eu/parameter.h"
+#include "eu/variant.h"
 
 struct object_s
 {

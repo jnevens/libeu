@@ -9,7 +9,7 @@
 #define INCLUDE_BUS_LIST_H_
 
 #include <stdbool.h>
-#include "bus/types.h"
+#include "eu/types.h"
 
 // free node function typedef
 typedef void (*list_destroy_element_fn_t)(void *element);

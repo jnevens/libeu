@@ -10,9 +10,9 @@
 #include <unistd.h>
 #include <poll.h>
 
-#include "bus/list.h"
-#include "bus/event.h"
-#include "bus/log.h"
+#include "eu/list.h"
+#include "eu/event.h"
+#include "eu/log.h"
 
 static bool keep_running;
 list_t *events;

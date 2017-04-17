@@ -15,8 +15,8 @@
 #include <errno.h>
 #include <fcntl.h>
 
-#include <bus/log.h>
-#include <bus/socket.h>
+#include <eu/log.h>
+#include <eu/socket.h>
 
 struct socket_s {
 	socket_type_e	type;

@@ -6,7 +6,7 @@
 #include <string.h>
 #include <inttypes.h>
 
-#include <bus/variant.h>
+#include <eu/variant.h>
 
 START_TEST(test_variant_create_destroy)
 {
@@ -268,7 +268,7 @@ START_TEST(test_variant_string)
 int main(void)
 {
 	int number_failed;
-	Suite *s = suite_create("bus_variant");
+	Suite *s = suite_create("eu_variant");
 	TCase *tc_core = tcase_create("Core");
 	tcase_set_timeout(tc_core, 1.0);
 

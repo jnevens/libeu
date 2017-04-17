@@ -6,7 +6,7 @@
 #include <string.h>
 #include <inttypes.h>
 
-#include <bus/list.h>
+#include <eu/list.h>
 
 START_TEST(test_list_create_destroy)
 {
@@ -128,7 +128,7 @@ START_TEST(test_list_remove_node)
 int main(void)
 {
 	int number_failed;
-	Suite *s = suite_create("bus_list");
+	Suite *s = suite_create("eu_list");
 	TCase *tc_core = tcase_create("Core");
 	tcase_set_timeout(tc_core, 1.0);
 

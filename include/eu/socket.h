@@ -9,7 +9,7 @@
 #define INCLUDE_BUS_SOCKET_H_
 
 #include <stdbool.h>
-#include <bus/types.h>
+#include <eu/types.h>
 
 typedef enum
 {

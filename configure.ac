@@ -1,7 +1,7 @@
 # Versioning.
 m4_define([dc_version_major],[0])
 m4_define([dc_version_minor],[0])
-m4_define([dc_version_micro],[2])
+m4_define([dc_version_micro],[1])
 m4_define([dc_version_suffix],[devel])
 m4_define([dc_version],dc_version_major.dc_version_minor.dc_version_micro[]m4_ifset([dc_version_suffix],-[dc_version_suffix])) 
 # Libtool versioning.
@@ -11,7 +11,7 @@ m4_define([dc_version_lt_age],[0])
 
 # Initialize autoconf
 AC_PREREQ([2.60])
-AC_INIT([libbus],[dc_version])
+AC_INIT([libeu],[dc_version])
 AC_CONFIG_SRCDIR([config.h.in])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
@@ -72,10 +72,10 @@ m4_ifset([dc_version_suffix],[
 ])
 
 AC_CONFIG_FILES([
-	libbus.pc
+	libeu.pc
 	Makefile
 	include/Makefile
-	include/bus/Makefile
+	include/eu/Makefile
 	src/Makefile
 	tests/Makefile
 	tools/Makefile

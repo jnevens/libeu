@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "bus/string.h"
+#include "eu/string.h"
 
 const char *strnull = "NULL";
 

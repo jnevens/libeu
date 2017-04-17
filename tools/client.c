@@ -8,9 +8,9 @@
 #include <argp.h>
 #include <stdlib.h>
 
-#include <bus/event.h>
-#include <bus/client.h>
-#include <bus/log.h>
+#include <eu/event.h>
+#include <eu/client.h>
+#include <eu/log.h>
 
 /* Used by main to communicate with parse_opt. */
 struct arguments

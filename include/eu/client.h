@@ -9,7 +9,7 @@
 #define INCLUDE_BUS_CLIENT_H_
 
 #include <stdbool.h>
-#include <bus/types.h>
+#include <eu/types.h>
 
 bool bus_connect(void);
 object_t *bus_register_path(const char *path);

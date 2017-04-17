@@ -1,5 +1,5 @@
 /*
- * busd.c
+ * eud.c
  *
  *  Created on: Jun 20, 2016
  *      Author: jnevens
@@ -9,11 +9,11 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include <bus/event.h>
-#include <bus/daemon.h>
-#include <bus/log.h>
-#include <bus/socket.h>
-#include <bus/bus_message.h>
+#include <eu/event.h>
+#include <eu/daemon.h>
+#include <eu/log.h>
+#include <eu/socket.h>
+#include <eu/bus_message.h>
 
 /* Used by main to communicate with parse_opt. */
 struct arguments

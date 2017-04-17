@@ -1,6 +1,6 @@
-libbusdir = $(includedir)/bus
+libeudir = $(includedir)/eu
 
-libbus_HEADERS = \
+libeu_HEADERS = \
 	bus_message.h \
 	client.h \
 	conffile.h \

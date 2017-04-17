@@ -10,8 +10,8 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-#include "bus/types.h"
-#include "bus/string.h"
+#include "eu/types.h"
+#include "eu/string.h"
 
 typedef enum
 {

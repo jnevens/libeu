@@ -7,7 +7,7 @@
 #include <string.h>
 #include <syslog.h>
 
-#include "bus/log.h"
+#include "eu/log.h"
 
 static int log_print_lvl = BLOG_DEBUG;
 static int log_syslog_lvl = BLOG_ERR;

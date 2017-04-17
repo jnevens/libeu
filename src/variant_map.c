@@ -8,9 +8,9 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include <bus/list.h>
-#include <bus/variant.h>
-#include <bus/variant_map.h>
+#include <eu/list.h>
+#include <eu/variant.h>
+#include <eu/variant_map.h>
 
 struct variant_map_item_s {
 	variant_t *value;

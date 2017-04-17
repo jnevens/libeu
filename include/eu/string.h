@@ -10,7 +10,7 @@
 
 #include <stdbool.h>
 #include <stdint.h>
-#include "bus/types.h"
+#include "eu/types.h"
 
 string_t *string_create(void);
 void string_destroy(string_t *str);

@@ -6,7 +6,7 @@
 #include <string.h>
 #include <inttypes.h>
 
-#include <bus/parameter.h>
+#include <eu/parameter.h>
 
 START_TEST(test_parameter_create_destroy)
 {
@@ -29,7 +29,7 @@ START_TEST(test_parameter_name)
 int main(void)
 {
 	int number_failed;
-	Suite *s = suite_create("bus_parameter");
+	Suite *s = suite_create("eu_parameter");
 	TCase *tc_core = tcase_create("Core");
 	tcase_set_timeout(tc_core, 1.0);
 

@@ -1,0 +1,11 @@
+prefix=/home/jnevens/src/libeu
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: libeu
+Description: C Embedded Utility library
+Version: 0.0.1-devel
+Requires.private: @DEPENDENCIES@
+Libs: -L${libdir} -leu
+Cflags: -I${includedir}

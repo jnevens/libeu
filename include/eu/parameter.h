@@ -8,7 +8,7 @@
 #ifndef INCLUDE_BUS_PARAMETER_H_
 #define INCLUDE_BUS_PARAMETER_H_
 
-#include "bus/types.h"
+#include "eu/types.h"
 
 typedef enum
 {

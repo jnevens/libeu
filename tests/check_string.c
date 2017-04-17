@@ -6,14 +6,14 @@
 #include <string.h>
 #include <inttypes.h>
 
-#include <bus/object.h>
-#include <bus/parameter.h>
-#include <bus/variant.h>
-#include <bus/list.h>
-#include <bus/string.h>
-#include <bus/log.h>
-#include <bus/event.h>
-#include <bus/timer.h>
+#include <eu/object.h>
+#include <eu/parameter.h>
+#include <eu/variant.h>
+#include <eu/list.h>
+#include <eu/string.h>
+#include <eu/log.h>
+#include <eu/event.h>
+#include <eu/timer.h>
 
 START_TEST(test_string_create_destroy)
 {
@@ -62,7 +62,7 @@ START_TEST(test_null_string_copy)
 int main(void)
 {
 	int number_failed;
-	Suite *s = suite_create("bus_string");
+	Suite *s = suite_create("eu_string");
 	TCase *tc_core = tcase_create("Core");
 	tcase_set_timeout(tc_core, 1.0);
 

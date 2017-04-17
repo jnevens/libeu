@@ -8,8 +8,8 @@
 #include <syslog.h>
 #include <string.h>
 
-#include <bus/log.h>
-#include <bus/daemon.h>
+#include <eu/log.h>
+#include <eu/daemon.h>
 
 static int daemon_write_pidfile(const char *pidfile, pid_t pid)
 {

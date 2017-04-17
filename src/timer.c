@@ -14,9 +14,9 @@
 #include <error.h>
 #include <errno.h>
 
-#include "bus/log.h"
-#include "bus/event.h"
-#include "bus/timer.h"
+#include "eu/log.h"
+#include "eu/event.h"
+#include "eu/timer.h"
 
 struct event_timer_s
 {

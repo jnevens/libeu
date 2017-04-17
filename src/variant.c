@@ -11,7 +11,7 @@
 #include <inttypes.h>
 #include <stdbool.h>
 
-#include "bus/variant.h"
+#include "eu/variant.h"
 
 struct variant_s
 {

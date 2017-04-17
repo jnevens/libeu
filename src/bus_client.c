@@ -1,5 +1,5 @@
 /*
- * bus_client.c
+ * eu_client.c
  *
  *  Created on: Jul 10, 2016
  *      Author: jnevens
@@ -8,12 +8,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <bus/client.h>
-#include <bus/socket.h>
-#include <bus/log.h>
-#include <bus/event.h>
+#include <eu/client.h>
+#include <eu/socket.h>
+#include <eu/log.h>
+#include <eu/event.h>
 
-#include <bus/bus_message.h>
+#include <eu/bus_message.h>
 
 socket_t *conn = NULL;
 
