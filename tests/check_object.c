@@ -119,6 +119,23 @@ START_TEST(test_object_parameter_count_invalid_object)
 	ck_assert_int_eq(eu_object_get_parameter_count(NULL), 0);
 } END_TEST
 
+START_TEST(test_object_create_path)
+{
+		eu_object_t *root = eu_object_create_path(NULL, "com.google.www");
+		ck_assert_ptr_eq(eu_object_create_path(root, "com.amazon.www"), root);
+		eu_object_print(root);
+		ck_assert_str_eq(eu_object_name(root), "com");
+		ck_assert_ptr_ne(eu_object_get_child(root, "google"), NULL);
+		ck_assert_ptr_ne(eu_object_get_child(root, "amazon"), NULL);
+		ck_assert_ptr_ne(
+				eu_object_get_child(eu_object_get_child(root, "google"), "www"),
+				NULL);
+		ck_assert_ptr_ne(
+				eu_object_get_child(eu_object_get_child(root, "amazon"), "www"),
+				NULL);
+		eu_object_destroy(root);
+}END_TEST
+
 int main(void)
 {
 	int number_failed;
@@ -134,6 +151,7 @@ int main(void)
 	tcase_add_test(tc_core, test_object_has_parameter);
 	tcase_add_test(tc_core, test_object_has_parameters);
 	tcase_add_test(tc_core, test_object_parameter_count_invalid_object);
+	tcase_add_test(tc_core, test_object_create_path);
 
 	suite_add_tcase(s, tc_core);
 	SRunner *sr = srunner_create(s);

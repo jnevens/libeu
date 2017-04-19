@@ -36,8 +36,43 @@ eu_object_t *eu_object_create(eu_object_t *parent, const char *name)
 	return obj;
 }
 
+eu_object_t *eu_object_create_path(eu_object_t *root, const char *path)
+{
+	char *path_dup = strdup(path);
+	char *token;
+	int n = 0;
+	eu_object_t *ptr = NULL;
+
+	while ((token = strsep(&path_dup, ".")))
+	{
+		if (root == NULL) {
+			root = eu_object_create(NULL, token);
+			ptr = root;
+		} else if (!ptr) {
+			if (strcmp(eu_object_name(root), token) != 0) {
+				// problem, create new root ?
+			}
+			ptr = root;
+		} else {
+			eu_object_t *child = eu_object_get_child(ptr, token);
+			if (!child) {
+				child = eu_object_create(ptr, token);
+			}
+			ptr = child;
+		}
+		n++;
+	}
+
+	free(path_dup);
+	return root;
+}
+
 const char *eu_object_name(eu_object_t *obj)
 {
+	if (!obj) {
+		return NULL;
+	}
+
 	return obj->name;
 }
 

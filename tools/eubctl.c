@@ -73,12 +73,15 @@ int main(int argc, char *argv[])
 		eu_log_set_print_level(EU_LOG_DEBUG);
 	}
 
-	if(!eu_bus_connect()) {
+	eu_bus_conn_t *conn = eu_bus_connect("eubctl");
+	if(!conn) {
 		log_err("Failed to connect to system bus");
 	}
-	eu_object_t *root = eu_bus_register_path("Devices");
+	eu_object_t *root = eu_bus_register_path(conn, "system.deamon.test");
 	if(!root) {
 		log_err("Failed to register object Devices");
+	} else {
+		eu_object_print(root);
 	}
 	eu_event_loop();
 	eu_event_loop_cleanup();

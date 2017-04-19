@@ -163,7 +163,7 @@ eu_socket_t *eu_socket_accept(eu_socket_t *sock)
 	return new;
 }
 
-size_t eu_socket_write(eu_socket_t *sock, uint8_t *data, size_t len)
+size_t eu_socket_write(eu_socket_t *sock, void *data, size_t len)
 {
 	// TODO loop until everything is written
 	int rv = write(sock->fd, data, len);
@@ -171,7 +171,7 @@ size_t eu_socket_write(eu_socket_t *sock, uint8_t *data, size_t len)
 	return (rv == len) ? true : false;
 }
 
-ssize_t eu_socket_read(eu_socket_t *sock, uint8_t *data, size_t len)
+ssize_t eu_socket_read(eu_socket_t *sock, void *data, size_t len)
 {
 	// TODO loop until everything is read
 	return read(sock->fd, data, len);

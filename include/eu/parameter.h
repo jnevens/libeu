@@ -42,6 +42,6 @@ eu_variant_t *eu_parameter_value(eu_parameter_t *param);
 eu_variant_t *eu_parameter_da_value(eu_parameter_t *param);
 
 // debug
-void parameter_print(eu_parameter_t *param);
+void eu_parameter_print(eu_parameter_t *param);
 
 #endif /* INCLUDE_EU_PARAMETER_H_ */

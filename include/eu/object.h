@@ -8,6 +8,7 @@
 
 // object tree
 eu_object_t *eu_object_create(eu_object_t *parent, const char *name);
+eu_object_t *eu_object_create_path(eu_object_t *root, const char *path);
 eu_object_t *eu_object_get_parent(eu_object_t *obj);
 eu_object_t *eu_object_get_child(eu_object_t *obj, const char *name);
 eu_object_t *eu_object_get_first_child(eu_object_t *obj);

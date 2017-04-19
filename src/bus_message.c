@@ -12,7 +12,7 @@
 
 
 
-eu_bus_message_t *eu_bus_message_create(eu_bus_msg_type_t type, uint8_t *data, size_t datalen)
+eu_bus_message_t *eu_bus_message_create(eu_bus_msg_type_t type, void *data, size_t datalen)
 {
 	eu_bus_message_t *msg = calloc(1, sizeof(eu_bus_message_t) + datalen);
 	if(msg) {
@@ -32,7 +32,6 @@ size_t eu_bus_message_size(eu_bus_message_t *msg)
 void eu_bus_message_destroy(eu_bus_message_t *msg)
 {
 	if(msg) {
-		free(msg->data);
 		free(msg);
 	}
 }

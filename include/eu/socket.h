@@ -36,8 +36,8 @@ int eu_socket_get_fd(eu_socket_t *sock);
 eu_socket_type_e eu_socket_get_type(eu_socket_t *sock);
 bool eu_socket_set_blocking(eu_socket_t *sock, bool blocking);
 eu_socket_t *eu_socket_accept(eu_socket_t *sock);
-size_t eu_socket_write(eu_socket_t *sock, uint8_t *data, size_t len);
-ssize_t eu_socket_read(eu_socket_t *sock, uint8_t *data, size_t len);
+size_t eu_socket_write(eu_socket_t *sock, void *data, size_t len);
+ssize_t eu_socket_read(eu_socket_t *sock, void *data, size_t len);
 
 void eu_socket_set_userdata(eu_socket_t *sock, void *userdata);
 void *eu_socket_get_userdata(eu_socket_t *sock);

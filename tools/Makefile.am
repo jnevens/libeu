@@ -1,10 +1,10 @@
 AM_CPPFLAGS = -I$(top_buildir)/include -I$(top_srcdir)/include
 LDADD = $(top_builddir)/src/.libs/libeu.la
 
-sbin_PROGRAMS = eud euctl
+sbin_PROGRAMS = eubd eubctl
 
-eud_SOURCES = \
-	eud.c
+eubd_SOURCES = \
+	eubd.c
 	
-euctl_SOURCES = \
-	euctl.c
+eubctl_SOURCES = \
+	eubctl.c
