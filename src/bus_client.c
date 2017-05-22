@@ -27,16 +27,16 @@ static void handle_message(eu_bus_conn_t *conn, eu_bus_message_t *msg) {
 		int response = EU_BUS_REGISTER_PATH_INVALID;
 		memcpy(&response, msg->data, sizeof(eu_bus_register_path_response_t));
 		if (response == EU_BUS_REGISTER_PATH_SUCCESS) {
-			log_info("Successfully registered path!");
+			eu_log_info("Successfully registered path!");
 		} else if (response == EU_BUS_REGISTER_PATH_FAILED_ALREADY_IN_USE) {
-			log_err("Failed to register path: Already in use!");
+			eu_log_err("Failed to register path: Already in use!");
 		} else {
-			log_err("Failed to register path!");
+			eu_log_err("Failed to register path!");
 		}
 		break;
 	}
 	default:
-		log_err("Unsupported action: %d", msg->type);
+		eu_log_err("Unsupported action: %d", msg->type);
 		break;
 	}
 }
@@ -49,7 +49,7 @@ static eu_bus_message_t *bus_conn_read_message(eu_bus_conn_t *conn){
 	/* try to read header */
 	int rv = eu_socket_read(sock, (uint8_t *) msg, msg_header_size);
 	if (rv != msg_header_size) {
-		log_err("Failed reading header!");
+		eu_log_err("Failed reading header!");
 		free(msg);
 		return NULL;
 	}
@@ -58,7 +58,7 @@ static eu_bus_message_t *bus_conn_read_message(eu_bus_conn_t *conn){
 	msg = realloc(msg, msg_header_size + msg->len);
 	rv = eu_socket_read(sock, &((uint8_t *) msg)[msg_header_size], msg->len);
 	if (rv != msg->len) {
-		log_err("Failed reading message data");
+		eu_log_err("Failed reading message data");
 	}
 
 	return msg;
@@ -69,12 +69,12 @@ static void bus_connection_callback(int fd, short int revents, void *arg) {
 	eu_bus_conn_t *conn = (eu_bus_conn_t *) arg;
 
 
-	log_info("connection callback!");
+	eu_log_info("connection callback!");
 
 	// read message;
 	msg = bus_conn_read_message(conn);
 	if(!msg) {
-		log_info("Connection closed!");
+		eu_log_info("Connection closed!");
 	} else {
 		handle_message(conn, msg);
 		eu_bus_message_destroy(msg);
@@ -86,7 +86,7 @@ eu_bus_conn_t *eu_bus_connect(const char *name) {
 
 	// try to connect to eu bus
 	if (!eu_socket_connect_unix(sock, "/tmp/eubd.sock")) {
-		log_err("Failed connecting socket!");
+		eu_log_err("Failed connecting socket!");
 		return NULL;
 	}
 
@@ -112,12 +112,12 @@ eu_object_t *eu_bus_register_path(eu_bus_conn_t *conn, const char *path)
 	int response = EU_BUS_REGISTER_PATH_INVALID;
 	memcpy(&response, resp->data, sizeof(eu_bus_register_path_response_t));
 	if (response == EU_BUS_REGISTER_PATH_SUCCESS) {
-		log_info("Successfully registered path!");
+		eu_log_info("Successfully registered path!");
 		obj = eu_object_create_path(NULL, path);
 	} else if (response == EU_BUS_REGISTER_PATH_FAILED_ALREADY_IN_USE) {
-		log_err("Failed to register path: Already in use!");
+		eu_log_err("Failed to register path: Already in use!");
 	} else {
-		log_err("Failed to register path!");
+		eu_log_err("Failed to register path!");
 	}
 
 	eu_bus_message_destroy(msg);

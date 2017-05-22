@@ -35,7 +35,7 @@ static void event_timer_callback(int fd, short int revents, void *arg)
 
 	ssize_t rv = read(timer->timerfd, &buf, sizeof(buf));
 	if (rv != 8) {
-		log_err("Problem reading timerfd! %d %s", rv, strerror(errno));
+		eu_log_err("Problem reading timerfd! %d %s", rv, strerror(errno));
 	}
 
 	if (timer->callback) {
@@ -54,11 +54,11 @@ eu_event_timer_t *eu_event_timer_create(uint32_t timeout_ms, bool (*callback)(vo
 
 	eu_event_timer_t *timer = calloc(1, sizeof(eu_event_timer_t));
 	if (!timer) {
-		log_err("Failed allocating timer!");
+		eu_log_err("Failed allocating timer!");
 		exit(-1);
 	}
 	timer->timerfd = timerfd_create(CLOCK_MONOTONIC, 0);
-	log_debug("timerfd: %d", timer->timerfd);
+	eu_log_debug("timerfd: %d", timer->timerfd);
 
 	timspec.it_interval.tv_sec = (timeout_ms > 999) ? timeout_ms / 1000 : 0;
 	timspec.it_interval.tv_nsec = (timeout_ms % 1000) * 1000000;
@@ -67,7 +67,7 @@ eu_event_timer_t *eu_event_timer_create(uint32_t timeout_ms, bool (*callback)(vo
 
 	int res = timerfd_settime(timer->timerfd, 0, &timspec, NULL);
 	if (res < 0) {
-		log_err("timerfd_settime");
+		eu_log_err("timerfd_settime");
 		perror("timerfd_settime");
 	}
 
@@ -75,7 +75,7 @@ eu_event_timer_t *eu_event_timer_create(uint32_t timeout_ms, bool (*callback)(vo
 	timer->callback = callback;
 	timer->arg = arg;
 
-	log_info("timer created: %d.%03ds", timspec.it_interval.tv_sec, timspec.it_interval.tv_nsec / 1000000);
+	eu_log_info("timer created: %d.%03ds", timspec.it_interval.tv_sec, timspec.it_interval.tv_nsec / 1000000);
 
 	return timer;
 }

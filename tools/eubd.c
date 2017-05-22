@@ -115,7 +115,7 @@ static void eubd_unregister_client(eu_socket_t *client)
 		eu_list_node_t *nextnode = eu_list_node_next(node);
 		registered_path_t *lpath = eu_list_node_data(node);
 		if(lpath->client_sock == client) {
-			log_info("unregister path: %s", lpath->path);
+			eu_log_info("unregister path: %s", lpath->path);
 			free(lpath);
 			eu_list_remove_node(registerd_paths, node);
 		}
@@ -129,7 +129,7 @@ static void message_handler(eu_socket_t *client, eu_bus_message_t *msg)
 		case EU_BUS_REGISTER_PATH :
 		{
 			eu_bus_register_path_response_t status = eubd_register_client_path(client, (char *)msg->data);
-			log_info("Register path: %s %d", (char *)msg->data, (int)status);
+			eu_log_info("Register path: %s %d", (char *)msg->data, (int)status);
 			eu_bus_message_t *newmsg = eu_bus_message_create(EU_BUS_REGISTER_PATH_RESPONSE,
 					&status, sizeof(eu_bus_register_path_response_t));
 			newmsg->trans_id = msg->trans_id;
@@ -137,7 +137,7 @@ static void message_handler(eu_socket_t *client, eu_bus_message_t *msg)
 			break;
 		}
 		default:
-			log_err("Unsupported action: %d", msg->type);
+			eu_log_err("Unsupported action: %d", msg->type);
 			break;
 	}
 }
@@ -152,19 +152,19 @@ void eud_connection_callback(int fd, short int revents, void *arg)
 	// read header
 	int rv = eu_socket_read(client, (uint8_t *) msg, msg_header_size);
 	if (rv != msg_header_size) {
-		log_err("Failed reading header!");
+		eu_log_err("Failed reading header!");
 	} else {
 		// read data
 		msg = realloc(msg, msg_header_size + msg->len);
 		rv = eu_socket_read(client, &((uint8_t *) msg)[msg_header_size],
 				msg->len);
 		if (rv != msg->len) {
-			log_err("Failed reading message data");
+			eu_log_err("Failed reading message data");
 		}
 	}
 
 	if(rv == 0) {
-		log_info("Connection closed!");
+		eu_log_info("Connection closed!");
 		eubd_unregister_client(client);
 		eu_event_destroy(event);
 	} else {
@@ -176,7 +176,7 @@ void eud_connection_callback(int fd, short int revents, void *arg)
 void eud_server_callback(int fd, short int revents, void *arg)
 {
 	eu_socket_t *server = arg;
-	log_info("server callback!");
+	eu_log_info("server callback!");
 	eu_socket_t *new = eu_socket_accept(server);
 	eu_event_t *event = eu_event_add(eu_socket_get_fd(new), POLLIN, eud_connection_callback, NULL, new);
 	eu_socket_set_userdata(new, event);
@@ -187,7 +187,7 @@ int main(int argc, char *argv[])
 	eu_log_init("eud");
 	eu_event_loop_init();
 
-	log_info("hello!");
+	eu_log_info("hello!");
 
 	argp_parse(&argp, argc, argv, 0, 0, &arguments);
 
@@ -201,7 +201,7 @@ int main(int argc, char *argv[])
 
 	eu_socket_t *server = eu_socket_create_unix();
 	if(!server) {
-		log_err("Failed creating server socket!");
+		eu_log_err("Failed creating server socket!");
 		exit(-1);
 	}
 	unlink("/tmp/eud.sock");
@@ -212,7 +212,7 @@ int main(int argc, char *argv[])
 	registerd_paths = eu_list_create();
 
 	eu_socket_listen(server, 10);
-	log_debug("fd = %d", eu_socket_get_fd(server));
+	eu_log_debug("fd = %d", eu_socket_get_fd(server));
 	eu_event_add(eu_socket_get_fd(server), POLLIN, eud_server_callback, NULL, server);
 
 	eu_event_loop();

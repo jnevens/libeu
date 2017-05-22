@@ -16,11 +16,11 @@ static int daemon_write_pidfile(const char *pidfile, pid_t pid)
 	FILE * fp;
 	fp = fopen(pidfile, "w+");
 	if(!fp){
-		log_err("Failed opening PID file!");
+		eu_log_err("Failed opening PID file!");
 		return -1;
 	}
 	if(fprintf(fp,"%d\n",(int)pid) <= 0){
-		log_err("Failed writing pid to file!");
+		eu_log_err("Failed writing pid to file!");
 	}
 	fclose(fp);
 	return 0;
@@ -46,7 +46,7 @@ bool eu_daemonize(const char *pf)
 	}
 	/* If we got a good PID, then we can exit the parent process. */
 	if (pid > 0) { // Child can continue to run even after the parent has finished executing
-		log_debug("Child ceated: pid: %d", pid);
+		eu_log_debug("Child ceated: pid: %d", pid);
 		daemon_write_pidfile(pf, pid);
 		exit(EXIT_SUCCESS);
 	}

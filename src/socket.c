@@ -36,7 +36,7 @@ eu_socket_t *eu_socket_create_unix(void)
 		return NULL;
 	}
 
-	log_debug("unix socket created: fd=%d", sock->fd);
+	eu_log_debug("unix socket created: fd=%d", sock->fd);
 	return sock;
 }
 
@@ -74,7 +74,7 @@ bool eu_socket_bind_unix(eu_socket_t *sock, const char *path)
 	server_un.sun_family = AF_UNIX;
 	strcpy(server_un.sun_path, path);
 	if (bind(sock->fd, (struct sockaddr *) &server_un, sizeof(struct sockaddr_un))) {
-		log_err("Cannot bind socket! error=%s", strerror(errno));
+		eu_log_err("Cannot bind socket! error=%s", strerror(errno));
 		free(sock);
 		return false;
 	}
@@ -100,7 +100,7 @@ bool eu_socket_connect_unix(eu_socket_t *sock, const char *path)
 
 	if (connect(sock->fd, (struct sockaddr *) &server_un, sizeof(struct sockaddr_un)) < 0) {
 		close(sock->fd);
-		log_err("Cannot connect stream socket! %s\n", strerror(errno));
+		eu_log_err("Cannot connect stream socket! %s\n", strerror(errno));
 		return false;
 	}
 

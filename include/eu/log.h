@@ -11,13 +11,13 @@
 
 /* Macro's for easy use of log */
 #define eu_log_fatal(fmt, ...) EU_Log(EU_LOG_FATAL, fmt, ##__VA_ARGS__)
-#define log_alert(fmt, ...) EU_Log(EU_LOG_ALERT, fmt, ##__VA_ARGS__)
-#define log_crit(fmt, ...) EU_Log(EU_LOG_CRIT, fmt, ##__VA_ARGS__)
-#define log_err(fmt, ...) EU_Log(EU_LOG_ERR, fmt, ##__VA_ARGS__)
-#define log_warn(fmt, ...) EU_Log(EU_LOG_WARNING, fmt, ##__VA_ARGS__)
-#define log_notice(fmt, ...) EU_Log(EU_LOG_NOTICE, fmt, ##__VA_ARGS__)
-#define log_info(fmt, ...) EU_Log(EU_LOG_INFO, fmt, ##__VA_ARGS__)
-#define log_debug(fmt, ...) EU_Log(EU_LOG_DEBUG, fmt, ##__VA_ARGS__)
+#define eu_log_alert(fmt, ...) EU_Log(EU_LOG_ALERT, fmt, ##__VA_ARGS__)
+#define eu_log_crit(fmt, ...) EU_Log(EU_LOG_CRIT, fmt, ##__VA_ARGS__)
+#define eu_log_err(fmt, ...) EU_Log(EU_LOG_ERR, fmt, ##__VA_ARGS__)
+#define eu_log_warn(fmt, ...) EU_Log(EU_LOG_WARNING, fmt, ##__VA_ARGS__)
+#define eu_log_notice(fmt, ...) EU_Log(EU_LOG_NOTICE, fmt, ##__VA_ARGS__)
+#define eu_log_info(fmt, ...) EU_Log(EU_LOG_INFO, fmt, ##__VA_ARGS__)
+#define eu_log_debug(fmt, ...) EU_Log(EU_LOG_DEBUG, fmt, ##__VA_ARGS__)
 
 /* 
  * Enumerate description of log level

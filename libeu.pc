@@ -5,7 +5,7 @@ includedir=${prefix}/include
 
 Name: libeu
 Description: C Embedded Utility library
-Version: 0.0.1-devel
+Version: 0.0.2-devel
 Requires.private: @DEPENDENCIES@
 Libs: -L${libdir} -leu
 Cflags: -I${includedir}

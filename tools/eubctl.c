@@ -10,6 +10,7 @@
 
 #include <eu/event.h>
 #include <eu/client.h>
+#include <eu/object.h>
 #include <eu/log.h>
 
 /* Used by main to communicate with parse_opt. */
@@ -65,7 +66,7 @@ int main(int argc, char *argv[])
 	eu_log_init("busd");
 	eu_event_loop_init();
 
-	log_info("euctl start!");
+	eu_log_info("euctl start!");
 
 	argp_parse(&argp, argc, argv, 0, 0, &arguments);
 
@@ -75,11 +76,11 @@ int main(int argc, char *argv[])
 
 	eu_bus_conn_t *conn = eu_bus_connect("eubctl");
 	if(!conn) {
-		log_err("Failed to connect to system bus");
+		eu_log_err("Failed to connect to system bus");
 	}
 	eu_object_t *root = eu_bus_register_path(conn, "system.deamon.test");
 	if(!root) {
-		log_err("Failed to register object Devices");
+		eu_log_err("Failed to register object Devices");
 	} else {
 		eu_object_print(root);
 	}
