@@ -72,4 +72,5 @@ m4/ltversion.m4
 m4/lt~obsolete.m4
 tools/eubd
 tools/eubctl
+libeu.pc
 
