@@ -58,7 +58,6 @@ eu_event_timer_t *eu_event_timer_create(uint32_t timeout_ms, bool (*callback)(vo
 		exit(-1);
 	}
 	timer->timerfd = timerfd_create(CLOCK_MONOTONIC, 0);
-	eu_log_debug("timerfd: %d", timer->timerfd);
 
 	timspec.it_interval.tv_sec = (timeout_ms > 999) ? timeout_ms / 1000 : 0;
 	timspec.it_interval.tv_nsec = (timeout_ms % 1000) * 1000000;
@@ -74,8 +73,6 @@ eu_event_timer_t *eu_event_timer_create(uint32_t timeout_ms, bool (*callback)(vo
 	timer->event = eu_event_add(timer->timerfd, POLLIN, event_timer_callback, NULL, timer);
 	timer->callback = callback;
 	timer->arg = arg;
-
-	eu_log_info("timer created: %d.%03ds", timspec.it_interval.tv_sec, timspec.it_interval.tv_nsec / 1000000);
 
 	return timer;
 }
