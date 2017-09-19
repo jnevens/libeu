@@ -46,7 +46,7 @@ bool eu_daemonize(const char *pf)
 	}
 	/* If we got a good PID, then we can exit the parent process. */
 	if (pid > 0) { // Child can continue to run even after the parent has finished executing
-		eu_log_debug("Child ceated: pid: %d", pid);
+		eu_log_debug("Child created: pid %d", pid);
 		daemon_write_pidfile(pf, pid);
 		exit(EXIT_SUCCESS);
 	}
