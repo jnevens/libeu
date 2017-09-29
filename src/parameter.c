@@ -53,6 +53,18 @@ eu_parameter_t *eu_parameter_create(eu_object_t *obj, const char *name, eu_param
 	return param;
 }
 
+eu_parameter_t *eu_parameter_duplicate(eu_object_t *new_parent, eu_parameter_t *orig)
+{
+	eu_parameter_t *param = calloc(1, sizeof(eu_parameter_t));
+	param->name = strdup(orig->name);
+	param->type = orig->type;
+	param->parent = new_parent;
+	if (orig->value)
+		param->value = eu_variant_duplicate(orig->value);
+
+	return param;
+}
+
 void eu_parameter_destroy(eu_parameter_t *param)
 {
 	eu_object_remove_parameter(param->parent, param);
@@ -68,6 +80,11 @@ const char *eu_parameter_name(eu_parameter_t *param)
 	}
 
 	return NULL;
+}
+
+eu_object_t *eu_parameter_parent(eu_parameter_t *param)
+{
+	return (param) ? param->parent : NULL;
 }
 
 bool eu_parameter_set_value(eu_parameter_t *param, eu_variant_t *variant)
@@ -97,6 +114,8 @@ void eu_parameter_print(eu_parameter_t *param)
 {
 	eu_object_print_path(param->parent);
 	printf(".%s=", param->name);
-	eu_variant_print(param->value);
+	if (param->value) {
+		eu_variant_print(param->value);
+	}
 	printf("\n");
 }

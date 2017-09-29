@@ -35,12 +35,17 @@ static eu_list_node_t *list_node_create(eu_list_t *list, void *element)
 eu_list_t *eu_list_create(void)
 {
 	eu_list_t *list = calloc(1, sizeof(eu_list_t));
-	list->count = 0;
+	if (list != NULL) {
+		list->count = 0;
+	}
 	return list;
 }
 
 void eu_list_destroy(eu_list_t *list)
 {
+	if (list == NULL)
+		return;
+
 	eu_list_node_t *node = list->head;
 	while(node) {
 		eu_list_node_t *next = node->next;
@@ -66,6 +71,9 @@ size_t eu_list_count(eu_list_t *list)
 
 void eu_list_append(eu_list_t *list, void *element)
 {
+	if (list == NULL || element == NULL)
+		return;
+
 	eu_list_node_t *new = list_node_create(list, element);
 	eu_list_node_t *last = list->tail;
 	if(last) {

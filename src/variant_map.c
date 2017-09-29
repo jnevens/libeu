@@ -368,7 +368,7 @@ char *eu_variant_map_get_char(eu_variant_map_t *map, const char *key)
 {
 	variant_map_item_t *item = variant_map_item_find(map, key);
 	if (item) {
-		return eu_variant_da_char(item->value);
+		return strdup(eu_variant_da_char(item->value));
 	}
 	return NULL;
 }

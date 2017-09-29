@@ -1,5 +1,9 @@
-#define _GNU_SOURCE
-
+/*
+ * log.c
+ *
+ *  Created on: Apr 10, 2016
+ *      Author: jnevens
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>

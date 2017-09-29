@@ -1,3 +1,9 @@
+/*
+ * check_object.c
+ *
+ *  Created on: Apr 10, 2016
+ *      Author: jnevens
+ */
 #include <check.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -8,10 +14,12 @@
 
 #include <eu/object.h>
 #include <eu/parameter.h>
+#include <eu/variant.h>
+#include <eu/log.h>
 
 START_TEST(test_object_create_destroy)
 {
-	eu_object_t *parent = eu_object_create(NULL, "com");
+	eu_object_t *parent = eu_object_create(NULL, "com", eu_object_attr_none);
 	ck_assert_ptr_ne(parent, NULL);
 	ck_assert_str_eq(eu_object_name(parent), "com");
 	eu_object_destroy(parent);
@@ -19,8 +27,8 @@ START_TEST(test_object_create_destroy)
 
 START_TEST(test_object_add_child)
 {
-	eu_object_t *parent = eu_object_create(NULL, "com");
-	eu_object_t *child = eu_object_create(parent, "linux");
+	eu_object_t *parent = eu_object_create(NULL, "com", eu_object_attr_none);
+	eu_object_t *child = eu_object_create(parent, "linux", eu_object_attr_none);
 
 	ck_assert_ptr_eq(eu_object_get_first_child(parent), child);
 	ck_assert_ptr_eq(eu_object_get_last_child(parent), child);
@@ -32,7 +40,7 @@ START_TEST(test_object_add_child)
 
 START_TEST(test_object_get_nonexisting_child)
 {
-	eu_object_t *parent = eu_object_create(NULL, "com");
+	eu_object_t *parent = eu_object_create(NULL, "com", eu_object_attr_none);
 
 	ck_assert_ptr_eq(eu_object_get_first_child(parent), NULL);
 	ck_assert_ptr_eq(eu_object_get_last_child(parent), NULL);
@@ -43,12 +51,12 @@ START_TEST(test_object_get_nonexisting_child)
 
 START_TEST(test_object_big_test)
 {
-	eu_object_t *parent = eu_object_create(NULL, "com");
-	eu_object_t *child1 = eu_object_create(parent, "dell");
-	eu_object_t *child2 = eu_object_create(parent, "hp");
-	eu_object_t *child3 = eu_object_create(parent, "msi");
-	eu_object_t *child4 = eu_object_create(parent, "lenovo");
-	eu_object_t *child2_1 = eu_object_create(child2, "www");
+	eu_object_t *parent = eu_object_create(NULL, "com", eu_object_attr_none);
+	eu_object_t *child1 = eu_object_create(parent, "dell", eu_object_attr_none);
+	eu_object_t *child2 = eu_object_create(parent, "hp", eu_object_attr_none);
+	eu_object_t *child3 = eu_object_create(parent, "msi", eu_object_attr_none);
+	eu_object_t *child4 = eu_object_create(parent, "lenovo", eu_object_attr_none);
+	eu_object_t *child2_1 = eu_object_create(child2, "www", eu_object_attr_none);
 
 	eu_parameter_create(child1, "https", EU_PARAMETER_TYPE_BOOL);
 	eu_object_parameter_set_bool(child1, "https", false);
@@ -83,7 +91,7 @@ START_TEST(test_object_big_test)
 
 START_TEST(test_object_parameter_count)
 {
-	eu_object_t *obj = eu_object_create(NULL, "com");
+	eu_object_t *obj = eu_object_create(NULL, "com", eu_object_attr_none);
 	eu_parameter_create(obj, "https", EU_PARAMETER_TYPE_BOOL);
 	eu_parameter_create(obj, "http", EU_PARAMETER_TYPE_BOOL);
 	eu_parameter_create(obj, "auth", EU_PARAMETER_TYPE_BOOL);
@@ -93,7 +101,7 @@ START_TEST(test_object_parameter_count)
 
 START_TEST(test_object_has_parameter)
 {
-	eu_object_t *obj = eu_object_create(NULL, "com");
+	eu_object_t *obj = eu_object_create(NULL, "com", eu_object_attr_none);
 	eu_parameter_create(obj, "https", EU_PARAMETER_TYPE_BOOL);
 	eu_parameter_create(obj, "http", EU_PARAMETER_TYPE_BOOL);
 	eu_parameter_create(obj, "auth", EU_PARAMETER_TYPE_BOOL);
@@ -106,7 +114,7 @@ START_TEST(test_object_has_parameter)
 
 START_TEST(test_object_has_parameters)
 {
-	eu_object_t *obj = eu_object_create(NULL, "com");
+	eu_object_t *obj = eu_object_create(NULL, "com", eu_object_attr_none);
 	eu_parameter_create(obj, "https", EU_PARAMETER_TYPE_BOOL);
 	eu_parameter_create(obj, "http", EU_PARAMETER_TYPE_BOOL);
 	eu_parameter_create(obj, "auth", EU_PARAMETER_TYPE_BOOL);
@@ -121,19 +129,60 @@ START_TEST(test_object_parameter_count_invalid_object)
 
 START_TEST(test_object_create_path)
 {
-		eu_object_t *root = eu_object_create_path(NULL, "com.google.www");
-		ck_assert_ptr_eq(eu_object_create_path(root, "com.amazon.www"), root);
-		eu_object_print(root);
-		ck_assert_str_eq(eu_object_name(root), "com");
-		ck_assert_ptr_ne(eu_object_get_child(root, "google"), NULL);
-		ck_assert_ptr_ne(eu_object_get_child(root, "amazon"), NULL);
-		ck_assert_ptr_ne(
-				eu_object_get_child(eu_object_get_child(root, "google"), "www"),
-				NULL);
-		ck_assert_ptr_ne(
-				eu_object_get_child(eu_object_get_child(root, "amazon"), "www"),
-				NULL);
-		eu_object_destroy(root);
+	eu_object_t *root = eu_object_create_path(NULL, "com.google.www");
+	ck_assert_ptr_eq(eu_object_create_path(root, "com.amazon.www"), root);
+	eu_object_print(root);
+	ck_assert_str_eq(eu_object_name(root), "com");
+	ck_assert_ptr_ne(eu_object_get_child(root, "google"), NULL);
+	ck_assert_ptr_ne(eu_object_get_child(root, "amazon"), NULL);
+	ck_assert_ptr_ne(
+			eu_object_get_child(eu_object_get_child(root, "google"), "www"),
+			NULL);
+	ck_assert_ptr_ne(
+			eu_object_get_child(eu_object_get_child(root, "amazon"), "www"),
+			NULL);
+	eu_object_destroy(root);
+}END_TEST
+
+START_TEST(test_object_create_instance)
+{
+	eu_object_t *root = eu_object_create(NULL, "root", eu_object_attr_none);
+	eu_object_t *tmpl = eu_object_create(root, "intfs", eu_object_attr_template);
+	eu_parameter_create(tmpl, "valid", EU_PARAMETER_TYPE_BOOL);
+	eu_parameter_create(tmpl, "online", EU_PARAMETER_TYPE_BOOL);
+
+	eu_object_t *instance1 = eu_object_create_instance(tmpl, "instance1");
+	ck_assert_ptr_ne(instance1, NULL);
+	ck_assert_ptr_eq(eu_object_get_parent(instance1), tmpl);
+	ck_assert_str_eq(eu_object_name(instance1), "instance1");
+	eu_object_t *instance2 = eu_object_create_instance(tmpl, "instance2");
+	ck_assert_ptr_ne(instance2, NULL);
+	ck_assert_ptr_eq(eu_object_get_parent(instance2), tmpl);
+	ck_assert_str_eq(eu_object_name(instance2), "instance2");
+
+	ck_assert_int_eq(eu_object_instance_count(tmpl), 2);
+
+	eu_variant_t *value = eu_variant_create(EU_VARIANT_TYPE_CHAR);
+	eu_variant_set_char(value, "i will not bend!");
+
+	eu_parameter_set_value(eu_object_get_parameter(instance1, "valid"), value);
+
+	ck_assert_int_eq(eu_object_has_parameter(instance1, "valid"), 1);
+	ck_assert_int_eq(eu_object_has_parameter(instance1, "online"), 1);
+	ck_assert_int_eq(eu_object_has_parameter(instance2, "valid"), 1);
+	ck_assert_int_eq(eu_object_has_parameter(instance2, "online"), 1);
+
+	ck_assert_ptr_eq(eu_object_get_first_child(tmpl), instance1);
+	ck_assert_ptr_eq(eu_object_get_last_child(tmpl), instance2);
+
+	printf("tree with instances:\n");
+	eu_object_print(tmpl);
+
+	eu_object_destroy(root);
+
+	eu_variant_destroy(value);
+
+	//ck_assert_ptr_eq(instance2, NULL);
 }END_TEST
 
 int main(void)
@@ -152,6 +201,7 @@ int main(void)
 	tcase_add_test(tc_core, test_object_has_parameters);
 	tcase_add_test(tc_core, test_object_parameter_count_invalid_object);
 	tcase_add_test(tc_core, test_object_create_path);
+	tcase_add_test(tc_core, test_object_create_instance);
 
 	suite_add_tcase(s, tc_core);
 	SRunner *sr = srunner_create(s);
