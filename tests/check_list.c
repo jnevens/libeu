@@ -125,6 +125,28 @@ START_TEST(test_list_remove_node)
 	eu_list_destroy(list);
 }END_TEST
 
+START_TEST(test_list_3_element_check)
+{
+	const char *data1 = "foo";
+	const char *data2 = "bar";
+	const char *data3 = "dead";
+
+	eu_list_t *list = eu_list_create();
+	eu_list_append(list, (void *) data1);
+	eu_list_append(list, (void *) data2);
+	eu_list_append(list, (void *) data3);
+
+	ck_assert_str_eq(eu_list_node_data(eu_list_first(list)), "foo");
+	ck_assert_str_eq(eu_list_node_data(eu_list_last(list)), "dead");
+	ck_assert_str_eq(eu_list_node_data(eu_list_node_prev(eu_list_last(list))), "bar");
+	ck_assert_str_eq(eu_list_node_data(eu_list_node_next(eu_list_first(list))), "bar");
+
+	ck_assert_ptr_eq(eu_list_node_next(eu_list_last(list)), NULL);
+	ck_assert_ptr_eq(eu_list_node_prev(eu_list_first(list)), NULL);
+
+	eu_list_destroy(list);
+}END_TEST
+
 int main(void)
 {
 	int number_failed;
@@ -139,6 +161,7 @@ int main(void)
 	tcase_add_test(tc_core, test_list_append_data_check_first_last);
 	tcase_add_test(tc_core, test_list_prepend_data_check_first_last);
 	tcase_add_test(tc_core, test_list_remove_node);
+	tcase_add_test(tc_core, test_list_3_element_check);
 
 	suite_add_tcase(s, tc_core);
 	SRunner *sr = srunner_create(s);
