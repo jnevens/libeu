@@ -18,7 +18,6 @@ struct eu_object_s
 {
 	struct eu_object_s *parent;
 	char *name;
-	size_t child_counter;
 	uint32_t attrs;
 	eu_list_t *children;
 	eu_list_t *parameters;
@@ -130,42 +129,36 @@ size_t eu_object_children_count(eu_object_t *obj)
 
 eu_object_t *eu_object_get_first_child(eu_object_t *obj)
 {
-	obj->child_counter = 0;
 	eu_list_node_t *node = eu_list_first(obj->children);
 	return (node) ? eu_list_node_data(node) : NULL;
 }
 
 eu_object_t *eu_object_get_last_child(eu_object_t *obj)
 {
-	obj->child_counter = eu_list_count(obj->children) - 1;
 	eu_list_node_t *node = eu_list_last(obj->children);
 	return (node) ? eu_list_node_data(node) : NULL;
 }
 
-eu_object_t *eu_object_get_next_child(eu_object_t *obj) // TODO, child instead of parent
+eu_object_t *eu_object_get_next_child(eu_object_t *child) // TODO: fix loop over all children
 {
-	size_t count = 0;
-	eu_list_node_t *node = NULL;
-	obj->child_counter++;
-	eu_list_for_each(node, obj->children)
+	eu_list_for_each_declare(node, child->parent->children)
 	{
-		if (obj->child_counter == count)
-			return (eu_object_t *) eu_list_node_data(node);
-		count++;
+		if (eu_list_node_data(node) == child) {
+			eu_list_node_t *node_next = eu_list_node_next(node);
+			return (node_next) ? eu_list_node_data(node_next) : NULL;
+		}
 	}
 	return NULL;
 }
 
-eu_object_t *eu_object_get_previous_child(eu_object_t *obj) // TODO, child instead of parent
+eu_object_t *eu_object_get_prev_child(eu_object_t *child) // TODO, fix loop over all children
 {
-	size_t count = 0;
-	eu_list_node_t *node = NULL;
-	obj->child_counter--;
-	eu_list_for_each(node, obj->children)
+	eu_list_for_each_declare(node, child->parent->children)
 	{
-		if (obj->child_counter == count)
-			return (eu_object_t *) eu_list_node_data(node);
-		count++;
+		if (eu_list_node_data(node) == child) {
+			eu_list_node_t *node_prev = eu_list_node_prev(node);
+			return (node_prev) ? eu_list_node_data(node_prev) : NULL;
+		}
 	}
 	return NULL;
 }
@@ -209,14 +202,24 @@ size_t eu_object_instance_count(eu_object_t *template)
 	return eu_object_children_count(template);
 }
 
-eu_object_t *eu_object_instance_first(eu_object_t *template)
+eu_object_t *eu_object_get_first_instance(eu_object_t *template)
 {
 	return eu_object_get_first_child(template);
 }
 
-eu_object_t *eu_object_instance_last(eu_object_t *template)
+eu_object_t *eu_object_get_last_instance(eu_object_t *template)
 {
 	return eu_object_get_last_child(template);
+}
+
+eu_object_t *eu_object_get_next_instance(eu_object_t *instance)
+{
+	return eu_object_get_next_child(instance);
+}
+
+eu_object_t *eu_object_get_prev_instance(eu_object_t *instance)
+{
+	return eu_object_get_prev_child(instance);
 }
 
 // parameters
@@ -261,11 +264,9 @@ eu_parameter_t *eu_object_get_last_parameter(eu_object_t *obj)
 	return (node) ? eu_list_node_data(node) : NULL;
 }
 
-eu_parameter_t *eu_object_get_next_parameter(eu_parameter_t *param)
+eu_parameter_t *eu_object_get_next_parameter(eu_parameter_t *param) // TODO: fix loop over all children
 {
-	eu_list_node_t *node = NULL;
-
-	eu_list_for_each(node, eu_parameter_parent(param)->parameters)
+	eu_list_for_each_declare(node, eu_parameter_parent(param)->parameters)
 	{
 		eu_parameter_t *cparam = eu_list_node_data(node);
 		if (strcmp(eu_parameter_name(cparam), eu_parameter_name(param)) == 0) {
@@ -278,11 +279,9 @@ eu_parameter_t *eu_object_get_next_parameter(eu_parameter_t *param)
 	return NULL;
 }
 
-eu_parameter_t *eu_object_get_prev_parameter(eu_parameter_t *param)
+eu_parameter_t *eu_object_get_prev_parameter(eu_parameter_t *param) // TODO: fix loop over all children
 {
-	eu_list_node_t *node = NULL;
-
-	eu_list_for_each_reverse(node, eu_parameter_parent(param)->parameters)
+	eu_list_for_each_reverse_declare(node, eu_parameter_parent(param)->parameters)
 	{
 		eu_parameter_t *cparam = eu_list_node_data(node);
 		if (strcmp(eu_parameter_name(cparam), eu_parameter_name(param)) == 0) {

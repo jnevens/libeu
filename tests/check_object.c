@@ -76,13 +76,13 @@ START_TEST(test_object_big_test)
 	printf("parent %s, list children asc:\n", eu_object_name(parent));
 	do {
 		printf("child %s\n", eu_object_name(it));
-	} while ((it = eu_object_get_next_child(parent)) != NULL);
+	} while ((it = eu_object_get_next_child(it)) != NULL);
 
 	it = eu_object_get_last_child(parent);
 	printf("parent %s, list children desc:\n", eu_object_name(parent));
 	do {
 		printf("child %s\n", eu_object_name(it));
-	} while ((it = eu_object_get_previous_child(parent)) != NULL);
+	} while ((it = eu_object_get_prev_child(it)) != NULL);
 
 	printf("print tree:\n");
 	eu_object_print(parent);
@@ -121,6 +121,37 @@ START_TEST(test_object_has_parameters)
 	ck_assert_int_eq(eu_object_has_parameters(obj), 1);
 	eu_object_destroy(obj);
 } END_TEST
+
+START_TEST(test_object_list_parameters)
+{
+	eu_object_t *obj = eu_object_create(NULL, "com", eu_object_attr_none);
+	eu_parameter_create(obj, "https", EU_PARAMETER_TYPE_BOOL);
+	eu_parameter_create(obj, "http", EU_PARAMETER_TYPE_BOOL);
+	eu_parameter_create(obj, "auth", EU_PARAMETER_TYPE_BOOL);
+
+	eu_parameter_t *param_first = eu_object_get_first_parameter(obj);
+	eu_parameter_t *param_mid = eu_object_get_next_parameter(param_first);
+	eu_parameter_t *param_last = eu_object_get_last_parameter(obj);
+	printf("begin:\n");
+	eu_parameter_t *param_mid2 = eu_object_get_prev_parameter(param_last);
+	printf("end:\n");
+
+	ck_assert_ptr_ne(param_first, NULL);
+	ck_assert_ptr_ne(param_last, NULL);
+	ck_assert_ptr_ne(param_mid, NULL);
+	ck_assert_ptr_ne(param_mid2, NULL);
+
+	ck_assert_str_eq(eu_parameter_name(param_first), "https");
+	ck_assert_str_eq(eu_parameter_name(param_mid), "http");
+	ck_assert_str_eq(eu_parameter_name(param_mid2), "http");
+	ck_assert_str_eq(eu_parameter_name(param_last), "auth");
+
+	ck_assert_ptr_eq(eu_object_get_prev_parameter(param_first), NULL);
+	ck_assert_ptr_eq(eu_object_get_next_parameter(param_last), NULL);
+
+	eu_object_destroy(obj);
+} END_TEST
+
 
 START_TEST(test_object_parameter_count_invalid_object)
 {
@@ -185,6 +216,55 @@ START_TEST(test_object_create_instance)
 	//ck_assert_ptr_eq(instance2, NULL);
 }END_TEST
 
+START_TEST(test_object_instance_loop)
+{
+	eu_log_info("start test: test_object_instance_loop\n");
+	eu_object_t *tmpl = eu_object_create(NULL, "intfs", eu_object_attr_template);
+	ck_assert_ptr_ne(tmpl, NULL);
+	eu_object_t *instance1 = eu_object_create_instance(tmpl, "instance1");
+	eu_object_t *instance2 = eu_object_create_instance(tmpl, "instance2");
+	eu_object_t *instance3 = eu_object_create_instance(tmpl, "instance3");
+
+	ck_assert_ptr_eq(eu_object_get_first_instance(tmpl), instance1);
+	eu_log_info("aai");
+	ck_assert_ptr_eq(eu_object_get_last_instance(tmpl), instance3);
+	eu_log_info("aai");
+
+	ck_assert_ptr_eq(eu_object_get_next_instance(instance1), instance2);
+	eu_log_info("aai");
+	ck_assert_ptr_eq(eu_object_get_prev_instance(instance1), NULL);
+	eu_log_info("aai");
+
+	ck_assert_ptr_eq(eu_object_get_prev_instance(instance3), instance2);
+	eu_log_info("aai");
+	ck_assert_ptr_eq(eu_object_get_next_instance(instance3), NULL);
+	eu_log_info("aai");
+
+	eu_object_destroy(tmpl);
+
+	eu_log_info("end test: test_object_instance_loop\n");
+}END_TEST
+
+START_TEST(test_object_instance_fail_cases)
+{
+	/* parent can't be NULL*/
+	ck_assert_ptr_eq(eu_object_create(NULL, "root", eu_object_attr_instance), NULL);
+
+	/* parent can't be normal object*/
+	eu_object_t *root = eu_object_create(NULL, "root", eu_object_attr_none);
+	ck_assert_ptr_eq(eu_object_create(root, "root", eu_object_attr_instance), NULL);
+	eu_object_destroy(root);
+
+	root = eu_object_create(NULL, "root", eu_object_attr_none);
+	ck_assert_ptr_eq(eu_object_create_instance(root, "root"), NULL);
+	eu_object_destroy(root);
+
+	/* cannot add normal object to template*/
+	eu_object_t *tmpl = eu_object_create(NULL, "template", eu_object_attr_template);
+	ck_assert_ptr_eq(eu_object_create(tmpl, "root", eu_object_attr_none), NULL);
+	eu_object_destroy(tmpl);
+}END_TEST
+
 int main(void)
 {
 	int number_failed;
@@ -199,9 +279,12 @@ int main(void)
 	tcase_add_test(tc_core, test_object_parameter_count);
 	tcase_add_test(tc_core, test_object_has_parameter);
 	tcase_add_test(tc_core, test_object_has_parameters);
+	tcase_add_test(tc_core, test_object_list_parameters);
 	tcase_add_test(tc_core, test_object_parameter_count_invalid_object);
 	tcase_add_test(tc_core, test_object_create_path);
 	tcase_add_test(tc_core, test_object_create_instance);
+	tcase_add_test(tc_core, test_object_instance_loop);
+	tcase_add_test(tc_core, test_object_instance_fail_cases);
 
 	suite_add_tcase(s, tc_core);
 	SRunner *sr = srunner_create(s);

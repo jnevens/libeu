@@ -18,9 +18,15 @@ typedef void (*eu_list_destroy_element_fn_t)(void *element);
 #define eu_list_for_each(node, list) \
 		for(node = eu_list_first(list); node; node = eu_list_node_next(node))
 
+#define eu_list_for_each_declare(node, list) \
+		for(eu_list_node_t *node = eu_list_first(list); node; node = eu_list_node_next(node))
+
 // loop all elements reverse
 #define eu_list_for_each_reverse(node, list) \
 		for(node = eu_list_last(list); node; node = eu_list_node_prev(node))
+
+#define eu_list_for_each_reverse_declare(node, list) \
+		for(eu_list_node_t *node = eu_list_last(list); node; node = eu_list_node_prev(node))
 
 // list functions
 eu_list_t *eu_list_create(void);
