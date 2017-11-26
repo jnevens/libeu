@@ -66,6 +66,14 @@ eu_socket_t *eu_socket_create_udp(void)
 	return socket;
 }
 
+void eu_socket_destroy(eu_socket_t *sock)
+{
+	if (sock) {
+		close(sock->fd);
+		free(sock);
+	}
+}
+
 bool eu_socket_bind_unix(eu_socket_t *sock, const char *path)
 {
 	unlink(path);

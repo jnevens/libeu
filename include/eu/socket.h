@@ -9,6 +9,7 @@
 #define INCLUDE_EU_SOCKET_H_
 
 #include <stdbool.h>
+#include <stdint.h>
 #include <eu/types.h>
 
 typedef enum
@@ -21,6 +22,8 @@ typedef enum
 eu_socket_t *eu_socket_create_unix(void);
 eu_socket_t *eu_socket_create_tcp(void);
 eu_socket_t *eu_socket_create_udp(void);
+
+void eu_socket_destroy(eu_socket_t *sock);
 
 bool eu_socket_bind_unix(eu_socket_t *sock, const char *path);
 bool eu_socket_bind_tcp(eu_socket_t *sock, uint16_t port);
