@@ -22,6 +22,15 @@ struct eu_variant_map_s {
 	eu_list_t *items;
 };
 
+eu_variant_map_t *eu_variant_map_create(void)
+{
+	eu_variant_map_t *map = calloc(1, sizeof(eu_variant_map_t));
+	if (map) {
+		map->items = eu_list_create();
+	}
+	return map;
+}
+
 static variant_map_item_t *variant_map_item_create(const char *key, eu_variant_t *var)
 {
 	variant_map_item_t *item = calloc(1, sizeof(variant_map_item_t));
