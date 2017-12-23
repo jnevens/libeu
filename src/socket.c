@@ -32,12 +32,35 @@ eu_socket_t *eu_socket_create_unix(void)
 
 	sock->fd = socket(AF_UNIX, SOCK_STREAM, 0);
 	if (sock->fd < 0) {
-		fprintf(stderr, "Cannot create socket!\n");
+		eu_log_err("Cannot create socket! error: %s", strerror(errno));
+		free(sock);
 		return NULL;
 	}
 
 	eu_log_debug("unix socket created: fd=%d", sock->fd);
 	return sock;
+}
+
+eu_socket_t *eu_socket_create_tcp(void)
+{
+	eu_socket_t *sock = calloc(1, sizeof(socket));
+	sock->type = EU_SOCKET_TYPE_TCP;
+
+	sock->fd = socket(AF_INET, SOCK_STREAM, 0);
+	if (sock->fd < 0) {
+		eu_log_err("Cannot create socket! error: %s", strerror(errno));
+		free(sock);
+		return NULL;
+	}
+
+	return sock;
+}
+
+eu_socket_t *eu_socket_create_udp(void)
+{
+	eu_socket_t *socket = calloc(1, sizeof(socket));
+	socket->type = EU_SOCKET_TYPE_UDP;
+	return socket;
 }
 
 static eu_socket_t *socket_duplicate(eu_socket_t *sock)
@@ -52,19 +75,6 @@ static eu_socket_t *socket_duplicate(eu_socket_t *sock)
 	return new;
 }
 
-eu_socket_t *eu_socket_create_tcp(void)
-{
-	eu_socket_t *socket = calloc(1, sizeof(socket));
-	socket->type = EU_SOCKET_TYPE_TCP;
-	return socket;
-}
-
-eu_socket_t *eu_socket_create_udp(void)
-{
-	eu_socket_t *socket = calloc(1, sizeof(socket));
-	socket->type = EU_SOCKET_TYPE_UDP;
-	return socket;
-}
 
 void eu_socket_destroy(eu_socket_t *sock)
 {
@@ -82,8 +92,7 @@ bool eu_socket_bind_unix(eu_socket_t *sock, const char *path)
 	server_un.sun_family = AF_UNIX;
 	strcpy(server_un.sun_path, path);
 	if (bind(sock->fd, (struct sockaddr *) &server_un, sizeof(struct sockaddr_un))) {
-		eu_log_err("Cannot bind socket! error=%s", strerror(errno));
-		free(sock);
+		eu_log_err("Cannot bind socket! error: %s", strerror(errno));
 		return false;
 	}
 
@@ -92,7 +101,26 @@ bool eu_socket_bind_unix(eu_socket_t *sock, const char *path)
 
 bool eu_socket_bind_tcp(eu_socket_t *sock, uint16_t port)
 {
-	return false;
+	struct sockaddr_in server_in;
+	int optval = 1;
+
+	bzero((char *) &server_in, sizeof(server_in));
+
+	if (setsockopt(sock->fd, SOL_SOCKET, SO_REUSEADDR, (const void *) &optval, sizeof(int))) {
+		eu_log_err("Failed to set socket option SO_REUSEADDR! error: %s", strerror(errno));
+		return false;
+	}
+
+	server_in.sin_family = AF_INET;
+	server_in.sin_addr.s_addr = htonl(INADDR_ANY);
+	server_in.sin_port = htons((unsigned short) port);
+
+	if (bind(sock->fd, (struct sockaddr *) &server_in, sizeof(server_in)) < 0) {
+		eu_log_err("Cannot bind socket! error: %s", strerror(errno));
+		return false;
+	}
+
+	return true;
 }
 
 bool eu_socket_bind_udp(eu_socket_t *sock, uint16_t port)
