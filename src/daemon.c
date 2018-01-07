@@ -73,5 +73,8 @@ bool eu_daemonize(const char *pf)
 	close(STDOUT_FILENO);
 	close(STDERR_FILENO);
 
+	// tell logger to stop logging to stdout
+	eu_log_set_print_level(-1);
+
 	return true;
 }
