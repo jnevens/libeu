@@ -12,16 +12,52 @@
 #include <eu/variant.h>
 #include <eu/variant_map.h>
 
-struct variant_map_item_s {
-	eu_variant_t *value;
-	char *key;
-};
-typedef struct variant_map_item_s variant_map_item_t;
-
-struct eu_variant_map_s {
+struct eu_variant_map_s
+{
 	eu_list_t *items;
 };
 
+struct eu_variant_map_pair_s
+{
+	eu_variant_map_t *map;
+	eu_list_node_t *list_node;
+	char *key;
+	eu_variant_t *value;
+};
+
+/* variant pair */
+eu_variant_map_pair_t *eu_variant_map_pair_create(const char *key, eu_variant_t *var)
+{
+	eu_variant_map_pair_t *item = calloc(1, sizeof(eu_variant_map_pair_t));
+	item->key = strdup(key);
+	item->value = var;
+	return item;
+}
+
+void eu_variant_map_pair_destroy(void *arg)
+{
+	eu_variant_map_pair_t *item = arg;
+	eu_variant_destroy(item->value);
+	free(item->key);
+	free(item);
+}
+
+const char *eu_variant_map_pair_get_key(eu_variant_map_pair_t *map_item)
+{
+	return map_item->key;
+}
+
+eu_variant_t *eu_variant_map_pair_get_val(eu_variant_map_pair_t *map_item)
+{
+	return map_item->value;
+}
+
+eu_variant_map_t *eu_variant_map_pair_get_map(eu_variant_map_pair_t *map_item)
+{
+	return map_item->map;
+}
+
+/* variant map */
 eu_variant_map_t *eu_variant_map_create(void)
 {
 	eu_variant_map_t *map = calloc(1, sizeof(eu_variant_map_t));
@@ -31,52 +67,134 @@ eu_variant_map_t *eu_variant_map_create(void)
 	return map;
 }
 
-static variant_map_item_t *variant_map_item_create(const char *key, eu_variant_t *var)
-{
-	variant_map_item_t *item = calloc(1, sizeof(variant_map_item_t));
-	item->key = strdup(key);
-	item->value = var;
-	return item;
-}
-
-static void variant_map_item_destroy(void *arg)
-{
-	variant_map_item_t *item = arg;
-	eu_variant_destroy(item->value);
-	free(item->key);
-	free(item);
-}
-
-eu_variant_map_t *variant_map_create(void)
-{
-	eu_variant_map_t *map = calloc(1, sizeof(eu_variant_map_t));
-	map->items = eu_list_create();
-	return map;
-}
-
 void eu_variant_map_destroy(eu_variant_map_t *map)
 {
-	eu_list_destroy_with_data(map->items, variant_map_item_destroy);
+	eu_list_destroy_with_data(map->items, eu_variant_map_pair_destroy);
 	free(map);
 }
 
-static variant_map_item_t *variant_map_item_find(eu_variant_map_t *map, const char *key) {
-	eu_list_node_t *iter = NULL;
-
-	if (!map || !key) {
-		return NULL;
+eu_variant_map_pair_t *eu_variant_map_get_first(eu_variant_map_t *map)
+{
+	eu_list_node_t *node_first = eu_list_first(map->items);
+	if (node_first ) {
+		return (eu_variant_map_pair_t *)eu_list_node_data(node_first);
 	}
 
+	return NULL;
+}
+
+eu_variant_map_pair_t *eu_variant_map_get_last(eu_variant_map_t *map)
+{
+	eu_list_node_t *node_last = eu_list_last(map->items);
+	if (node_last) {
+		return (eu_variant_map_pair_t *)eu_list_node_data(node_last);
+	}
+
+	return NULL;
+}
+
+eu_variant_map_pair_t *eu_variant_map_get_next(eu_variant_map_pair_t *map_item)
+{
+	eu_list_node_t *node_next = eu_list_node_next(map_item->list_node);
+	if (node_next) {
+		return (eu_variant_map_pair_t *)eu_list_node_data(node_next);
+	}
+
+	return NULL;
+}
+
+eu_variant_map_pair_t *eu_variant_map_get_prev(eu_variant_map_pair_t *map_item)
+{
+	eu_list_node_t *node_prev = eu_list_node_prev(map_item->list_node);
+	if (node_prev) {
+		return (eu_variant_map_pair_t *)eu_list_node_data(node_prev);
+	}
+
+	return NULL;
+}
+
+eu_variant_map_pair_t *eu_variant_map_find_pair(eu_variant_map_t *map, const char *key)
+{
+	eu_list_node_t *iter = NULL;
 	eu_list_for_each(iter, map->items)
 	{
-		variant_map_item_t *item = eu_list_node_data(iter);
-		if (strcmp(item->key, key) == 0) {
-			return item;
+		eu_variant_map_pair_t *pair = eu_list_node_data(iter);
+		if (strcmp(pair->key, key) == 0) {
+			return pair;
 		}
 	}
 	return NULL;
 }
 
+eu_variant_t *eu_variant_map_find(eu_variant_map_t *map, const char *key)
+{
+	eu_variant_map_pair_t *pair = eu_variant_map_find_pair(map, key);
+	return (pair) ? eu_variant_map_pair_get_val(pair) : NULL;
+}
+
+bool eu_variant_map_has(eu_variant_map_t *map, const char *key)
+{
+	return (eu_variant_map_find_pair(map, key) != NULL) ? true : false;
+}
+
+bool eu_variant_map_delete(eu_variant_map_t *map, const char *key)
+{
+	eu_list_node_t *iter = NULL;
+	eu_list_for_each(iter, map->items)
+	{
+		eu_variant_map_pair_t *item = eu_list_node_data(iter);
+		if (strcmp(item->key, key) == 0) {
+			eu_variant_map_pair_t *item = eu_list_node_data(iter);
+			eu_variant_map_pair_destroy(item);
+			eu_list_remove_node(map->items, iter);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+eu_variant_t *eu_variant_map_take(eu_variant_map_t *map, const char *key)
+{
+	eu_variant_t *var = NULL;
+	eu_list_node_t *iter = NULL;
+	eu_list_for_each(iter, map->items)
+	{
+		eu_variant_map_pair_t *item = eu_list_node_data(iter);
+		if (strcmp(item->key, key) == 0) {
+			eu_variant_map_pair_t *item = eu_list_node_data(iter);
+			var = item->value;
+			item->value = NULL;
+			eu_variant_map_pair_destroy(item);
+			eu_list_remove_node(map->items, iter);
+			break;
+		}
+	}
+
+	return var;
+}
+
+size_t eu_variant_map_count(eu_variant_map_t *map)
+{
+	return eu_list_count(map->items);
+}
+
+bool eu_variant_map_is_empty(eu_variant_map_t *map)
+{
+	return (eu_list_count(map->items) > 0) ?  false : true;
+}
+
+void eu_variant_map_add_pair(eu_variant_map_t *map, eu_variant_map_pair_t *pair)
+{
+	if (!map || !pair)
+		return;
+
+	pair->map = map;
+	eu_list_node_t *node = eu_list_append(map->items, pair);
+	pair->list_node = node;
+}
+
+/* set functions */
 bool eu_variant_map_set_variant(eu_variant_map_t *map, const char *key, eu_variant_t *var)
 {
 	if (!map || !key || !var) {
@@ -84,13 +202,13 @@ bool eu_variant_map_set_variant(eu_variant_map_t *map, const char *key, eu_varia
 		return false;
 	}
 
-	variant_map_item_t *item = variant_map_item_find(map, key);
-	if (item) {
-		eu_variant_destroy(item->value);
-		item->value = var;
+	eu_variant_map_pair_t *pair = eu_variant_map_find_pair(map, key);
+	if (pair) {
+		eu_variant_destroy(pair->value);
+		pair->value = var;
 	} else {
-		variant_map_item_t *item = variant_map_item_create(key, var);
-		eu_list_append(map->items, item);
+		eu_variant_map_pair_t *pair = eu_variant_map_pair_create(key, var);
+		eu_variant_map_add_pair(map, pair);
 	}
 
 	return true;
@@ -267,7 +385,7 @@ bool eu_variant_map_set_string(eu_variant_map_t *map, const char *key, const eu_
 
 eu_variant_t *eu_variant_map_get_variant(eu_variant_map_t *map, const char *key)
 {
-	variant_map_item_t *item = variant_map_item_find(map, key);
+	eu_variant_map_pair_t *item = eu_variant_map_find_pair(map, key);
 	if (item) {
 		return item->value;
 	}
@@ -276,7 +394,7 @@ eu_variant_t *eu_variant_map_get_variant(eu_variant_map_t *map, const char *key)
 
 bool eu_variant_map_get_bool(eu_variant_map_t *map, const char *key)
 {
-	variant_map_item_t *item = variant_map_item_find(map, key);
+	eu_variant_map_pair_t *item = eu_variant_map_find_pair(map, key);
 	if (item) {
 		return eu_variant_bool(item->value);
 	}
@@ -285,7 +403,7 @@ bool eu_variant_map_get_bool(eu_variant_map_t *map, const char *key)
 
 int8_t eu_variant_map_get_int8(eu_variant_map_t *map, const char *key)
 {
-	variant_map_item_t *item = variant_map_item_find(map, key);
+	eu_variant_map_pair_t *item = eu_variant_map_find_pair(map, key);
 	if (item) {
 		return eu_variant_int8(item->value);
 	}
@@ -294,7 +412,7 @@ int8_t eu_variant_map_get_int8(eu_variant_map_t *map, const char *key)
 
 uint8_t eu_variant_map_get_uint8(eu_variant_map_t *map, const char *key)
 {
-	variant_map_item_t *item = variant_map_item_find(map, key);
+	eu_variant_map_pair_t *item = eu_variant_map_find_pair(map, key);
 	if (item) {
 		return eu_variant_uint8(item->value);
 	}
@@ -303,7 +421,7 @@ uint8_t eu_variant_map_get_uint8(eu_variant_map_t *map, const char *key)
 
 int16_t eu_variant_map_get_int16(eu_variant_map_t *map, const char *key)
 {
-	variant_map_item_t *item = variant_map_item_find(map, key);
+	eu_variant_map_pair_t *item = eu_variant_map_find_pair(map, key);
 	if (item) {
 		return eu_variant_int16(item->value);
 	}
@@ -312,7 +430,7 @@ int16_t eu_variant_map_get_int16(eu_variant_map_t *map, const char *key)
 
 uint16_t eu_variant_map_get_uint16(eu_variant_map_t *map, const char *key)
 {
-	variant_map_item_t *item = variant_map_item_find(map, key);
+	eu_variant_map_pair_t *item = eu_variant_map_find_pair(map, key);
 	if (item) {
 		return eu_variant_uint16(item->value);
 	}
@@ -321,7 +439,7 @@ uint16_t eu_variant_map_get_uint16(eu_variant_map_t *map, const char *key)
 
 int32_t eu_variant_map_get_int32(eu_variant_map_t *map, const char *key)
 {
-	variant_map_item_t *item = variant_map_item_find(map, key);
+	eu_variant_map_pair_t *item = eu_variant_map_find_pair(map, key);
 	if (item) {
 		return eu_variant_int32(item->value);
 	}
@@ -330,7 +448,7 @@ int32_t eu_variant_map_get_int32(eu_variant_map_t *map, const char *key)
 
 uint32_t eu_variant_map_get_uint32(eu_variant_map_t *map, const char *key)
 {
-	variant_map_item_t *item = variant_map_item_find(map, key);
+	eu_variant_map_pair_t *item = eu_variant_map_find_pair(map, key);
 	if (item) {
 		return eu_variant_uint32(item->value);
 	}
@@ -339,7 +457,7 @@ uint32_t eu_variant_map_get_uint32(eu_variant_map_t *map, const char *key)
 
 int64_t eu_variant_map_get_int64(eu_variant_map_t *map, const char *key)
 {
-	variant_map_item_t *item = variant_map_item_find(map, key);
+	eu_variant_map_pair_t *item = eu_variant_map_find_pair(map, key);
 	if (item) {
 		return eu_variant_int64(item->value);
 	}
@@ -348,7 +466,7 @@ int64_t eu_variant_map_get_int64(eu_variant_map_t *map, const char *key)
 
 uint64_t eu_variant_map_get_uint64(eu_variant_map_t *map, const char *key)
 {
-	variant_map_item_t *item = variant_map_item_find(map, key);
+	eu_variant_map_pair_t *item = eu_variant_map_find_pair(map, key);
 	if (item) {
 		return eu_variant_uint64(item->value);
 	}
@@ -357,7 +475,7 @@ uint64_t eu_variant_map_get_uint64(eu_variant_map_t *map, const char *key)
 
 float eu_variant_map_get_float(eu_variant_map_t *map, const char *key)
 {
-	variant_map_item_t *item = variant_map_item_find(map, key);
+	eu_variant_map_pair_t *item = eu_variant_map_find_pair(map, key);
 	if (item) {
 		return eu_variant_float(item->value);
 	}
@@ -366,7 +484,7 @@ float eu_variant_map_get_float(eu_variant_map_t *map, const char *key)
 
 double eu_variant_map_get_double(eu_variant_map_t *map, const char *key)
 {
-	variant_map_item_t *item = variant_map_item_find(map, key);
+	eu_variant_map_pair_t *item = eu_variant_map_find_pair(map, key);
 	if (item) {
 		return eu_variant_double(item->value);
 	}
@@ -375,7 +493,7 @@ double eu_variant_map_get_double(eu_variant_map_t *map, const char *key)
 
 char *eu_variant_map_get_char(eu_variant_map_t *map, const char *key)
 {
-	variant_map_item_t *item = variant_map_item_find(map, key);
+	eu_variant_map_pair_t *item = eu_variant_map_find_pair(map, key);
 	if (item) {
 		return strdup(eu_variant_da_char(item->value));
 	}
@@ -384,71 +502,11 @@ char *eu_variant_map_get_char(eu_variant_map_t *map, const char *key)
 
 eu_string_t *eu_variant_map_get_string(eu_variant_map_t *map, const char *key)
 {
-	variant_map_item_t *item = variant_map_item_find(map, key);
+	eu_variant_map_pair_t *item = eu_variant_map_find_pair(map, key);
 	if (item) {
 		return eu_variant_da_string(item->value);
 	}
 	return NULL;
 }
 
-
-const eu_variant_t *eu_variant_map_find(eu_variant_map_t *map, const char *key)
-{
-	eu_list_node_t *iter = NULL;
-	eu_list_for_each(iter, map->items)
-	{
-		variant_map_item_t *item = eu_list_node_data(iter);
-		if (strcmp(item->key, key) == 0) {
-			return item->value;
-		}
-	}
-	return NULL;
-}
-
-bool eu_variant_map_delete(eu_variant_map_t *map, const char *key)
-{
-	eu_list_node_t *iter = NULL;
-	eu_list_for_each(iter, map->items)
-	{
-		variant_map_item_t *item = eu_list_node_data(iter);
-		if (strcmp(item->key, key) == 0) {
-			variant_map_item_t *item = eu_list_node_data(iter);
-			variant_map_item_destroy(item);
-			eu_list_remove_node(map->items, iter);
-			return true;
-		}
-	}
-
-	return false;
-}
-
-eu_variant_t *eu_variant_map_take(eu_variant_map_t *map, const char *key)
-{
-	eu_variant_t *var = NULL;
-	eu_list_node_t *iter = NULL;
-	eu_list_for_each(iter, map->items)
-	{
-		variant_map_item_t *item = eu_list_node_data(iter);
-		if (strcmp(item->key, key) == 0) {
-			variant_map_item_t *item = eu_list_node_data(iter);
-			var = item->value;
-			item->value = NULL;
-			variant_map_item_destroy(item);
-			eu_list_remove_node(map->items, iter);
-			break;
-		}
-	}
-
-	return var;
-}
-
-size_t eu_variant_map_count(eu_variant_map_t *map)
-{
-	return eu_list_count(map->items);
-}
-
-bool eu_variant_map_is_empty(eu_variant_map_t *map)
-{
-	return (eu_list_count(map->items) > 0) ?  false : true;
-}
 

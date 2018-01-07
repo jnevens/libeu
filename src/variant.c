@@ -12,6 +12,7 @@
 #include <stdbool.h>
 
 #include "eu/variant.h"
+#include "eu/variant_map.h"
 
 struct eu_variant_s
 {
