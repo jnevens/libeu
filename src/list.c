@@ -69,10 +69,10 @@ size_t eu_list_count(eu_list_t *list)
 	return list->count;
 }
 
-void eu_list_append(eu_list_t *list, void *element)
+eu_list_node_t *eu_list_append(eu_list_t *list, void *element)
 {
 	if (list == NULL || element == NULL)
-		return;
+		return NULL;
 
 	eu_list_node_t *new = list_node_create(list, element);
 	eu_list_node_t *last = list->tail;
@@ -84,10 +84,15 @@ void eu_list_append(eu_list_t *list, void *element)
 	}
 	list->tail = new;
 	list->count++;
+
+	return new;
 }
 
-void eu_list_prepend(eu_list_t *list, void *element)
+eu_list_node_t *eu_list_prepend(eu_list_t *list, void *element)
 {
+	if (list == NULL || element == NULL)
+		return NULL;
+
 	eu_list_node_t *new = list_node_create(list, element);
 	eu_list_node_t *first = list->head;
 	if(first) {
@@ -98,6 +103,8 @@ void eu_list_prepend(eu_list_t *list, void *element)
 	}
 	list->head=new;
 	list->count++;
+
+	return new;
 }
 
 eu_list_node_t *eu_list_first(eu_list_t *list)
