@@ -110,9 +110,34 @@ eu_variant_t *eu_parameter_da_value(eu_parameter_t *param)
 	return param->value;
 }
 
+json_object *eu_parameter_serialize(eu_parameter_t *param)
+{
+	json_object *obj = json_object_new_object();
+	json_object_object_add(obj, "name", json_object_new_string(eu_parameter_name(param)));
+	json_object_object_add(obj, "type", json_object_new_int((int)param->type));
+	json_object_object_add(obj, "value", eu_variant_serialize(eu_parameter_da_value(param)));
+	return obj;
+}
+
+eu_parameter_t *eu_parameter_deserialize(eu_object_t *obj, json_object *jobj)
+{
+	json_object *jobj_name = json_object_object_get(jobj, "name");
+	json_object *jobj_type = json_object_object_get(jobj, "type");
+	json_object *jobj_value = json_object_object_get(jobj, "value");
+
+	eu_parameter_type_t type = json_object_get_int(jobj_type);
+	const char *name = json_object_get_string(jobj_name);
+
+	eu_parameter_t *param = eu_parameter_create(obj, name, type);
+	eu_variant_t *var = eu_variant_deserialize(jobj_value);
+	eu_parameter_set_value(param, var);
+
+	return param;
+}
+
 void eu_parameter_print(eu_parameter_t *param)
 {
-	eu_object_print_path(param->parent);
+	eu_object_print_path(param->parent, eu_object_print_attrs_none);
 	printf(".%s=", param->name);
 	if (param->value) {
 		eu_variant_print(param->value);

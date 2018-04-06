@@ -12,6 +12,8 @@
 #include <string.h>
 #include <inttypes.h>
 
+#include <json-c/json.h>
+
 #include <eu/object.h>
 #include <eu/parameter.h>
 #include <eu/variant.h>
@@ -85,7 +87,7 @@ START_TEST(test_object_big_test)
 	} while ((it = eu_object_get_prev_child(it)) != NULL);
 
 	printf("print tree:\n");
-	eu_object_print(parent);
+	eu_object_print(parent, eu_object_print_attrs_none);
 	eu_object_destroy(parent);
 } END_TEST
 
@@ -162,7 +164,7 @@ START_TEST(test_object_create_path)
 {
 	eu_object_t *root = eu_object_create_path(NULL, "com.google.www");
 	ck_assert_ptr_eq(eu_object_create_path(root, "com.amazon.www"), root);
-	eu_object_print(root);
+	eu_object_print(root, eu_object_print_attrs_none);
 	ck_assert_str_eq(eu_object_name(root), "com");
 	ck_assert_ptr_ne(eu_object_get_child(root, "google"), NULL);
 	ck_assert_ptr_ne(eu_object_get_child(root, "amazon"), NULL);
@@ -207,7 +209,7 @@ START_TEST(test_object_create_instance)
 	ck_assert_ptr_eq(eu_object_get_last_child(tmpl), instance2);
 
 	printf("tree with instances:\n");
-	eu_object_print(tmpl);
+	eu_object_print(tmpl, eu_object_print_attrs_none);
 
 	eu_object_destroy(root);
 
@@ -265,6 +267,61 @@ START_TEST(test_object_instance_fail_cases)
 	eu_object_destroy(tmpl);
 }END_TEST
 
+static eu_object_t *build_demo_object(void)
+{
+	eu_object_t *parent = eu_object_create(NULL, "com", eu_object_attr_none);
+	eu_object_t *child1 = eu_object_create(parent, "dell", eu_object_attr_none);
+	eu_object_t *child1_1 = eu_object_create(child1, "www", eu_object_attr_none);
+	eu_object_t *child2 = eu_object_create(parent, "hp", eu_object_attr_none);
+	eu_object_t *child2_1 = eu_object_create(child2, "www", eu_object_attr_none);
+	eu_object_t *child3 = eu_object_create(parent, "msi", eu_object_attr_none);
+	eu_object_t *child3_1 = eu_object_create(child3, "www", eu_object_attr_none);
+	eu_object_t *child4 = eu_object_create(parent, "lenovo", eu_object_attr_none);
+	eu_object_t *child4_1 = eu_object_create(child4, "www", eu_object_attr_none);
+	eu_object_parameter_set_bool(child1_1, "https", true);
+	eu_object_parameter_set_bool(child1_1, "tls", true);
+	eu_object_parameter_set_int32(child1_1, "visitors", 8098099);
+	eu_object_parameter_set_bool(child2_1, "https", true);
+	eu_object_parameter_set_bool(child2_1, "tls", false);
+	eu_object_parameter_set_int32(child2_1, "visitors", 1869);
+	eu_object_parameter_set_bool(child3_1, "https", true);
+	eu_object_parameter_set_bool(child3_1, "tls", false);
+	eu_object_parameter_set_int32(child3_1, "visitors", 8984);
+	eu_object_parameter_set_bool(child4_1, "https", true);
+	eu_object_parameter_set_bool(child4_1, "tls", false);
+	eu_object_parameter_set_int32(child4_1, "visitors", 28983);
+
+	return parent;
+}
+
+START_TEST(test_object_serialize)
+{
+	eu_object_t *parent = build_demo_object();
+
+	json_object *obj = eu_object_serialize(parent, 0);
+	eu_object_print(parent, eu_object_print_attrs_none);
+	char *json = json_object_to_json_string(obj);
+
+	printf("json: [%s]\n", json);
+
+	json_object *jobj2 = json_tokener_parse(json);
+	eu_object_t *parent_dup = eu_object_deserialize(NULL, jobj2);
+	eu_object_print(parent_dup, eu_object_print_attrs_none);
+
+	json_object_put(obj);
+
+}END_TEST
+
+START_TEST(test_object_print_only_part)
+{
+	eu_object_t *parent = build_demo_object();
+	eu_object_t *obj_dell = eu_object_get_child(parent, "dell");
+
+	ck_assert_ptr_ne(obj_dell, NULL);
+
+	eu_object_print(obj_dell, eu_object_print_attrs_none);
+}END_TEST
+
 int main(void)
 {
 	int number_failed;
@@ -285,6 +342,8 @@ int main(void)
 	tcase_add_test(tc_core, test_object_create_instance);
 	tcase_add_test(tc_core, test_object_instance_loop);
 	tcase_add_test(tc_core, test_object_instance_fail_cases);
+	tcase_add_test(tc_core, test_object_serialize);
+	tcase_add_test(tc_core, test_object_print_only_part);
 
 	suite_add_tcase(s, tc_core);
 	SRunner *sr = srunner_create(s);

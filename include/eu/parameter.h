@@ -9,6 +9,7 @@
 #define INCLUDE_EU_PARAMETER_H_
 
 #include "eu/types.h"
+#include <json-c/json.h>
 
 typedef enum
 {
@@ -43,7 +44,9 @@ bool eu_parameter_set_value(eu_parameter_t *param, eu_variant_t *variant);
 eu_variant_t *eu_parameter_value(eu_parameter_t *param);
 eu_variant_t *eu_parameter_da_value(eu_parameter_t *param);
 
-// debug
+// extra
+json_object *eu_parameter_serialize(eu_parameter_t *param);
+eu_parameter_t *eu_parameter_deserialize(eu_object_t *obj, json_object *jobj);
 void eu_parameter_print(eu_parameter_t *param);
 
 #endif /* INCLUDE_EU_PARAMETER_H_ */

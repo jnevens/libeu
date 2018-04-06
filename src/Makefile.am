@@ -4,7 +4,7 @@ AM_CFLAGS = -D_GNU_SOURCE
 lib_LTLIBRARIES = libeu.la
 
 libeu_la_LIBADD =
-libeu_la_LDFLAGS =
+libeu_la_LDFLAGS = -ljson-c
 
 libeu_la_SOURCES = \
 	bus_client.c \

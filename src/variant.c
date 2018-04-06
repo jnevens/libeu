@@ -336,50 +336,163 @@ eu_variant_map_t *eu_variant_da_map(const eu_variant_t *variant)
 	return (variant) ? variant->data.m : NULL;
 }
 
-void eu_variant_print(eu_variant_t *variant)
+json_object *eu_variant_serialize(const eu_variant_t *variant)
 {
+	json_object *obj = json_object_new_object();
+	json_object_object_add(obj, "type", json_object_new_int((int) variant->type));
 	switch(variant->type) {
 		case EU_VARIANT_TYPE_BOOL:
-			printf("%s", variant->data.b ? "1" : "0");
+			json_object_object_add(obj, "value", json_object_new_boolean(variant->data.b));
 			break;
 		case EU_VARIANT_TYPE_INT8:
-			printf("%d", variant->data.i8);
+			json_object_object_add(obj, "value", json_object_new_int(variant->data.i8));
 			break;
 		case EU_VARIANT_TYPE_UINT8:
-			printf("%u", variant->data.u8);
+			json_object_object_add(obj, "value", json_object_new_int(variant->data.u8));
 			break;
 		case EU_VARIANT_TYPE_INT16:
-			printf("%d", variant->data.i16);
+			json_object_object_add(obj, "value", json_object_new_int(variant->data.i16));
 			break;
 		case EU_VARIANT_TYPE_UINT16:
-			printf("%u", variant->data.u16);
+			json_object_object_add(obj, "value", json_object_new_int(variant->data.u16));
 			break;
 		case EU_VARIANT_TYPE_INT32:
-			printf("%d", variant->data.i32);
+			json_object_object_add(obj, "value", json_object_new_int(variant->data.i32));
 			break;
 		case EU_VARIANT_TYPE_UINT32:
-			printf("%u", variant->data.u32);
+			json_object_object_add(obj, "value", json_object_new_int64(variant->data.u32));
 			break;
 		case EU_VARIANT_TYPE_INT64:
-			printf("%" PRId64 "", variant->data.i64);
+			json_object_object_add(obj, "value", json_object_new_int64(variant->data.i64));
 			break;
 		case EU_VARIANT_TYPE_UINT64:
-			printf("%" PRIu64 "", variant->data.u64);
+			json_object_object_add(obj, "value", json_object_new_int64(variant->data.u64));
 			break;
 		case EU_VARIANT_TYPE_FLOAT:
-			printf("%f", variant->data.f);
+			json_object_object_add(obj, "value", json_object_new_double(variant->data.f));
 			break;
 		case EU_VARIANT_TYPE_DOUBLE:
-			printf("%f", variant->data.d);
+			json_object_object_add(obj, "value", json_object_new_double(variant->data.d));
 			break;
 		case EU_VARIANT_TYPE_CHAR:
-			printf("%s", variant->data.c);
+			json_object_object_add(obj, "value", json_object_new_string(variant->data.c));
 			break;
 		case EU_VARIANT_TYPE_STRING:
-			printf("%s", eu_string_to_da_char(variant->data.s));
+			json_object_object_add(obj, "value", json_object_new_string(eu_string_to_da_char(variant->data.s)));
 			break;
 		default:
-			printf("Not implemented!");
+			json_object_object_add(obj, "value", json_object_new_string("UNSUPPORTED"));
 			break;
 	}
+
+	return obj;
+}
+
+eu_variant_t *eu_variant_deserialize(json_object *jobj)
+{
+	json_object *jobj_type = json_object_object_get(jobj, "type");
+	json_object *jobj_value = json_object_object_get(jobj, "value");
+
+	eu_variant_type_t type = json_object_get_int(jobj_type);
+
+	eu_variant_t *var = eu_variant_create(type);
+
+	switch(type) {
+	case EU_VARIANT_TYPE_BOOL:
+		var->data.b = json_object_get_boolean(jobj_value);
+		break;
+	case EU_VARIANT_TYPE_INT8:
+		var->data.i8 = json_object_get_int(jobj_value);
+		break;
+	case EU_VARIANT_TYPE_UINT8:
+		var->data.u8 = json_object_get_int(jobj_value);
+		break;
+	case EU_VARIANT_TYPE_INT16:
+		var->data.i16 = json_object_get_int(jobj_value);
+		break;
+	case EU_VARIANT_TYPE_UINT16:
+		var->data.u16 = json_object_get_int(jobj_value);
+		break;
+	case EU_VARIANT_TYPE_INT32:
+		var->data.i32 = json_object_get_int(jobj_value);
+		break;
+	case EU_VARIANT_TYPE_UINT32:
+		var->data.u32 = json_object_get_int64(jobj_value);
+		break;
+	case EU_VARIANT_TYPE_INT64:
+		var->data.i64 = json_object_get_int64(jobj_value);
+		break;
+	case EU_VARIANT_TYPE_UINT64:
+		var->data.u64 = json_object_get_int64(jobj_value);
+		break;
+	case EU_VARIANT_TYPE_FLOAT:
+		var->data.f = json_object_get_double(jobj_value);
+		break;
+	case EU_VARIANT_TYPE_DOUBLE:
+		var->data.d = json_object_get_double(jobj_value);
+		break;
+	case EU_VARIANT_TYPE_CHAR:
+		var->data.c = strdup(json_object_get_string(jobj_value));
+		break;
+	}
+
+}
+
+char *eu_variant_print_char(eu_variant_t *variant)
+{
+	char *buf = NULL;
+
+	switch(variant->type) {
+		case EU_VARIANT_TYPE_BOOL:
+			asprintf(&buf, "%s", variant->data.b ? "1" : "0");
+			break;
+		case EU_VARIANT_TYPE_INT8:
+			asprintf(&buf, "%d", variant->data.i8);
+			break;
+		case EU_VARIANT_TYPE_UINT8:
+			asprintf(&buf, "%u", variant->data.u8);
+			break;
+		case EU_VARIANT_TYPE_INT16:
+			asprintf(&buf, "%d", variant->data.i16);
+			break;
+		case EU_VARIANT_TYPE_UINT16:
+			asprintf(&buf, "%u", variant->data.u16);
+			break;
+		case EU_VARIANT_TYPE_INT32:
+			asprintf(&buf, "%d", variant->data.i32);
+			break;
+		case EU_VARIANT_TYPE_UINT32:
+			asprintf(&buf, "%u", variant->data.u32);
+			break;
+		case EU_VARIANT_TYPE_INT64:
+			asprintf(&buf, "%" PRId64 "", variant->data.i64);
+			break;
+		case EU_VARIANT_TYPE_UINT64:
+			asprintf(&buf, "%" PRIu64 "", variant->data.u64);
+			break;
+		case EU_VARIANT_TYPE_FLOAT:
+			asprintf(&buf, "%f", variant->data.f);
+			break;
+		case EU_VARIANT_TYPE_DOUBLE:
+			asprintf(&buf, "%f", variant->data.d);
+			break;
+		case EU_VARIANT_TYPE_CHAR:
+			asprintf(&buf, "%s", variant->data.c);
+			break;
+		case EU_VARIANT_TYPE_STRING:
+			asprintf(&buf, "%s", eu_string_to_da_char(variant->data.s));
+			break;
+		default:
+			asprintf(&buf, "Not implemented!");
+			break;
+	}
+
+	return buf;
+}
+
+void eu_variant_print(eu_variant_t *variant)
+{
+	char *var = eu_variant_print_char(variant);
+	printf("%s", var);
+	free(var);
 }

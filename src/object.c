@@ -21,6 +21,7 @@ struct eu_object_s
 	uint32_t attrs;
 	eu_list_t *children;
 	eu_list_t *parameters;
+	void *userdata;
 };
 
 static bool object_add_child(eu_object_t *obj, eu_object_t *child)
@@ -109,9 +110,7 @@ eu_object_t *eu_object_get_parent(eu_object_t *obj)
 
 eu_object_t *eu_object_get_child(eu_object_t *obj, const char *name)
 {
-	eu_list_node_t *node = NULL;
-
-	eu_list_for_each(node, obj->children)
+	eu_list_for_each_declare(node, obj->children)
 	{
 		eu_object_t *child = eu_list_node_data(node);
 		if (strcmp(child->name, name) == 0) {
@@ -120,6 +119,50 @@ eu_object_t *eu_object_get_child(eu_object_t *obj, const char *name)
 	}
 
 	return NULL;
+}
+
+eu_object_t *eu_object_get_child_path(eu_object_t *root, const char *path)
+{
+	char *path_dup = strdup(path);
+
+	char *token;
+	eu_object_t *ptr = NULL;
+	int n = 0;
+
+	while ((token = strsep(&path_dup, "."))) {
+		if (n == 0) {
+			if (strcmp(eu_object_name(root), token) == 0) {
+				ptr = root;
+			} else {
+				ptr = NULL;
+				goto cleanup;
+			}
+		} else {
+			ptr = eu_object_get_child(ptr, token);
+			if (!ptr) {
+				ptr = NULL;
+				goto cleanup;
+			}
+		}
+		n++;
+	}
+
+cleanup:
+	free(path_dup);
+	return ptr;
+}
+
+void eu_object_destroy_child(eu_object_t *obj, const char *name)
+{
+	eu_list_for_each_declare(node, obj->children)
+	{
+		eu_object_t *child = eu_list_node_data(node);
+		if (strcmp(child->name, name) == 0) {
+			eu_list_remove_node(obj->children, node);
+			eu_object_destroy(child);
+			break;
+		}
+	}
 }
 
 size_t eu_object_children_count(eu_object_t *obj)
@@ -169,6 +212,17 @@ void eu_object_destroy(eu_object_t *obj)
 	eu_list_destroy_with_data(obj->children, (eu_list_destroy_element_fn_t) eu_object_destroy);
 	eu_list_destroy_with_data(obj->parameters, (eu_list_destroy_element_fn_t) eu_parameter_destroy);
 	free(obj);
+}
+
+// userdata
+void eu_object_set_userdata(eu_object_t *obj, void *userdata)
+{
+	obj->userdata = userdata;
+}
+
+void *eu_object_get_userdata(eu_object_t *obj)
+{
+	return obj->userdata;
 }
 
 // template & instances
@@ -335,38 +389,214 @@ bool eu_object_parameter_set_bool(eu_object_t *obj, const char *name, bool value
 {
 	bool rv = false;
 	eu_parameter_t *param = eu_object_get_parameter(obj, name);
-	if (param) {
-		eu_variant_t *var = eu_variant_create(EU_VARIANT_TYPE_BOOL);
-		if (eu_variant_set_bool(var, value)) {
-			if (eu_parameter_set_value(param, var)) {
-				rv = true;
-			}
-		}
-		eu_variant_destroy(var);
+	if (!param) {
+		param = eu_parameter_create(obj, name, EU_PARAMETER_TYPE_BOOL);
 	}
+	eu_variant_t *var = eu_variant_create(EU_VARIANT_TYPE_BOOL);
+	if (eu_variant_set_bool(var, value)) {
+		if (eu_parameter_set_value(param, var)) {
+			rv = true;
+		}
+	}
+	eu_variant_destroy(var);
 
 	return rv;
 }
 
-void eu_object_print_path(eu_object_t *obj)
+bool eu_object_parameter_set_int32(eu_object_t *obj, const char *name, int32_t value)
 {
-	if(obj->parent) {
-		eu_object_print_path(obj->parent);
-		printf(".");
+	bool rv = false;
+	eu_parameter_t *param = eu_object_get_parameter(obj, name);
+	if (!param) {
+		param = eu_parameter_create(obj, name, EU_PARAMETER_TYPE_INT32);
 	}
-	printf("%s", obj->name);
-	obj = obj->parent;
+	eu_variant_t *var = eu_variant_create(EU_VARIANT_TYPE_INT32);
+	if (eu_variant_set_int32(var, value)) {
+		if (eu_parameter_set_value(param, var)) {
+			rv = true;
+		}
+	}
+	eu_variant_destroy(var);
+
+	return rv;
 }
 
-void eu_object_print(eu_object_t *obj)
+bool eu_object_parameter_set_float(eu_object_t *obj, const char *name, float value)
+{
+	bool rv = false;
+	eu_parameter_t *param = eu_object_get_parameter(obj, name);
+	if (!param) {
+		param = eu_parameter_create(obj, name, EU_PARAMETER_TYPE_FLOAT);
+	}
+	eu_variant_t *var = eu_variant_create(EU_VARIANT_TYPE_FLOAT);
+	if (eu_variant_set_float(var, value)) {
+		if (eu_parameter_set_value(param, var)) {
+			rv = true;
+		}
+	}
+	eu_variant_destroy(var);
+
+	return rv;
+}
+
+bool eu_object_parameter_set_double(eu_object_t *obj, const char *name, double value)
+{
+	bool rv = false;
+	eu_parameter_t *param = eu_object_get_parameter(obj, name);
+	if (!param) {
+		param = eu_parameter_create(obj, name, EU_PARAMETER_TYPE_DOUBLE);
+	}
+	eu_variant_t *var = eu_variant_create(EU_VARIANT_TYPE_DOUBLE);
+	if (eu_variant_set_double(var, value)) {
+		if (eu_parameter_set_value(param, var)) {
+			rv = true;
+		}
+	}
+	eu_variant_destroy(var);
+
+	return rv;
+}
+
+bool eu_object_parameter_set_char(eu_object_t *obj, const char *name, const char * value)
+{
+	bool rv = false;
+	eu_parameter_t *param = eu_object_get_parameter(obj, name);
+	if (!param) {
+		param = eu_parameter_create(obj, name, EU_PARAMETER_TYPE_STRING);
+	}
+	eu_variant_t *var = eu_variant_create(EU_VARIANT_TYPE_CHAR);
+	if (eu_variant_set_char(var, value)) {
+		if (eu_parameter_set_value(param, var)) {
+			rv = true;
+		}
+	}
+	eu_variant_destroy(var);
+
+	return rv;
+}
+
+
+// extra
+bool eu_object_validate_name(const char *name)
+{
+	size_t i,j;
+	static const char *valid_chars = EU_OBJECT_NAME_VALID_CHARS;
+
+	if(!name || strlen(name) == 0)
+		return false;
+
+	size_t len = strlen(name);
+	size_t lenc = strlen(valid_chars);
+
+	for(i = 0; i < len; i++) {
+		for (j = 0; j < lenc; j++) {
+			if (name[i] == valid_chars[j]) {
+				break;
+			}
+		}
+
+		if (j == lenc) { /* char not in valid_chars */
+			return false;
+		}
+	}
+
+	return true;
+}
+
+json_object *eu_object_serialize(eu_object_t *obj, uint32_t attrs)
+{
+	eu_list_node_t *node = NULL;
+
+	if (!obj) {
+		return NULL;
+	}
+
+	json_object *jobj = json_object_new_object();
+	// object parameters (name, isTemplate, ...)
+	json_object_object_add(jobj, "name", json_object_new_string(eu_object_name(obj)));
+	json_object_object_add(jobj, "isTemplate", json_object_new_boolean(obj->attrs & eu_object_attr_template));
+	json_object_object_add(jobj, "isInstance", json_object_new_boolean(obj->attrs & eu_object_attr_instance));
+
+	// children
+	json_object *jobj_children = json_object_new_array();
+	eu_list_for_each(node, obj->children)
+	{
+		eu_object_t *child = eu_list_node_data(node);
+		json_object *jobj_child = eu_object_serialize(child, attrs);
+		json_object_array_add(jobj_children, jobj_child);
+	}
+	json_object_object_add(jobj, "children", jobj_children);
+
+	// parameters
+	json_object *jobj_params = json_object_new_array();
+	eu_list_for_each(node, obj->parameters)
+	{
+		eu_parameter_t *param = eu_list_node_data(node);
+		json_object *jobj_param = eu_parameter_serialize(param);
+		json_object_array_add(jobj_params, jobj_param);
+	}
+	json_object_object_add(jobj, "parameters", jobj_params);
+	return jobj;
+}
+
+eu_object_t *eu_object_deserialize(eu_object_t *parent, json_object *jobj)
+{
+	eu_object_t *obj = NULL;
+
+	json_object *jobj_name = json_object_object_get(jobj, "name");
+	json_object *jobj_isTemplate = json_object_object_get(jobj, "isTemplate");
+	json_object *jobj_isInstance = json_object_object_get(jobj, "isInstance");
+	json_object *jobj_children = json_object_object_get(jobj, "children");
+	json_object *jobj_parameters = json_object_object_get(jobj, "parameters");
+
+	if (json_object_get_string(jobj_name) != NULL) {
+		const char *obj_name = json_object_get_string(jobj_name);
+		bool isTemplate = json_object_get_boolean(jobj_isTemplate);
+		bool isInstance = json_object_get_boolean(jobj_isInstance);
+		uint32_t attrs = (isTemplate) ? eu_object_attr_template : eu_object_attr_none;
+		attrs |= (isInstance) ? eu_object_attr_instance : eu_object_attr_none;
+		obj = eu_object_create(parent, json_object_get_string(jobj_name), attrs);
+
+		int child_count = json_object_array_length(jobj_children);
+		for (int i = 0; i < child_count; i++) {
+			json_object *child = json_object_array_get_idx(jobj_children, i);
+			eu_object_deserialize(obj, child);
+		}
+
+		int param_count = json_object_array_length(jobj_parameters);
+		for (int i = 0; i < param_count; i++) {
+			json_object *param = json_object_array_get_idx(jobj_parameters, i);
+			eu_parameter_deserialize(obj, param);
+		}
+	}
+
+	return obj;
+}
+
+void eu_object_print_path(eu_object_t *obj, uint32_t attrs)
+{
+	if(obj->parent) {
+		eu_object_print_path(obj->parent, attrs);
+		printf(".");
+	}
+
+	if (!(attrs & eu_object_print_attrs_no_root) || obj->parent) {
+		printf("%s", obj->name);
+		obj = obj->parent;
+	}
+}
+
+void eu_object_print(eu_object_t *obj, uint32_t attrs)
 {
 	eu_list_node_t *node;
 	if (!obj) {
 		return;
 	}
 
-	eu_object_print_path(obj);
-	printf("\n");
+	if (!(attrs & eu_object_print_attrs_no_root) || (obj->parent != NULL)) {
+		eu_object_print_path(obj, attrs);
+		printf("\n");
+	}
 
 	if (!(obj->attrs & eu_object_attr_template)) {
 		eu_list_for_each(node, obj->parameters) {
@@ -376,7 +606,7 @@ void eu_object_print(eu_object_t *obj)
 	}
 	eu_list_for_each(node, obj->children) {
 		eu_object_t *child = eu_list_node_data(node);
-		eu_object_print(child);
+		eu_object_print(child, attrs);
 	}
 
 }

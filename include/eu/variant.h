@@ -10,6 +10,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <json-c/json.h>
 #include "eu/types.h"
 #include "eu/string.h"
 
@@ -83,7 +84,10 @@ const char *eu_variant_da_char(const eu_variant_t *variant);
 const eu_string_t *eu_variant_da_string(const eu_variant_t *variant);
 eu_variant_map_t *eu_variant_da_map(const eu_variant_t *variant);
 
-//debug
+// extra
+json_object *eu_variant_serialize(const eu_variant_t *variant);
+eu_variant_t *eu_variant_deserialize(json_object *jobj);
+char *eu_variant_print_char(eu_variant_t *variant);
 void eu_variant_print(eu_variant_t *variant);
 
 #endif /* INCLUDE_VARIANT_H_ */
