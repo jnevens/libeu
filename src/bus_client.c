@@ -20,6 +20,8 @@
 struct eu_bus_conn_s {
 	eu_socket_t *sock;
 	eu_object_t *root;
+	eu_bus_conn_disconnect_cb_t disco_cb;
+	void *disco_arg;
 	char *name;
 };
 
@@ -107,20 +109,30 @@ static eu_bus_message_t *bus_conn_read_message(eu_bus_conn_t *conn){
 	return msg;
 }
 
+void eu_bus_disconnect(eu_bus_conn_t *conn)
+{
+	// Call disconnect handler first if exists
+	if (conn->disco_cb) {
+		conn->disco_cb(conn, conn->disco_arg);
+	}
+
+	eu_socket_destroy(conn->sock);
+	free(conn->name);
+	free(conn);
+}
+
 static void bus_connection_callback(int fd, short int revents, void *arg) {
 	eu_bus_message_t *msg = NULL;
 	eu_bus_conn_t *conn = (eu_bus_conn_t *) arg;
 
-
-	eu_log_info("connection callback!");
-
 	// read message;
 	msg = bus_conn_read_message(conn);
-	if(!msg) {
-		eu_log_info("Connection closed!");
-	} else {
+	if(msg) {
 		handle_message(conn, msg);
 		eu_bus_message_destroy(msg);
+	} else {
+		eu_log_info("Connection error, disconnecting!");
+		eu_bus_disconnect(conn);
 	}
 }
 
@@ -140,6 +152,14 @@ eu_bus_conn_t *eu_bus_connect(const char *name) {
 	eu_event_add(eu_socket_get_fd(sock), POLLIN, bus_connection_callback, NULL, conn);
 
 	return conn;
+}
+
+void eu_bus_set_disconnect_handler(eu_bus_conn_t *conn, eu_bus_conn_disconnect_cb_t cb, void *arg)
+{
+	if (conn) {
+		conn->disco_cb = cb;
+		conn->disco_arg = arg;
+	}
 }
 
 eu_object_t *eu_bus_register_client(eu_bus_conn_t *conn, const char *path)

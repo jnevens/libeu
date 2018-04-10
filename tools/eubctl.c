@@ -131,6 +131,12 @@ static void eubctl_read_cmd(int fd, short int revents, void *arg)
 	}
 }
 
+static void eu_bus_disconnect_cb(eu_bus_conn_t *conn, void *arg)
+{
+	eu_log_err("eubus disconnected, closing application!");
+	eu_event_loop_stop();
+}
+
 int main(int argc, char *argv[])
 {
 	eu_log_init("busd");
@@ -150,6 +156,8 @@ int main(int argc, char *argv[])
 	if(!conn) {
 		eu_log_err("Failed to connect to system bus");
 	}
+	// set disconnect handler
+	eu_bus_set_disconnect_handler(conn, eu_bus_disconnect_cb, NULL);
 
 	eu_event_add(2, POLLIN, eubctl_read_cmd, NULL, conn);
 

@@ -61,6 +61,12 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state)
 
 static struct argp argp = { options, parse_opt, args_doc, doc };
 
+static void eu_bus_disconnect_cb(eu_bus_conn_t *conn, void *arg)
+{
+	eu_log_err("eubus disconnected, closing application!");
+	eu_event_loop_stop();
+}
+
 int main(int argc, char *argv[])
 {
 	eu_log_init("busd");
@@ -78,6 +84,7 @@ int main(int argc, char *argv[])
 	if(!conn) {
 		eu_log_err("Failed to connect to system bus");
 	}
+	eu_bus_set_disconnect_handler(conn, eu_bus_disconnect_cb, NULL);
 	eu_object_t *root = eu_bus_register_client(conn, "Dummy");
 	if(!root) {
 		eu_log_err("Failed to register object Devices");
