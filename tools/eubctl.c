@@ -67,10 +67,11 @@ static struct argp argp = { options, parse_opt, args_doc, doc };
 static void eubctl_help_print()
 {
 	printf("Available commands:\n");
-	printf("\thelp         print help\n");
-	printf("\tls [path]    list objects\n");
-	printf("\tcd [path]    enter location\n");
-	printf("\tpwd          current location\n");
+	printf("\thelp         Print help\n");
+	printf("\tls [path]    List objects\n");
+	printf("\tcd [path]    Enter location\n");
+	printf("\tpwd          Current working directory\n");
+	printf("\texit         Exit application\n");
 }
 
 static void eubctl_list_object()
@@ -126,6 +127,9 @@ static void eubctl_read_cmd(int fd, short int revents, void *arg)
 		eubctl_change_directory(buf);
 	} else if (!strcmp(buf, "pwd")) {	/* print working directory */
 		printf("%s\n",cwd);
+	} else if (!strcmp(buf, "exit")) {	/* print working directory */
+		eu_bus_disconnect(conn);
+		eu_event_loop_stop();
 	} else {
 		printf("Unknown command!\n");
 	}
