@@ -27,7 +27,7 @@ struct eu_socket_s {
 
 eu_socket_t *eu_socket_create_unix(void)
 {
-	eu_socket_t *sock = calloc(1, sizeof(socket));
+	eu_socket_t *sock = calloc(1, sizeof(eu_socket_t));
 	sock->type = EU_SOCKET_TYPE_UNIX;
 
 	sock->fd = socket(AF_UNIX, SOCK_STREAM, 0);
@@ -43,7 +43,7 @@ eu_socket_t *eu_socket_create_unix(void)
 
 eu_socket_t *eu_socket_create_tcp(void)
 {
-	eu_socket_t *sock = calloc(1, sizeof(socket));
+	eu_socket_t *sock = calloc(1, sizeof(eu_socket_t));
 	sock->type = EU_SOCKET_TYPE_TCP;
 
 	sock->fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -58,7 +58,7 @@ eu_socket_t *eu_socket_create_tcp(void)
 
 eu_socket_t *eu_socket_create_udp(void)
 {
-	eu_socket_t *socket = calloc(1, sizeof(socket));
+	eu_socket_t *socket = calloc(1, sizeof(eu_socket_t));
 	socket->type = EU_SOCKET_TYPE_UDP;
 	return socket;
 }
