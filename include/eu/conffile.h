@@ -8,14 +8,12 @@
 #ifndef INCLUDE_EU_CONFFILE_H_
 #define INCLUDE_EU_CONFFILE_H_
 
-#include <eu/types.h>
+#include <stdbool.h>
 
+typedef int (eu_config_file_line_parcer_cb_t)(const char *arg, const char *val, void *arguments);
 
-eu_config_t *eu_config_init(const char *file);
-void eu_config_destroy(eu_config_t *config);
-
-eu_variant_t *eu_config_get_parameter(eu_config_t *config, const char *name);
-
+// basic config file parser
+bool eu_config_file_parse(eu_config_file_line_parcer_cb_t cb, const char *config_file, void *arguments);
 
 
 #endif /* INCLUDE_EU_UTILS_CONFFILE_H_ */

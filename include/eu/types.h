@@ -19,7 +19,6 @@ typedef struct eu_event_s eu_event_t;
 typedef struct eu_event_timer_s eu_event_timer_t;
 typedef struct eu_string_s eu_string_t;
 typedef struct eu_socket_s eu_socket_t;
-typedef struct eu_config_s eu_config_t;
 typedef struct eu_variant_map_s eu_variant_map_t;
 typedef struct eu_variant_map_pair_s eu_variant_map_pair_t;
 typedef struct eu_bus_conn_s eu_bus_conn_t;

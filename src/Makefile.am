@@ -9,6 +9,7 @@ libeu_la_LDFLAGS = -ljson-c
 libeu_la_SOURCES = \
 	bus_client.c \
 	bus_message.c \
+	conffile.c \
 	daemon.c \
 	event.c \
 	list.c \
