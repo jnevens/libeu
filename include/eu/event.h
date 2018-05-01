@@ -23,6 +23,9 @@ eu_event_t *eu_event_add(int fd, short int events,
 		void (*err_callback)(int fd, short int revents, void *arg),
 		void *arg);
 
+void *eu_event_get_userdata(eu_event_t *event);
+void eu_event_set_userdata(eu_event_t *event, void *userdata);
+
 void eu_event_destroy(eu_event_t *event);
 
 #endif /* INCLUDE_EVENT_H_ */

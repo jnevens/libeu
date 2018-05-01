@@ -83,6 +83,16 @@ void eu_event_destroy(eu_event_t *event)
 	event->deleted = true;
 }
 
+void *eu_event_get_userdata(eu_event_t *event)
+{
+	return event->arg;
+}
+
+void eu_event_set_userdata(eu_event_t *event, void *userdata)
+{
+	event->arg = userdata;
+}
+
 static int fd_handlers_count(void)
 {
 	return (nfds_t)eu_list_count(events);
