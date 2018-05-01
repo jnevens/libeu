@@ -41,13 +41,16 @@ bool eu_event_loop_init(void)
 
 static void events_cleanup(bool all)
 {
-	eu_list_node_t *node;
-	eu_list_for_each(node, events) {
+	eu_list_node_t *node = NULL;
+	eu_list_node_t *node_next = NULL;
+
+	for(node = eu_list_first(events); node; node = node_next) {
+		node_next = eu_list_node_next(node);
 		eu_event_t *event = eu_list_node_data(node);
 		if(event->deleted || all) {
 			eu_list_remove_node(events, node);
 			free(event);
-			break;
+			if (!all) break;
 		}
 	}
 }
