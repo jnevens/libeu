@@ -12,7 +12,6 @@ libeu_HEADERS = \
 	parameter.h \
 	socket.h \
 	string.h \
-	timer.h \
 	types.h \
 	variant.h \
 	variant_map.h

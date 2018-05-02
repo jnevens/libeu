@@ -13,7 +13,6 @@
 #include <eu/string.h>
 #include <eu/log.h>
 #include <eu/event.h>
-#include <eu/timer.h>
 
 START_TEST(test_string_create_destroy)
 {

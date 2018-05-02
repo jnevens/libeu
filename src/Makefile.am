@@ -18,7 +18,6 @@ libeu_la_SOURCES = \
 	parameter.c \
 	socket.c \
 	string.c \
-	timer.c \
 	variant.c \
 	variant_map.c
 
