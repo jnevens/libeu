@@ -71,7 +71,6 @@ static void events_cleanup(bool all)
 				eu_event_timer_destroy(timer);
 			}
 			free(event);
-			if (!all) break;
 		}
 	}
 }
