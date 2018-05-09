@@ -68,7 +68,7 @@ static void events_cleanup(bool all)
 			eu_list_remove_node(events, node);
 			if (event->is_timer) {
 				eu_event_timer_t *timer = eu_event_get_userdata(event);
-				eu_event_timer_destroy(timer);
+				free(timer);
 			}
 			free(event);
 		}
@@ -103,7 +103,8 @@ eu_event_t *eu_event_add(int fd, short int qevents,
 
 void eu_event_destroy(eu_event_t *event)
 {
-	event->deleted = true;
+	if (event)
+		event->deleted = true;
 }
 
 void *eu_event_get_userdata(eu_event_t *event)
@@ -235,17 +236,19 @@ eu_event_timer_t *eu_event_timer_create(uint32_t timeout_ms, bool (*callback)(vo
 
 void eu_event_timer_set_userdata(eu_event_timer_t *timer, void *arg)
 {
-	timer->arg = arg;
+	if (timer)
+		timer->arg = arg;
 }
 
 void *eu_event_timer_get_userdata(eu_event_timer_t *timer)
 {
-	return timer->arg;
+	return (timer) ? timer->arg : NULL;
 }
 
 void eu_event_timer_destroy(eu_event_timer_t *timer)
 {
-	eu_event_destroy(timer->event);
+	if (timer)
+		eu_event_destroy(timer->event);
 }
 
 long long eu_time_ms(void)
