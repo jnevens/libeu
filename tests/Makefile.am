@@ -9,7 +9,7 @@ TESTS = \
 	check_parameter \
 	check_variant \
 	check_variant_map \
-	check_conffile
+	check_event
 
 @VALGRIND_CHECK_RULES@
 
@@ -21,4 +21,4 @@ check_object_SOURCES = check_object.c
 check_parameter_SOURCES = check_parameter.c
 check_variant_SOURCES = check_variant.c
 check_variant_map_SOURCES = check_variant_map.c
-check_conffile_SOURCES = check_conffile.c
+check_event_SOURCES = check_event.c
