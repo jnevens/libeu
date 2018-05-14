@@ -68,6 +68,7 @@ static void events_cleanup(bool all)
 			eu_list_remove_node(events, node);
 			if (event->is_timer) {
 				eu_event_timer_t *timer = eu_event_get_userdata(event);
+				close(timer->timerfd);
 				free(timer);
 			}
 			free(event);
@@ -182,7 +183,6 @@ void eu_event_loop_stop(void) {
 	keep_running = false;
 }
 
-
 static void event_timer_callback(int fd, short int revents, void *arg)
 {
 	eu_event_timer_t *timer = arg;
@@ -214,6 +214,10 @@ eu_event_timer_t *eu_event_timer_create(uint32_t timeout_ms, bool (*callback)(vo
 		exit(-1);
 	}
 	timer->timerfd = timerfd_create(CLOCK_MONOTONIC, 0);
+	if (timer->timerfd < 0) {
+		eu_log_err("Failed to create timerfd! %m");
+		goto cleanup;
+	}
 
 	timspec.it_interval.tv_sec = (timeout_ms > 999) ? timeout_ms / 1000 : 0;
 	timspec.it_interval.tv_nsec = (timeout_ms % 1000) * 1000000;
@@ -222,8 +226,8 @@ eu_event_timer_t *eu_event_timer_create(uint32_t timeout_ms, bool (*callback)(vo
 
 	int res = timerfd_settime(timer->timerfd, 0, &timspec, NULL);
 	if (res < 0) {
-		eu_log_err("timerfd_settime");
-		perror("timerfd_settime");
+		eu_log_err("Failed to set time on timerfd! %m");
+		goto cleanup;
 	}
 
 	timer->event = eu_event_add(timer->timerfd, POLLIN, event_timer_callback, NULL, timer);
@@ -232,6 +236,9 @@ eu_event_timer_t *eu_event_timer_create(uint32_t timeout_ms, bool (*callback)(vo
 	timer->arg = arg;
 
 	return timer;
+cleanup:
+	free(timer);
+	return NULL;
 }
 
 void eu_event_timer_set_userdata(eu_event_timer_t *timer, void *arg)
