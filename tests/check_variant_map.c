@@ -6,6 +6,9 @@
 #include <string.h>
 #include <inttypes.h>
 
+#include <json-c/json.h>
+
+#include <eu/variant.h>
 #include <eu/variant_map.h>
 
 START_TEST(test_variant_map_create_destroy)
@@ -83,6 +86,35 @@ START_TEST(test_variant_map_foreach_reverse)
 	eu_variant_map_destroy(map);
 }END_TEST
 
+START_TEST(test_variant_map_serialize_simple)
+{
+	eu_variant_t *var = eu_variant_create(EU_VARIANT_TYPE_MAP);
+	eu_variant_map_t *map = eu_variant_map_create();
+	eu_variant_set_map(var, map);
+	eu_variant_map_set_bool(map, "isBool", true);
+	eu_variant_map_set_uint8(map, "isDouble", 199);
+
+	json_object *obj = eu_variant_serialize(var);
+
+	const char *json = json_object_to_json_string(obj);
+	ck_assert_str_eq(json, "{ \"type\": 14, \"value\": [ { \"name\": \"isBool\", \"value\": { \"type\": 1, \"value\": true } }, { \"name\": \"isDouble\", \"value\": { \"type\": 3, \"value\": 199 } } ] }");
+
+	eu_variant_destroy(var);
+	json_object_put(obj);
+}END_TEST
+
+START_TEST(test_variant_map_deserialize_simple)
+{
+	json_object *jobj = json_tokener_parse("{ \"type\": 14, \"value\": [ { \"name\": \"isBool\", \"value\": { \"type\": 1, \"value\": true } }, { \"name\": \"isDouble\", \"value\": { \"type\": 3, \"value\": 199 } } ] }");
+	eu_variant_t *var = eu_variant_deserialize(jobj);
+	eu_variant_map_t *map = eu_variant_da_map(var);
+	ck_assert_int_eq(eu_variant_map_get_bool(map, "isBool"), 1);
+	ck_assert_int_eq(eu_variant_map_get_uint8(map, "isDouble"), 199);
+
+	eu_variant_destroy(var);
+	json_object_put(jobj);
+}END_TEST
+
 int main(void)
 {
 	int number_failed;
@@ -94,6 +126,8 @@ int main(void)
 	tcase_add_test(tc_core, test_variant_map_add_remove_find);
 	tcase_add_test(tc_core, test_variant_map_foreach);
 	tcase_add_test(tc_core, test_variant_map_foreach_reverse);
+	tcase_add_test(tc_core, test_variant_map_serialize_simple);
+	tcase_add_test(tc_core, test_variant_map_deserialize_simple);
 
 	suite_add_tcase(s, tc_core);
 	SRunner *sr = srunner_create(s);

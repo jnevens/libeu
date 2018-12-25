@@ -11,6 +11,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <eu/types.h>
+#include <json-c/json.h>
 
 // loop all child's
 #define eu_variant_map_for_each_pair(pair, map) \
@@ -76,5 +77,8 @@ float eu_variant_map_get_float(eu_variant_map_t *map, const char *key);
 double eu_variant_map_get_double(eu_variant_map_t *map, const char *key);
 char *eu_variant_map_get_char(eu_variant_map_t *map, const char *key);
 eu_string_t *eu_variant_map_get_string(eu_variant_map_t *map, const char *key);
+
+json_object *eu_variant_map_serialize(const eu_variant_map_t *map);
+eu_variant_map_t *eu_variant_map_deserialize(json_object *obj);
 
 #endif /* INCLUDE_EU_VARIANT_MAP_H_ */

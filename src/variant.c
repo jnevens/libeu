@@ -11,6 +11,8 @@
 #include <inttypes.h>
 #include <stdbool.h>
 
+#include <json-c/json.h>
+
 #include "eu/variant.h"
 #include "eu/variant_map.h"
 
@@ -380,6 +382,9 @@ json_object *eu_variant_serialize(const eu_variant_t *variant)
 		case EU_VARIANT_TYPE_STRING:
 			json_object_object_add(obj, "value", json_object_new_string(eu_string_to_da_char(variant->data.s)));
 			break;
+		case EU_VARIANT_TYPE_MAP:
+			json_object_object_add(obj, "value", eu_variant_map_serialize(variant->data.m));
+			break;
 		default:
 			json_object_object_add(obj, "value", json_object_new_string("UNSUPPORTED"));
 			break;
@@ -434,8 +439,12 @@ eu_variant_t *eu_variant_deserialize(json_object *jobj)
 	case EU_VARIANT_TYPE_CHAR:
 		var->data.c = strdup(json_object_get_string(jobj_value));
 		break;
+	case EU_VARIANT_TYPE_MAP:
+		var->data.m = eu_variant_map_deserialize(jobj_value);
+		break;
 	}
 
+	return var;
 }
 
 char *eu_variant_print_char(eu_variant_t *variant)

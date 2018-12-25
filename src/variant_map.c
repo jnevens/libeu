@@ -509,4 +509,38 @@ eu_string_t *eu_variant_map_get_string(eu_variant_map_t *map, const char *key)
 	return NULL;
 }
 
+json_object *eu_variant_map_serialize(const eu_variant_map_t *map)
+{
+	json_object *map_obj = json_object_new_array();
+	eu_list_node_t *iter = NULL;
 
+	eu_list_for_each(iter, map->items)
+	{
+		eu_variant_map_pair_t *pair = eu_list_node_data(iter);
+		const char *key = eu_variant_map_pair_get_key(pair);
+		eu_variant_t *var = eu_variant_map_pair_get_val(pair);
+
+		json_object *map_item = json_object_new_object();
+		json_object_object_add(map_item, "name", json_object_new_string(key));
+		json_object_object_add(map_item, "value", eu_variant_serialize(var));
+		json_object_array_add(map_obj, map_item);
+	}
+
+	return map_obj;
+}
+
+eu_variant_map_t *eu_variant_map_deserialize(json_object *obj)
+{
+	eu_variant_map_t *map = eu_variant_map_create();
+
+	int map_count = json_object_array_length(obj);
+	for (int i = 0; i < map_count; i++) {
+		json_object *map_item = json_object_array_get_idx(obj, i);
+		const char *name = json_object_get_string(json_object_object_get(map_item, "name"));
+		json_object *map_item_val = json_object_object_get(map_item, "value");
+		eu_variant_t *var = eu_variant_deserialize(map_item_val);
+		eu_variant_map_set_variant(map, name, var);
+	}
+
+	return map;
+}

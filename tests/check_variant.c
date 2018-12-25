@@ -6,6 +6,8 @@
 #include <string.h>
 #include <inttypes.h>
 
+#include <json-c/json.h>
+
 #include <eu/variant.h>
 
 START_TEST(test_variant_create_destroy)
@@ -265,6 +267,32 @@ START_TEST(test_variant_string)
 	eu_string_destroy(res);
 }END_TEST
 
+START_TEST(test_variant_serialize_bool)
+{
+	eu_variant_t *var = eu_variant_create(EU_VARIANT_TYPE_BOOL);
+	json_object *obj = eu_variant_serialize(var);
+
+	char *json = json_object_to_json_string(obj);
+	ck_assert_str_eq(json, "{ \"type\": 1, \"value\": false }");
+	printf("json: [%s]\n", json);
+
+	eu_variant_destroy(var);
+	json_object_put(obj);
+}END_TEST
+
+START_TEST(test_variant_serialize_string)
+{
+	eu_variant_t *var = eu_variant_create(EU_VARIANT_TYPE_STRING);
+	json_object *obj = eu_variant_serialize(var);
+
+	char *json = json_object_to_json_string(obj);
+	printf("json: [%s]\n", json);
+	ck_assert_str_eq(json, "{ \"type\": 13, \"value\": \"NULL\" }");
+
+	eu_variant_destroy(var);
+	json_object_put(obj);
+}END_TEST
+
 int main(void)
 {
 	int number_failed;
@@ -294,6 +322,8 @@ int main(void)
 	tcase_add_test(tc_core, test_variant_double);
 	tcase_add_test(tc_core, test_variant_char);
 	tcase_add_test(tc_core, test_variant_string);
+	tcase_add_test(tc_core, test_variant_serialize_bool);
+	tcase_add_test(tc_core, test_variant_serialize_string);
 
 	suite_add_tcase(s, tc_core);
 	SRunner *sr = srunner_create(s);
