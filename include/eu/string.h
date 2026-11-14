@@ -45,6 +45,6 @@ size_t eu_string_from_float(eu_string_t *string, const double data);
 size_t eu_string_from_double(eu_string_t *string, const double data);
 
 char *eu_string_to_char(eu_string_t *string);
-const char *eu_string_to_da_char(eu_string_t *string);
+const char *eu_string_to_da_char(const eu_string_t *string);
 
 #endif /* INCLUDE_EU_STRING_H_ */

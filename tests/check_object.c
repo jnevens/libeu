@@ -299,17 +299,28 @@ START_TEST(test_object_serialize)
 	eu_object_t *parent = build_demo_object();
 
 	json_object *obj = eu_object_serialize(parent, 0);
-	eu_object_print(parent, eu_object_print_attrs_none);
-	char *json = json_object_to_json_string(obj);
-
-	printf("json: [%s]\n", json);
+	ck_assert_ptr_ne(obj, NULL);
+	const char *json = json_object_to_json_string(obj);
+	ck_assert_ptr_ne(json, NULL);
 
 	json_object *jobj2 = json_tokener_parse(json);
+	ck_assert_ptr_ne(jobj2, NULL);
 	eu_object_t *parent_dup = eu_object_deserialize(NULL, jobj2);
-	eu_object_print(parent_dup, eu_object_print_attrs_none);
+	ck_assert_ptr_ne(parent_dup, NULL);
+	ck_assert_str_eq(eu_object_name(parent_dup), "com");
+	ck_assert_uint_eq(eu_object_children_count(parent_dup), 4);
 
+	eu_object_t *dell = eu_object_get_child(parent_dup, "dell");
+	eu_object_t *www = eu_object_get_child(dell, "www");
+	ck_assert_ptr_ne(www, NULL);
+	ck_assert_int_eq(eu_variant_bool(eu_parameter_da_value(eu_object_get_parameter(www, "https"))), true);
+	ck_assert_int_eq(eu_variant_bool(eu_parameter_da_value(eu_object_get_parameter(www, "tls"))), true);
+	ck_assert_int_eq(eu_variant_int32(eu_parameter_da_value(eu_object_get_parameter(www, "visitors"))), 8098099);
+
+	json_object_put(jobj2);
 	json_object_put(obj);
-
+	eu_object_destroy(parent_dup);
+	eu_object_destroy(parent);
 }END_TEST
 
 START_TEST(test_object_print_only_part)
@@ -318,8 +329,9 @@ START_TEST(test_object_print_only_part)
 	eu_object_t *obj_dell = eu_object_get_child(parent, "dell");
 
 	ck_assert_ptr_ne(obj_dell, NULL);
+	ck_assert_ptr_ne(eu_object_get_child(obj_dell, "www"), NULL);
 
-	eu_object_print(obj_dell, eu_object_print_attrs_none);
+	eu_object_destroy(parent);
 }END_TEST
 
 int main(void)

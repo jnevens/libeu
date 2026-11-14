@@ -21,12 +21,14 @@ static int t3_count = 0;
 
 static bool t3_callback(void *arg)
 {
+	(void)arg;
 	t3_count++;
 	return false;
 }
 
 static bool t1_callback(void *arg)
 {
+	(void)arg;
 	t1_count++;
 	eu_event_loop_stop();
 	return false;
@@ -34,6 +36,7 @@ static bool t1_callback(void *arg)
 
 static bool t2_callback(void *arg)
 {
+	(void)arg;
 	t2_count++;
 	for (int i = 1; i <= 200; i++) {
 		eu_event_timer_t *t = eu_event_timer_create(i/10 + 1, t3_callback, NULL);

@@ -62,7 +62,7 @@ clean-coverage-report:
 	-rm -rf $(COVERAGE_REPORT_DIR)
 
 clean-coverage: clean-coverage-report
-	-$(LCOV) --zerocounters --directory $(top_builddir)
+	@if test -n "$(LCOV)"; then $(LCOV) --zerocounters --directory $(top_builddir); fi
 
 clean-coverage-hook-for-clean-local:
 	-find $(top_builddir) -name "*.gcno" -print | xargs -r rm

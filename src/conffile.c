@@ -9,6 +9,7 @@
 #include <string.h>
 
 #include "eu/conffile.h"
+#include "eu/log.h"
 
 // basic parser
 bool eu_config_file_parse(eu_config_file_line_parcer_cb_t cb, const char *config_file, void *arguments)
@@ -20,7 +21,7 @@ bool eu_config_file_parse(eu_config_file_line_parcer_cb_t cb, const char *config
 	bool rv = true;
 
 	fp = fopen(config_file, "r");
-	if (!fopen) {
+	if (fp == NULL) {
 		eu_log_err("Failed to open config file: %m\n");
 		return false;
 	} else {

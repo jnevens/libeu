@@ -129,7 +129,7 @@ START_TEST(test_variant_int8)
 	eu_variant_t *var = eu_variant_create(EU_VARIANT_TYPE_INT8);
 	ck_assert_int_eq(eu_variant_type(var), EU_VARIANT_TYPE_INT8);
 	ck_assert_ptr_ne(var, NULL);
-	ck_assert_int_eq(eu_variant_set_int8(var, -100 +1024), true);
+	ck_assert_int_eq(eu_variant_set_int8(var, -100), true);
 	ck_assert_int_eq(eu_variant_int8(var), -100);
 	eu_variant_print(var);
 	eu_variant_destroy(var);
@@ -140,7 +140,7 @@ START_TEST(test_variant_uint8)
 	eu_variant_t *var = eu_variant_create(EU_VARIANT_TYPE_UINT8);
 	ck_assert_int_eq(eu_variant_type(var), EU_VARIANT_TYPE_UINT8);
 	ck_assert_ptr_ne(var, NULL);
-	ck_assert_int_eq(eu_variant_set_uint8(var, 230 +1024), true);
+	ck_assert_int_eq(eu_variant_set_uint8(var, 230), true);
 	ck_assert_int_eq(eu_variant_uint8(var), 230);
 	eu_variant_print(var);
 	eu_variant_destroy(var);
@@ -217,8 +217,8 @@ START_TEST(test_variant_float)
 	eu_variant_t *var = eu_variant_create(EU_VARIANT_TYPE_FLOAT);
 	ck_assert_int_eq(eu_variant_type(var), EU_VARIANT_TYPE_FLOAT);
 	ck_assert_ptr_ne(var, NULL);
-	ck_assert_int_eq(eu_variant_set_float(var, 123.456), true);
-	ck_assert_int_eq(eu_variant_float(var), 123.45);
+	ck_assert_int_eq(eu_variant_set_float(var, 123.456f), true);
+	ck_assert_float_eq_tol(eu_variant_float(var), 123.456f, 0.0001f);
 	eu_variant_print(var);
 	eu_variant_destroy(var);
 }END_TEST
@@ -229,7 +229,7 @@ START_TEST(test_variant_double)
 	ck_assert_int_eq(eu_variant_type(var), EU_VARIANT_TYPE_DOUBLE);
 	ck_assert_ptr_ne(var, NULL);
 	ck_assert_int_eq(eu_variant_set_double(var, 12345789.12345678), true);
-	ck_assert_int_eq(eu_variant_double(var), 12345789.123456785);
+	ck_assert_double_eq_tol(eu_variant_double(var), 12345789.12345678, 0.001);
 	eu_variant_print(var);
 	eu_variant_destroy(var);
 }END_TEST
@@ -272,7 +272,7 @@ START_TEST(test_variant_serialize_bool)
 	eu_variant_t *var = eu_variant_create(EU_VARIANT_TYPE_BOOL);
 	json_object *obj = eu_variant_serialize(var);
 
-	char *json = json_object_to_json_string(obj);
+	const char *json = json_object_to_json_string(obj);
 	ck_assert_str_eq(json, "{ \"type\": 1, \"value\": false }");
 	printf("json: [%s]\n", json);
 
@@ -285,7 +285,7 @@ START_TEST(test_variant_serialize_string)
 	eu_variant_t *var = eu_variant_create(EU_VARIANT_TYPE_STRING);
 	json_object *obj = eu_variant_serialize(var);
 
-	char *json = json_object_to_json_string(obj);
+	const char *json = json_object_to_json_string(obj);
 	printf("json: [%s]\n", json);
 	ck_assert_str_eq(json, "{ \"type\": 13, \"value\": \"NULL\" }");
 

@@ -17,4 +17,10 @@ pkgconfig_DATA = libeu.pc
 EXTRA_DIST = \
 	libeu.pc.in
 
+if HAVE_GCOV
+ENABLE_COVERAGE = yes
+else
+ENABLE_COVERAGE = no
+endif
+
 include Makefile.am.coverage

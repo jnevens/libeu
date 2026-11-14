@@ -1,6 +1,6 @@
 AM_CPPFLAGS = -I$(top_srcdir)/include
-AM_CFLAGS = -pthread -lcheck_pic -lrt -lm -lsubunit
-LDADD = ../src/libeu.la -ljson-c
+AM_CFLAGS = $(CHECK_CFLAGS)
+LDADD = ../src/libeu.la $(CHECK_LIBS) -ljson-c
 
 TESTS = \
 	check_string \

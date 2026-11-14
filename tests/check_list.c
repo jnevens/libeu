@@ -43,6 +43,7 @@ START_TEST(test_list_create_destroy)
 
 static bool data_freed = false;
 static void data_free(void *data) {
+	(void)data;
 	data_freed = true;
 }
 
@@ -73,9 +74,8 @@ START_TEST(test_list_destroy_node_with_data)
 
 START_TEST(test_list_destroy_non_existing_node)
 {
-	const char *data = "foobar";
 	eu_list_t *list = eu_list_create();
-	ck_assert_int_eq(eu_list_remove_node(list, 0xdeadbeef), 0);
+	ck_assert_int_eq(eu_list_remove_node(list, (eu_list_node_t *)(uintptr_t)0xdeadbeef), 0);
 	eu_list_destroy(list);
 }END_TEST
 

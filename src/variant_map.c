@@ -500,7 +500,7 @@ char *eu_variant_map_get_char(eu_variant_map_t *map, const char *key)
 	return NULL;
 }
 
-eu_string_t *eu_variant_map_get_string(eu_variant_map_t *map, const char *key)
+const eu_string_t *eu_variant_map_get_string(eu_variant_map_t *map, const char *key)
 {
 	eu_variant_map_pair_t *item = eu_variant_map_find_pair(map, key);
 	if (item) {

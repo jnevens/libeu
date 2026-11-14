@@ -131,6 +131,7 @@ eu_parameter_t *eu_parameter_deserialize(eu_object_t *obj, json_object *jobj)
 	eu_parameter_t *param = eu_parameter_create(obj, name, type);
 	eu_variant_t *var = eu_variant_deserialize(jobj_value);
 	eu_parameter_set_value(param, var);
+	eu_variant_destroy(var);
 
 	return param;
 }

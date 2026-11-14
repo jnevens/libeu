@@ -1,4 +1,4 @@
-AM_CPPFLAGS = -I$(top_buildir)/include -I$(top_srcdir)/include
+AM_CPPFLAGS = -I$(top_builddir)/include -I$(top_srcdir)/include
 AM_CFLAGS = -D_GNU_SOURCE
 
 lib_LTLIBRARIES = libeu.la

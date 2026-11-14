@@ -36,12 +36,14 @@ AC_ARG_ENABLE([tools],
         [], [enable_tools=yes])
 AM_CONDITIONAL([ENABLE_TOOLS], [test "x$enable_tools" = "xyes"])
 
-# Tests
+# Tests. Accept "y" as well as "yes" (--enable-tests=y).
 AC_ARG_ENABLE([tests],
 	[AS_HELP_STRING([--enable-tests=@<:@yes/no@:>@],
 		[Build self tests @<:@default=no@:>@])],
 	[], [enable_tests=no])
-AM_CONDITIONAL([ENABLE_TESTS], [test "x$enable_tests" = "xyes"])
+AS_CASE([$enable_tests],
+	[yes|y], [enable_tests=yes],
+	[enable_tests=no])
 
 AX_VALGRIND_CHECK
 
@@ -49,7 +51,6 @@ AM_CONDITIONAL([ENABLE_LIBEVQUICK], [test "x$with_libevquick" = "xyes"])
 
 # Checks for programs.
 AC_PROG_CC
-AC_PROG_CC_C99
 
 # gcov coverage reporting
 
@@ -59,12 +60,27 @@ AC_SUBST(COVERAGE_CFLAGS)
 AC_SUBST(COVERAGE_CXXFLAGS)
 AC_SUBST(COVERAGE_LDFLAGS)
 
+# Coverage replays the test suite, so turn tests on with gcov.
+AS_IF([test "x$use_gcov" = "xyes" && test "x$enable_tests" != "xyes"],
+	[enable_tests=yes])
+AM_CONDITIONAL([ENABLE_TESTS], [test "x$enable_tests" = "xyes"])
+AS_IF([test "x$enable_tests" = "xyes"], [
+	PKG_CHECK_MODULES([CHECK], [check])
+	# libcheck is a static archive that needs libsubunit. Link the
+	# subunit archive itself so the tests do not depend on
+	# libsubunit.so.0 being on the default runtime path.
+	subunit_libdir=`$PKG_CONFIG --variable=libdir libsubunit`
+	AS_IF([test -n "$subunit_libdir" && test -f "$subunit_libdir/libsubunit.a"], [
+		CHECK_LIBS=`echo "$CHECK_LIBS" | sed "s|-lsubunit|$subunit_libdir/libsubunit.a|"`
+	])
+])
+
 # Versioning.
 AC_SUBST([DC_VERSION],[dc_version])
 AC_SUBST([DC_VERSION_MAJOR],[dc_version_major])
 AC_SUBST([DC_VERSION_MINOR],[dc_version_minor])
 AC_SUBST([DC_VERSION_MICRO],[dc_version_micro])
-AC_SUBST([DC_VERSION_LIBTOOL],[dc_version_lt_current:dc_version_lt_revision:    dc_version_lt_age])
+AC_SUBST([DC_VERSION_LIBTOOL],[dc_version_lt_current:dc_version_lt_revision:dc_version_lt_age])
 
 # Version suffix.
 m4_ifset([dc_version_suffix],[

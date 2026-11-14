@@ -76,7 +76,7 @@ uint64_t eu_variant_map_get_uint64(eu_variant_map_t *map, const char *key);
 float eu_variant_map_get_float(eu_variant_map_t *map, const char *key);
 double eu_variant_map_get_double(eu_variant_map_t *map, const char *key);
 char *eu_variant_map_get_char(eu_variant_map_t *map, const char *key);
-eu_string_t *eu_variant_map_get_string(eu_variant_map_t *map, const char *key);
+const eu_string_t *eu_variant_map_get_string(eu_variant_map_t *map, const char *key);
 
 json_object *eu_variant_map_serialize(const eu_variant_map_t *map);
 eu_variant_map_t *eu_variant_map_deserialize(json_object *obj);

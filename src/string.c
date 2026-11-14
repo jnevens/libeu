@@ -220,7 +220,7 @@ char *eu_string_to_char(eu_string_t *string)
 	return strdup(string->buf);
 }
 
-const char *eu_string_to_da_char(eu_string_t *string)
+const char *eu_string_to_da_char(const eu_string_t *string)
 {
 	if(!string) {
 		return NULL;
