@@ -15,3 +15,9 @@ libeu_HEADERS = \
 	types.h \
 	variant.h \
 	variant_map.h
+
+nodist_libeu_HEADERS = \
+	version.h
+
+EXTRA_DIST = \
+	version.h.in

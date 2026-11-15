@@ -51,6 +51,7 @@ Makefile
 Makefile.in
 config.*
 configure
+configure~
 .libs
 .deps
 autom4te.cache
@@ -74,4 +75,5 @@ tools/eubd
 tools/eubctl
 tools/eubdummy
 libeu.pc
+include/eu/version.h
 

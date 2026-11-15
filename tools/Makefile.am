@@ -11,3 +11,5 @@ eubctl_SOURCES = \
 
 eubdummy_SOURCES = \
 	eubdummy.c
+
+$(eubd_OBJECTS) $(eubctl_OBJECTS) $(eubdummy_OBJECTS): $(abs_top_builddir)/include/eu/version.h

@@ -12,6 +12,9 @@
 #include <eu/client.h>
 #include <eu/object.h>
 #include <eu/log.h>
+#include <eu/version.h>
+
+const char *argp_program_version = EU_VERSION;
 
 /* Used by main to communicate with parse_opt. */
 struct arguments

@@ -15,7 +15,8 @@ pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libeu.pc
 
 EXTRA_DIST = \
-	libeu.pc.in
+	libeu.pc.in \
+	include/eu/version.h.in
 
 if HAVE_GCOV
 ENABLE_COVERAGE = yes

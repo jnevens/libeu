@@ -3,8 +3,8 @@ AM_CFLAGS = -D_GNU_SOURCE
 
 lib_LTLIBRARIES = libeu.la
 
-libeu_la_LIBADD =
-libeu_la_LDFLAGS = -ljson-c
+libeu_la_LIBADD = -ljson-c
+libeu_la_LDFLAGS = -version-info $(DC_VERSION_LIBTOOL)
 
 libeu_la_SOURCES = \
 	bus_client.c \
@@ -19,5 +19,8 @@ libeu_la_SOURCES = \
 	socket.c \
 	string.c \
 	variant.c \
-	variant_map.c
+	variant_map.c \
+	version.c
+
+$(libeu_la_OBJECTS): $(abs_top_builddir)/include/eu/version.h
 

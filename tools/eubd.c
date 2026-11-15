@@ -18,6 +18,9 @@
 #include <eu/socket.h>
 #include <eu/object.h>
 #include <eu/bus_message.h>
+#include <eu/version.h>
+
+const char *argp_program_version = EU_VERSION;
 
 eu_object_t *root_object = NULL;
 
