@@ -108,7 +108,7 @@ eu_object_t *eu_object_get_parent(const eu_object_t *obj)
 	return obj->parent;
 }
 
-eu_object_t *eu_object_get_child(eu_object_t *obj, const char *name)
+eu_object_t *eu_object_get_child(const eu_object_t *obj, const char *name)
 {
 	eu_list_for_each_declare(node, obj->children)
 	{
@@ -121,7 +121,7 @@ eu_object_t *eu_object_get_child(eu_object_t *obj, const char *name)
 	return NULL;
 }
 
-eu_object_t *eu_object_get_child_path(eu_object_t *root, const char *path)
+eu_object_t *eu_object_get_child_path(const eu_object_t *root, const char *path)
 {
 	char *path_dup = strdup(path);
 
@@ -132,7 +132,7 @@ eu_object_t *eu_object_get_child_path(eu_object_t *root, const char *path)
 	while ((token = strsep(&path_dup, "."))) {
 		if (n == 0) {
 			if (strcmp(eu_object_name(root), token) == 0) {
-				ptr = root;
+				ptr = (eu_object_t *)root;
 			} else {
 				ptr = NULL;
 				goto cleanup;
@@ -165,24 +165,24 @@ void eu_object_destroy_child(eu_object_t *obj, const char *name)
 	}
 }
 
-size_t eu_object_children_count(eu_object_t *obj)
+size_t eu_object_children_count(const eu_object_t *obj)
 {
 	return eu_list_count(obj->children);
 }
 
-eu_object_t *eu_object_get_first_child(eu_object_t *obj)
+eu_object_t *eu_object_get_first_child(const eu_object_t *obj)
 {
 	eu_list_node_t *node = eu_list_first(obj->children);
 	return (node) ? eu_list_node_data(node) : NULL;
 }
 
-eu_object_t *eu_object_get_last_child(eu_object_t *obj)
+eu_object_t *eu_object_get_last_child(const eu_object_t *obj)
 {
 	eu_list_node_t *node = eu_list_last(obj->children);
 	return (node) ? eu_list_node_data(node) : NULL;
 }
 
-eu_object_t *eu_object_get_next_child(eu_object_t *child) // TODO: fix loop over all children
+eu_object_t *eu_object_get_next_child(const eu_object_t *child) // TODO: fix loop over all children
 {
 	eu_list_for_each_declare(node, child->parent->children)
 	{
@@ -194,7 +194,7 @@ eu_object_t *eu_object_get_next_child(eu_object_t *child) // TODO: fix loop over
 	return NULL;
 }
 
-eu_object_t *eu_object_get_prev_child(eu_object_t *child) // TODO, fix loop over all children
+eu_object_t *eu_object_get_prev_child(const eu_object_t *child) // TODO, fix loop over all children
 {
 	eu_list_for_each_declare(node, child->parent->children)
 	{
@@ -251,27 +251,27 @@ eu_object_t *eu_object_create_instance(eu_object_t *tmpl, const char *name)
 	return instance;
 }
 
-size_t eu_object_instance_count(eu_object_t *template)
+size_t eu_object_instance_count(const eu_object_t *template)
 {
 	return eu_object_children_count(template);
 }
 
-eu_object_t *eu_object_get_first_instance(eu_object_t *template)
+eu_object_t *eu_object_get_first_instance(const eu_object_t *template)
 {
 	return eu_object_get_first_child(template);
 }
 
-eu_object_t *eu_object_get_last_instance(eu_object_t *template)
+eu_object_t *eu_object_get_last_instance(const eu_object_t *template)
 {
 	return eu_object_get_last_child(template);
 }
 
-eu_object_t *eu_object_get_next_instance(eu_object_t *instance)
+eu_object_t *eu_object_get_next_instance(const eu_object_t *instance)
 {
 	return eu_object_get_next_child(instance);
 }
 
-eu_object_t *eu_object_get_prev_instance(eu_object_t *instance)
+eu_object_t *eu_object_get_prev_instance(const eu_object_t *instance)
 {
 	return eu_object_get_prev_child(instance);
 }
@@ -291,7 +291,7 @@ bool eu_object_remove_parameter(eu_object_t *obj, eu_parameter_t *param)
 	return false;
 }
 
-eu_parameter_t *eu_object_get_parameter(eu_object_t *obj, const char *name)
+eu_parameter_t *eu_object_get_parameter(const eu_object_t *obj, const char *name)
 {
 	eu_list_node_t *node = NULL;
 
@@ -306,19 +306,19 @@ eu_parameter_t *eu_object_get_parameter(eu_object_t *obj, const char *name)
 	return NULL;
 }
 
-eu_parameter_t *eu_object_get_first_parameter(eu_object_t *obj)
+eu_parameter_t *eu_object_get_first_parameter(const eu_object_t *obj)
 {
 	eu_list_node_t *node = eu_list_first(obj->parameters);
 	return (node) ? eu_list_node_data(node) : NULL;
 }
 
-eu_parameter_t *eu_object_get_last_parameter(eu_object_t *obj)
+eu_parameter_t *eu_object_get_last_parameter(const eu_object_t *obj)
 {
 	eu_list_node_t *node = eu_list_last(obj->parameters);
 	return (node) ? eu_list_node_data(node) : NULL;
 }
 
-eu_parameter_t *eu_object_get_next_parameter(eu_parameter_t *param) // TODO: fix loop over all children
+eu_parameter_t *eu_object_get_next_parameter(const eu_parameter_t *param) // TODO: fix loop over all children
 {
 	eu_list_for_each_declare(node, eu_parameter_parent(param)->parameters)
 	{
@@ -333,7 +333,7 @@ eu_parameter_t *eu_object_get_next_parameter(eu_parameter_t *param) // TODO: fix
 	return NULL;
 }
 
-eu_parameter_t *eu_object_get_prev_parameter(eu_parameter_t *param) // TODO: fix loop over all children
+eu_parameter_t *eu_object_get_prev_parameter(const eu_parameter_t *param) // TODO: fix loop over all children
 {
 	eu_list_for_each_reverse_declare(node, eu_parameter_parent(param)->parameters)
 	{
@@ -348,7 +348,7 @@ eu_parameter_t *eu_object_get_prev_parameter(eu_parameter_t *param) // TODO: fix
 	return NULL;
 }
 
-size_t eu_object_get_parameter_count(eu_object_t *obj)
+size_t eu_object_get_parameter_count(const eu_object_t *obj)
 {
 	if (!obj) {
 		return 0;
@@ -357,7 +357,7 @@ size_t eu_object_get_parameter_count(eu_object_t *obj)
 	return eu_list_count(obj->parameters);
 }
 
-bool eu_object_has_parameter(eu_object_t *obj, const char *name)
+bool eu_object_has_parameter(const eu_object_t *obj, const char *name)
 {
 	eu_list_node_t *node = NULL;
 
@@ -374,7 +374,7 @@ bool eu_object_has_parameter(eu_object_t *obj, const char *name)
 	return false;
 }
 
-bool eu_object_has_parameters(eu_object_t *obj)
+bool eu_object_has_parameters(const eu_object_t *obj)
 {
 	if (!obj) {
 		return false;
@@ -501,7 +501,7 @@ bool eu_object_validate_name(const char *name)
 	return true;
 }
 
-json_object *eu_object_serialize(eu_object_t *obj, uint32_t attrs)
+json_object *eu_object_serialize(const eu_object_t *obj, uint32_t attrs)
 {
 	eu_list_node_t *node = NULL;
 
@@ -571,7 +571,7 @@ eu_object_t *eu_object_deserialize(eu_object_t *parent, json_object *jobj)
 	return obj;
 }
 
-void eu_object_print_path(eu_object_t *obj, uint32_t attrs)
+void eu_object_print_path(const eu_object_t *obj, uint32_t attrs)
 {
 	if(obj->parent) {
 		eu_object_print_path(obj->parent, attrs);
@@ -583,7 +583,7 @@ void eu_object_print_path(eu_object_t *obj, uint32_t attrs)
 	}
 }
 
-void eu_object_print(eu_object_t *obj, uint32_t attrs)
+void eu_object_print(const eu_object_t *obj, uint32_t attrs)
 {
 	eu_list_node_t *node;
 	if (!obj) {

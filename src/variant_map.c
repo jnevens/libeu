@@ -73,7 +73,7 @@ void eu_variant_map_destroy(eu_variant_map_t *map)
 	free(map);
 }
 
-eu_variant_map_pair_t *eu_variant_map_get_first(eu_variant_map_t *map)
+eu_variant_map_pair_t *eu_variant_map_get_first(const eu_variant_map_t *map)
 {
 	eu_list_node_t *node_first = eu_list_first(map->items);
 	if (node_first ) {
@@ -83,7 +83,7 @@ eu_variant_map_pair_t *eu_variant_map_get_first(eu_variant_map_t *map)
 	return NULL;
 }
 
-eu_variant_map_pair_t *eu_variant_map_get_last(eu_variant_map_t *map)
+eu_variant_map_pair_t *eu_variant_map_get_last(const eu_variant_map_t *map)
 {
 	eu_list_node_t *node_last = eu_list_last(map->items);
 	if (node_last) {
@@ -93,7 +93,7 @@ eu_variant_map_pair_t *eu_variant_map_get_last(eu_variant_map_t *map)
 	return NULL;
 }
 
-eu_variant_map_pair_t *eu_variant_map_get_next(eu_variant_map_pair_t *map_item)
+eu_variant_map_pair_t *eu_variant_map_get_next(const eu_variant_map_pair_t *map_item)
 {
 	eu_list_node_t *node_next = eu_list_node_next(map_item->list_node);
 	if (node_next) {
@@ -103,7 +103,7 @@ eu_variant_map_pair_t *eu_variant_map_get_next(eu_variant_map_pair_t *map_item)
 	return NULL;
 }
 
-eu_variant_map_pair_t *eu_variant_map_get_prev(eu_variant_map_pair_t *map_item)
+eu_variant_map_pair_t *eu_variant_map_get_prev(const eu_variant_map_pair_t *map_item)
 {
 	eu_list_node_t *node_prev = eu_list_node_prev(map_item->list_node);
 	if (node_prev) {
@@ -113,7 +113,7 @@ eu_variant_map_pair_t *eu_variant_map_get_prev(eu_variant_map_pair_t *map_item)
 	return NULL;
 }
 
-eu_variant_map_pair_t *eu_variant_map_find_pair(eu_variant_map_t *map, const char *key)
+eu_variant_map_pair_t *eu_variant_map_find_pair(const eu_variant_map_t *map, const char *key)
 {
 	eu_list_node_t *iter = NULL;
 	eu_list_for_each(iter, map->items)
@@ -126,13 +126,13 @@ eu_variant_map_pair_t *eu_variant_map_find_pair(eu_variant_map_t *map, const cha
 	return NULL;
 }
 
-eu_variant_t *eu_variant_map_find(eu_variant_map_t *map, const char *key)
+eu_variant_t *eu_variant_map_find(const eu_variant_map_t *map, const char *key)
 {
 	eu_variant_map_pair_t *pair = eu_variant_map_find_pair(map, key);
 	return (pair) ? eu_variant_map_pair_get_val(pair) : NULL;
 }
 
-bool eu_variant_map_has(eu_variant_map_t *map, const char *key)
+bool eu_variant_map_has(const eu_variant_map_t *map, const char *key)
 {
 	return (eu_variant_map_find_pair(map, key) != NULL) ? true : false;
 }
@@ -172,12 +172,12 @@ eu_variant_t *eu_variant_map_take(eu_variant_map_t *map, const char *key)
 	return var;
 }
 
-size_t eu_variant_map_count(eu_variant_map_t *map)
+size_t eu_variant_map_count(const eu_variant_map_t *map)
 {
 	return eu_list_count(map->items);
 }
 
-bool eu_variant_map_is_empty(eu_variant_map_t *map)
+bool eu_variant_map_is_empty(const eu_variant_map_t *map)
 {
 	return (eu_list_count(map->items) > 0) ?  false : true;
 }
@@ -381,7 +381,7 @@ bool eu_variant_map_set_string(eu_variant_map_t *map, const char *key, const eu_
 	return eu_variant_map_set_variant(map, key, var);
 }
 
-eu_variant_t *eu_variant_map_get_variant(eu_variant_map_t *map, const char *key)
+eu_variant_t *eu_variant_map_get_variant(const eu_variant_map_t *map, const char *key)
 {
 	eu_variant_map_pair_t *item = eu_variant_map_find_pair(map, key);
 	if (item) {
@@ -390,7 +390,7 @@ eu_variant_t *eu_variant_map_get_variant(eu_variant_map_t *map, const char *key)
 	return NULL;
 }
 
-bool eu_variant_map_get_bool(eu_variant_map_t *map, const char *key)
+bool eu_variant_map_get_bool(const eu_variant_map_t *map, const char *key)
 {
 	eu_variant_map_pair_t *item = eu_variant_map_find_pair(map, key);
 	if (item) {
@@ -399,7 +399,7 @@ bool eu_variant_map_get_bool(eu_variant_map_t *map, const char *key)
 	return false;
 }
 
-int8_t eu_variant_map_get_int8(eu_variant_map_t *map, const char *key)
+int8_t eu_variant_map_get_int8(const eu_variant_map_t *map, const char *key)
 {
 	eu_variant_map_pair_t *item = eu_variant_map_find_pair(map, key);
 	if (item) {
@@ -408,7 +408,7 @@ int8_t eu_variant_map_get_int8(eu_variant_map_t *map, const char *key)
 	return -1;
 }
 
-uint8_t eu_variant_map_get_uint8(eu_variant_map_t *map, const char *key)
+uint8_t eu_variant_map_get_uint8(const eu_variant_map_t *map, const char *key)
 {
 	eu_variant_map_pair_t *item = eu_variant_map_find_pair(map, key);
 	if (item) {
@@ -417,7 +417,7 @@ uint8_t eu_variant_map_get_uint8(eu_variant_map_t *map, const char *key)
 	return -1;
 }
 
-int16_t eu_variant_map_get_int16(eu_variant_map_t *map, const char *key)
+int16_t eu_variant_map_get_int16(const eu_variant_map_t *map, const char *key)
 {
 	eu_variant_map_pair_t *item = eu_variant_map_find_pair(map, key);
 	if (item) {
@@ -426,7 +426,7 @@ int16_t eu_variant_map_get_int16(eu_variant_map_t *map, const char *key)
 	return -1;
 }
 
-uint16_t eu_variant_map_get_uint16(eu_variant_map_t *map, const char *key)
+uint16_t eu_variant_map_get_uint16(const eu_variant_map_t *map, const char *key)
 {
 	eu_variant_map_pair_t *item = eu_variant_map_find_pair(map, key);
 	if (item) {
@@ -435,7 +435,7 @@ uint16_t eu_variant_map_get_uint16(eu_variant_map_t *map, const char *key)
 	return -1;
 }
 
-int32_t eu_variant_map_get_int32(eu_variant_map_t *map, const char *key)
+int32_t eu_variant_map_get_int32(const eu_variant_map_t *map, const char *key)
 {
 	eu_variant_map_pair_t *item = eu_variant_map_find_pair(map, key);
 	if (item) {
@@ -444,7 +444,7 @@ int32_t eu_variant_map_get_int32(eu_variant_map_t *map, const char *key)
 	return -1;
 }
 
-uint32_t eu_variant_map_get_uint32(eu_variant_map_t *map, const char *key)
+uint32_t eu_variant_map_get_uint32(const eu_variant_map_t *map, const char *key)
 {
 	eu_variant_map_pair_t *item = eu_variant_map_find_pair(map, key);
 	if (item) {
@@ -453,7 +453,7 @@ uint32_t eu_variant_map_get_uint32(eu_variant_map_t *map, const char *key)
 	return -1;
 }
 
-int64_t eu_variant_map_get_int64(eu_variant_map_t *map, const char *key)
+int64_t eu_variant_map_get_int64(const eu_variant_map_t *map, const char *key)
 {
 	eu_variant_map_pair_t *item = eu_variant_map_find_pair(map, key);
 	if (item) {
@@ -462,7 +462,7 @@ int64_t eu_variant_map_get_int64(eu_variant_map_t *map, const char *key)
 	return -1;
 }
 
-uint64_t eu_variant_map_get_uint64(eu_variant_map_t *map, const char *key)
+uint64_t eu_variant_map_get_uint64(const eu_variant_map_t *map, const char *key)
 {
 	eu_variant_map_pair_t *item = eu_variant_map_find_pair(map, key);
 	if (item) {
@@ -471,7 +471,7 @@ uint64_t eu_variant_map_get_uint64(eu_variant_map_t *map, const char *key)
 	return -1;
 }
 
-float eu_variant_map_get_float(eu_variant_map_t *map, const char *key)
+float eu_variant_map_get_float(const eu_variant_map_t *map, const char *key)
 {
 	eu_variant_map_pair_t *item = eu_variant_map_find_pair(map, key);
 	if (item) {
@@ -480,7 +480,7 @@ float eu_variant_map_get_float(eu_variant_map_t *map, const char *key)
 	return NAN;
 }
 
-double eu_variant_map_get_double(eu_variant_map_t *map, const char *key)
+double eu_variant_map_get_double(const eu_variant_map_t *map, const char *key)
 {
 	eu_variant_map_pair_t *item = eu_variant_map_find_pair(map, key);
 	if (item) {
@@ -489,7 +489,7 @@ double eu_variant_map_get_double(eu_variant_map_t *map, const char *key)
 	return NAN;
 }
 
-char *eu_variant_map_get_char(eu_variant_map_t *map, const char *key)
+char *eu_variant_map_get_char(const eu_variant_map_t *map, const char *key)
 {
 	eu_variant_map_pair_t *item = eu_variant_map_find_pair(map, key);
 	if (item) {
@@ -498,7 +498,7 @@ char *eu_variant_map_get_char(eu_variant_map_t *map, const char *key)
 	return NULL;
 }
 
-const eu_string_t *eu_variant_map_get_string(eu_variant_map_t *map, const char *key)
+const eu_string_t *eu_variant_map_get_string(const eu_variant_map_t *map, const char *key)
 {
 	eu_variant_map_pair_t *item = eu_variant_map_find_pair(map, key);
 	if (item) {

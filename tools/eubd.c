@@ -107,7 +107,7 @@ static eu_bus_register_client_response_t eubd_register_client( eu_socket_t *clie
 	}
 }
 
-static void eubd_unregister_client(eu_socket_t *client)
+static void eubd_unregister_client(const eu_socket_t *client)
 {
 	// remote from registered paths
 	eu_log_debug("Unregister client: fd = %d", eu_socket_get_fd(client));

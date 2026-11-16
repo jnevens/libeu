@@ -53,7 +53,7 @@ eu_parameter_t *eu_parameter_create(eu_object_t *obj, const char *name, eu_param
 	return param;
 }
 
-eu_parameter_t *eu_parameter_duplicate(eu_object_t *new_parent, eu_parameter_t *orig)
+eu_parameter_t *eu_parameter_duplicate(eu_object_t *new_parent, const eu_parameter_t *orig)
 {
 	eu_parameter_t *param = calloc(1, sizeof(eu_parameter_t));
 	param->name = strdup(orig->name);
@@ -73,7 +73,7 @@ void eu_parameter_destroy(eu_parameter_t *param)
 	free(param);
 }
 
-const char *eu_parameter_name(eu_parameter_t *param)
+const char *eu_parameter_name(const eu_parameter_t *param)
 {
 	if(param) {
 		return param->name;
@@ -82,12 +82,12 @@ const char *eu_parameter_name(eu_parameter_t *param)
 	return NULL;
 }
 
-eu_object_t *eu_parameter_parent(eu_parameter_t *param)
+eu_object_t *eu_parameter_parent(const eu_parameter_t *param)
 {
 	return (param) ? param->parent : NULL;
 }
 
-bool eu_parameter_set_value(eu_parameter_t *param, eu_variant_t *variant)
+bool eu_parameter_set_value(eu_parameter_t *param, const eu_variant_t *variant)
 {
 	if(!param || !variant) {
 		return false;
@@ -100,7 +100,7 @@ bool eu_parameter_set_value(eu_parameter_t *param, eu_variant_t *variant)
 	return (param->value) ? true : false;
 }
 
-eu_variant_t *eu_parameter_value(eu_parameter_t *param)
+eu_variant_t *eu_parameter_value(const eu_parameter_t *param)
 {
 	return eu_variant_duplicate(param->value);
 }
@@ -110,7 +110,7 @@ eu_variant_t *eu_parameter_da_value(const eu_parameter_t *param)
 	return param->value;
 }
 
-json_object *eu_parameter_serialize(eu_parameter_t *param)
+json_object *eu_parameter_serialize(const eu_parameter_t *param)
 {
 	json_object *obj = json_object_new_object();
 	json_object_object_add(obj, "name", json_object_new_string(eu_parameter_name(param)));
@@ -136,7 +136,7 @@ eu_parameter_t *eu_parameter_deserialize(eu_object_t *obj, json_object *jobj)
 	return param;
 }
 
-void eu_parameter_print(eu_parameter_t *param)
+void eu_parameter_print(const eu_parameter_t *param)
 {
 	eu_object_print_path(param->parent, eu_object_print_attrs_none);
 	printf(".%s=", param->name);

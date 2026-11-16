@@ -64,14 +64,14 @@
 eu_object_t *eu_object_create(eu_object_t *parent, const char *name, uint32_t attr);
 eu_object_t *eu_object_create_path(eu_object_t *root, const char *path);
 eu_object_t *eu_object_get_parent(const eu_object_t *obj);
-eu_object_t *eu_object_get_child(eu_object_t *obj, const char *name);
-eu_object_t *eu_object_get_child_path(eu_object_t *root, const char *path);
+eu_object_t *eu_object_get_child(const eu_object_t *obj, const char *name);
+eu_object_t *eu_object_get_child_path(const eu_object_t *root, const char *path);
 void eu_object_destroy_child(eu_object_t *obj, const char *name);
-eu_object_t *eu_object_get_first_child(eu_object_t *obj);
-eu_object_t *eu_object_get_last_child(eu_object_t *obj);
-eu_object_t *eu_object_get_next_child(eu_object_t *child);
-eu_object_t *eu_object_get_prev_child(eu_object_t *child);
-size_t eu_object_children_count(eu_object_t *obj);
+eu_object_t *eu_object_get_first_child(const eu_object_t *obj);
+eu_object_t *eu_object_get_last_child(const eu_object_t *obj);
+eu_object_t *eu_object_get_next_child(const eu_object_t *child);
+eu_object_t *eu_object_get_prev_child(const eu_object_t *child);
+size_t eu_object_children_count(const eu_object_t *obj);
 const char *eu_object_name(const eu_object_t *obj);
 void eu_object_destroy(eu_object_t *obj);
 
@@ -81,23 +81,23 @@ void *eu_object_get_userdata(const eu_object_t *obj);
 
 // template & instances
 eu_object_t *eu_object_create_instance(eu_object_t *template, const char *name);
-size_t eu_object_instance_count(eu_object_t *template);
-eu_object_t *eu_object_get_first_instance(eu_object_t *template);
-eu_object_t *eu_object_get_last_instance(eu_object_t *template);
-eu_object_t *eu_object_get_next_instance(eu_object_t *instance);
-eu_object_t *eu_object_get_prev_instance(eu_object_t *instance);
+size_t eu_object_instance_count(const eu_object_t *template);
+eu_object_t *eu_object_get_first_instance(const eu_object_t *template);
+eu_object_t *eu_object_get_last_instance(const eu_object_t *template);
+eu_object_t *eu_object_get_next_instance(const eu_object_t *instance);
+eu_object_t *eu_object_get_prev_instance(const eu_object_t *instance);
 
 // parameters
 bool eu_object_add_parameter(eu_object_t *obj, eu_parameter_t *param);
 bool eu_object_remove_parameter(eu_object_t *obj, eu_parameter_t *param);
-eu_parameter_t *eu_object_get_parameter(eu_object_t *obj, const char *name);
-eu_parameter_t *eu_object_get_first_parameter(eu_object_t *obj);
-eu_parameter_t *eu_object_get_last_parameter(eu_object_t *obj);
-eu_parameter_t *eu_object_get_next_parameter(eu_parameter_t *param);
-eu_parameter_t *eu_object_get_prev_parameter(eu_parameter_t *param);
-size_t eu_object_get_parameter_count(eu_object_t *obj);
-bool eu_object_has_parameter(eu_object_t *obj, const char *name);
-bool eu_object_has_parameters(eu_object_t *obj);
+eu_parameter_t *eu_object_get_parameter(const eu_object_t *obj, const char *name);
+eu_parameter_t *eu_object_get_first_parameter(const eu_object_t *obj);
+eu_parameter_t *eu_object_get_last_parameter(const eu_object_t *obj);
+eu_parameter_t *eu_object_get_next_parameter(const eu_parameter_t *param);
+eu_parameter_t *eu_object_get_prev_parameter(const eu_parameter_t *param);
+size_t eu_object_get_parameter_count(const eu_object_t *obj);
+bool eu_object_has_parameter(const eu_object_t *obj, const char *name);
+bool eu_object_has_parameters(const eu_object_t *obj);
 
 // set value
 bool eu_object_parameter_set_bool(eu_object_t *obj, const char *name, bool value);
@@ -108,9 +108,9 @@ bool eu_object_parameter_set_char(eu_object_t *obj, const char *name, const char
 
 // extra
 bool eu_object_validate_name(const char *name);
-json_object *eu_object_serialize(eu_object_t *obj, uint32_t attrs);
+json_object *eu_object_serialize(const eu_object_t *obj, uint32_t attrs);
 eu_object_t *eu_object_deserialize(eu_object_t *parent, json_object *jobj);
-void eu_object_print(eu_object_t *obj, uint32_t attrs);
-void eu_object_print_path(eu_object_t *obj, uint32_t attrs);
+void eu_object_print(const eu_object_t *obj, uint32_t attrs);
+void eu_object_print_path(const eu_object_t *obj, uint32_t attrs);
 
 #endif /* __EU_OBJECT_H */

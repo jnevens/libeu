@@ -25,7 +25,7 @@ struct eu_bus_conn_s {
 	char *name;
 };
 
-static bool eu_bus_request_object(eu_bus_conn_t *conn, eu_bus_message_t *msg)
+static bool eu_bus_request_object(eu_bus_conn_t *conn, const eu_bus_message_t *msg)
 {
 	eu_bus_message_request_object_response_t *bus_msg_resp = NULL;
 	size_t bus_msg_resp_size = 0;

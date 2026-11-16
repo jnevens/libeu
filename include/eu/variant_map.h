@@ -31,22 +31,22 @@ eu_variant_map_t *eu_variant_map_pair_get_map(const eu_variant_map_pair_t *map_i
 eu_variant_map_t *eu_variant_map_create(void);
 void eu_variant_map_destroy(eu_variant_map_t *map);
 
-eu_variant_t *eu_variant_map_find(eu_variant_map_t *map, const char *key);
-bool eu_variant_map_has(eu_variant_map_t *map, const char *key);
-eu_variant_map_pair_t *eu_variant_map_find_pair(eu_variant_map_t *map, const char *key);
+eu_variant_t *eu_variant_map_find(const eu_variant_map_t *map, const char *key);
+bool eu_variant_map_has(const eu_variant_map_t *map, const char *key);
+eu_variant_map_pair_t *eu_variant_map_find_pair(const eu_variant_map_t *map, const char *key);
 
 eu_variant_t *eu_variant_map_take(eu_variant_map_t *map, const char *key);
-size_t eu_variant_map_count(eu_variant_map_t *map);
-bool eu_variant_map_is_empty(eu_variant_map_t *map);
+size_t eu_variant_map_count(const eu_variant_map_t *map);
+bool eu_variant_map_is_empty(const eu_variant_map_t *map);
 
 void eu_variant_map_add_pair(eu_variant_map_t *map, eu_variant_map_pair_t *pair);
 bool eu_variant_map_delete(eu_variant_map_t *map, const char *key);
 
 
-eu_variant_map_pair_t *eu_variant_map_get_first(eu_variant_map_t *map);
-eu_variant_map_pair_t *eu_variant_map_get_last(eu_variant_map_t *map);
-eu_variant_map_pair_t *eu_variant_map_get_next(eu_variant_map_pair_t *map_entry);
-eu_variant_map_pair_t *eu_variant_map_get_prev(eu_variant_map_pair_t *map_etry);
+eu_variant_map_pair_t *eu_variant_map_get_first(const eu_variant_map_t *map);
+eu_variant_map_pair_t *eu_variant_map_get_last(const eu_variant_map_t *map);
+eu_variant_map_pair_t *eu_variant_map_get_next(const eu_variant_map_pair_t *map_entry);
+eu_variant_map_pair_t *eu_variant_map_get_prev(const eu_variant_map_pair_t *map_etry);
 
 bool eu_variant_map_set_variant(eu_variant_map_t *map, const char *key, eu_variant_t *var);
 bool eu_variant_map_set_bool(eu_variant_map_t *map, const char *key, bool data);
@@ -63,20 +63,20 @@ bool eu_variant_map_set_double(eu_variant_map_t *map, const char *key, double da
 bool eu_variant_map_set_char(eu_variant_map_t *map, const char *key, const char *data);
 bool eu_variant_map_set_string(eu_variant_map_t *map, const char *key, const eu_string_t *data);
 
-eu_variant_t *eu_variant_map_get_variant(eu_variant_map_t *map, const char *key);
-bool eu_variant_map_get_bool(eu_variant_map_t *map, const char *key);
-int8_t eu_variant_map_get_int8(eu_variant_map_t *map, const char *key);
-uint8_t eu_variant_map_get_uint8(eu_variant_map_t *map, const char *key);
-int16_t eu_variant_map_get_int16(eu_variant_map_t *map, const char *key);
-uint16_t eu_variant_map_get_uint16(eu_variant_map_t *map, const char *key);
-int32_t eu_variant_map_get_int32(eu_variant_map_t *map, const char *key);
-uint32_t eu_variant_map_get_uint32(eu_variant_map_t *map, const char *key);
-int64_t eu_variant_map_get_int64(eu_variant_map_t *map, const char *key);
-uint64_t eu_variant_map_get_uint64(eu_variant_map_t *map, const char *key);
-float eu_variant_map_get_float(eu_variant_map_t *map, const char *key);
-double eu_variant_map_get_double(eu_variant_map_t *map, const char *key);
-char *eu_variant_map_get_char(eu_variant_map_t *map, const char *key);
-const eu_string_t *eu_variant_map_get_string(eu_variant_map_t *map, const char *key);
+eu_variant_t *eu_variant_map_get_variant(const eu_variant_map_t *map, const char *key);
+bool eu_variant_map_get_bool(const eu_variant_map_t *map, const char *key);
+int8_t eu_variant_map_get_int8(const eu_variant_map_t *map, const char *key);
+uint8_t eu_variant_map_get_uint8(const eu_variant_map_t *map, const char *key);
+int16_t eu_variant_map_get_int16(const eu_variant_map_t *map, const char *key);
+uint16_t eu_variant_map_get_uint16(const eu_variant_map_t *map, const char *key);
+int32_t eu_variant_map_get_int32(const eu_variant_map_t *map, const char *key);
+uint32_t eu_variant_map_get_uint32(const eu_variant_map_t *map, const char *key);
+int64_t eu_variant_map_get_int64(const eu_variant_map_t *map, const char *key);
+uint64_t eu_variant_map_get_uint64(const eu_variant_map_t *map, const char *key);
+float eu_variant_map_get_float(const eu_variant_map_t *map, const char *key);
+double eu_variant_map_get_double(const eu_variant_map_t *map, const char *key);
+char *eu_variant_map_get_char(const eu_variant_map_t *map, const char *key);
+const eu_string_t *eu_variant_map_get_string(const eu_variant_map_t *map, const char *key);
 
 json_object *eu_variant_map_serialize(const eu_variant_map_t *map);
 eu_variant_map_t *eu_variant_map_deserialize(json_object *obj);
