@@ -1,0 +1,5 @@
+usr/include/*
+usr/lib/*/libeu.so
+usr/lib/*/libeu.la
+usr/lib/*/libeu.a
+usr/lib/*/pkgconfig/*

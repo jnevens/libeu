@@ -16,7 +16,16 @@ pkgconfig_DATA = libeu.pc
 
 EXTRA_DIST = \
 	libeu.pc.in \
-	include/eu/version.h.in
+	include/eu/version.h.in \
+	Makefile.am.coverage \
+	configure.ac \
+	m4/gcov.m4 \
+	m4/valgrind.m4 \
+	misc/cppcheck-env.h \
+	misc/cppcheck-suppressions.txt \
+	scripts/cppcheck.sh \
+	scripts/ci-ssh-key-file.sh \
+	scripts/publish-apt-reprepro.sh
 
 if HAVE_GCOV
 ENABLE_COVERAGE = yes

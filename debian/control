@@ -1,0 +1,33 @@
+Source: libeu
+Section: libs
+Priority: optional
+Maintainer: Jasper Nevens <jasper.nevens@linux.com>
+Build-Depends: debhelper-compat (= 13),
+               autoconf,
+               automake,
+               libtool,
+               pkg-config,
+               libjson-c-dev
+Standards-Version: 4.6.2
+Rules-Requires-Root: no
+Homepage: https://github.com/jnevens/libeu
+Vcs-Git: https://github.com/jnevens/libeu.git
+Vcs-Browser: https://github.com/jnevens/libeu
+
+Package: libeu0
+Architecture: any
+Multi-Arch: same
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: C utility library and eubus tools
+ Shared library for lists, strings, variants, objects, events, logging,
+ sockets, and a small configuration-file parser.
+ .
+ This package also installs eubd, eubctl, and eubdummy.
+
+Package: libeu-dev
+Section: libdevel
+Architecture: any
+Multi-Arch: same
+Depends: libeu0 (= ${binary:Version}), ${misc:Depends}
+Description: development files for libeu
+ Headers and pkg-config file for building against libeu.

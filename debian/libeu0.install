@@ -1,0 +1,4 @@
+usr/lib/*/libeu.so.*
+usr/sbin/eubd
+usr/sbin/eubctl
+usr/sbin/eubdummy

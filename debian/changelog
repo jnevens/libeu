@@ -1,0 +1,6 @@
+libeu (1.0.0-1) unstable; urgency=medium
+
+  * First stable upstream release (libeu 1.0.0).
+  * Binary packages: libeu0 (library and eubus tools), libeu-dev.
+
+ -- Jasper Nevens <jasper.nevens@linux.com>  Mon, 16 Nov 2026 21:31:00 +0100
