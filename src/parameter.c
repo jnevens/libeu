@@ -105,7 +105,7 @@ eu_variant_t *eu_parameter_value(eu_parameter_t *param)
 	return eu_variant_duplicate(param->value);
 }
 
-eu_variant_t *eu_parameter_da_value(eu_parameter_t *param)
+eu_variant_t *eu_parameter_da_value(const eu_parameter_t *param)
 {
 	return param->value;
 }

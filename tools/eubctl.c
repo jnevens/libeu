@@ -47,12 +47,12 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state)
 {
 	/* Get the input argument from argp_parse, which we
 	 know is a pointer to our arguments structure. */
-	struct arguments *arguments = state->input;
+	struct arguments *args = state->input;
 
 	switch (key)
 	{
 		case 'v':
-			arguments->verbose = true;
+			args->verbose = true;
 			break;
 		case ARGP_KEY_ARG:
 			break;
@@ -90,8 +90,16 @@ static void eubctl_change_directory(const char *buf)
 	} else if (strlen(buf) > 3) {
 		if (strlen(cwd) > 0) {
 			char *tmp = strdup(cwd);
+			if (!tmp) {
+				return;
+			}
 			size_t newlen = strlen(cwd) + strlen(&buf[3]) + 2;
-			cwd = realloc(cwd, newlen);
+			char *grown = realloc(cwd, newlen);
+			if (!grown) {
+				free(tmp);
+				return;
+			}
+			cwd = grown;
 			snprintf(cwd, newlen, "%s.%s", tmp, &buf[3]);
 			free(tmp);
 		} else {

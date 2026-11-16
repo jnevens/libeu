@@ -32,17 +32,17 @@ typedef void (*eu_list_destroy_element_fn_t)(void *element);
 eu_list_t *eu_list_create(void);
 void eu_list_destroy(eu_list_t *list);
 void eu_list_destroy_with_data(eu_list_t *list, eu_list_destroy_element_fn_t destroy_cb);
-size_t eu_list_count(eu_list_t *list);
+size_t eu_list_count(const eu_list_t *list);
 eu_list_node_t *eu_list_append(eu_list_t *list, void *element);
 eu_list_node_t *eu_list_prepend(eu_list_t *list, void *element);
-eu_list_node_t *eu_list_first(eu_list_t *list);
-eu_list_node_t *eu_list_last(eu_list_t *list);
+eu_list_node_t *eu_list_first(const eu_list_t *list);
+eu_list_node_t *eu_list_last(const eu_list_t *list);
 bool eu_list_remove_node(eu_list_t *list, eu_list_node_t *node);
 bool eu_list_remove_node_with_data(eu_list_t *list, eu_list_node_t *node, eu_list_destroy_element_fn_t destroy_cb);
 
 // node functions
 eu_list_node_t *eu_list_node_next(eu_list_node_t *list);
 eu_list_node_t *eu_list_node_prev(eu_list_node_t *list);
-void *eu_list_node_data(eu_list_node_t *node);
+void *eu_list_node_data(const eu_list_node_t *node);
 
 #endif /* INCLUDE_EU_OBJECT_LIST_H_ */

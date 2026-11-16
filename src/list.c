@@ -64,7 +64,7 @@ void eu_list_destroy_with_data(eu_list_t *list, eu_list_destroy_element_fn_t des
 	eu_list_destroy(list);
 }
 
-size_t eu_list_count(eu_list_t *list)
+size_t eu_list_count(const eu_list_t *list)
 {
 	return list->count;
 }
@@ -107,12 +107,12 @@ eu_list_node_t *eu_list_prepend(eu_list_t *list, void *element)
 	return new;
 }
 
-eu_list_node_t *eu_list_first(eu_list_t *list)
+eu_list_node_t *eu_list_first(const eu_list_t *list)
 {
 	return list->head;
 }
 
-eu_list_node_t *eu_list_last(eu_list_t *list)
+eu_list_node_t *eu_list_last(const eu_list_t *list)
 {
 	return list->tail;
 }
@@ -172,7 +172,7 @@ eu_list_node_t *eu_list_node_prev(eu_list_node_t *node)
 	return (node) ? node->prev : NULL;
 }
 
-void *eu_list_node_data(eu_list_node_t *node)
+void *eu_list_node_data(const eu_list_node_t *node)
 {
 	return node->element;
 }

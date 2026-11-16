@@ -34,27 +34,27 @@ eu_bus_message_t *eu_bus_message_duplicate(eu_bus_message_t *orig)
 	return new;
 }
 
-size_t eu_bus_message_size(eu_bus_message_t *msg)
+size_t eu_bus_message_size(const eu_bus_message_t *msg)
 {
 	return sizeof(eu_bus_message_t) + msg->data_len;
 }
 
-void *eu_bus_message_data(eu_bus_message_t *msg)
+void *eu_bus_message_data(const eu_bus_message_t *msg)
 {
-	return msg->data;
+	return (void *)msg->data;
 }
 
-size_t eu_bus_message_data_len(eu_bus_message_t *msg)
+size_t eu_bus_message_data_len(const eu_bus_message_t *msg)
 {
 	return msg->data_len;
 }
 
-uint32_t eu_bus_message_id(eu_bus_message_t *msg)
+uint32_t eu_bus_message_id(const eu_bus_message_t *msg)
 {
 	return msg->trans_id;
 }
 
-eu_bus_msg_type_t eu_bus_message_type(eu_bus_message_t *msg)
+eu_bus_msg_type_t eu_bus_message_type(const eu_bus_message_t *msg)
 {
 	return msg->type;
 }

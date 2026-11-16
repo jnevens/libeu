@@ -62,12 +62,12 @@ void eu_variant_destroy(eu_variant_t *variant)
 	}
 }
 
-eu_variant_type_t eu_variant_type(eu_variant_t *variant)
+eu_variant_type_t eu_variant_type(const eu_variant_t *variant)
 {
 	return variant->type;
 }
 
-bool eu_variant_copy(eu_variant_t *dest, eu_variant_t *src)
+bool eu_variant_copy(eu_variant_t *dest, const eu_variant_t *src)
 {
 	if(!dest || !src || dest->type != src->type) {
 		return false;
@@ -85,7 +85,7 @@ bool eu_variant_copy(eu_variant_t *dest, eu_variant_t *src)
 	return true;
 }
 
-eu_variant_t *eu_variant_duplicate(eu_variant_t *variant)
+eu_variant_t *eu_variant_duplicate(const eu_variant_t *variant)
 {
 	eu_variant_t *copy = NULL;
 	if (!variant) {

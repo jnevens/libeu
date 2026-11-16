@@ -42,7 +42,7 @@ eu_object_t *eu_parameter_parent(eu_parameter_t *param);
 // value
 bool eu_parameter_set_value(eu_parameter_t *param, eu_variant_t *variant);
 eu_variant_t *eu_parameter_value(eu_parameter_t *param);
-eu_variant_t *eu_parameter_da_value(eu_parameter_t *param);
+eu_variant_t *eu_parameter_da_value(const eu_parameter_t *param);
 
 // extra
 json_object *eu_parameter_serialize(eu_parameter_t *param);

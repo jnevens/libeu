@@ -207,7 +207,7 @@ size_t eu_string_from_double(eu_string_t *string, const double data)
 }
 
 
-char *eu_string_to_char(eu_string_t *string)
+char *eu_string_to_char(const eu_string_t *string)
 {
 	if(!string) {
 		return NULL;

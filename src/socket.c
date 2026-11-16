@@ -63,7 +63,7 @@ eu_socket_t *eu_socket_create_udp(void)
 	return socket;
 }
 
-static eu_socket_t *socket_duplicate(eu_socket_t *sock)
+static eu_socket_t *socket_duplicate(const eu_socket_t *sock)
 {
 	eu_socket_t *new = calloc(1, sizeof(eu_socket_t));
 	if(!new) {
@@ -158,17 +158,17 @@ bool eu_socket_listen(eu_socket_t *sock, int n)
 	return (listen(sock->fd, n) == 0) ? true : false;
 }
 
-bool eu_socket_is_copy(eu_socket_t *sock)
+bool eu_socket_is_copy(const eu_socket_t *sock)
 {
 	return sock->copy;
 }
 
-int eu_socket_get_fd(eu_socket_t *sock)
+int eu_socket_get_fd(const eu_socket_t *sock)
 {
 	return sock->fd;
 }
 
-eu_socket_type_e eu_socket_get_type(eu_socket_t *socket)
+eu_socket_type_e eu_socket_get_type(const eu_socket_t *socket)
 {
 	return socket->type;
 }
@@ -218,7 +218,7 @@ void eu_socket_set_userdata(eu_socket_t *sock, void *userdata)
 	sock->userdata = userdata;
 }
 
-void *eu_socket_get_userdata(eu_socket_t *sock)
+void *eu_socket_get_userdata(const eu_socket_t *sock)
 {
 	return sock->userdata;
 }

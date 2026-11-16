@@ -42,17 +42,17 @@ void eu_variant_map_pair_destroy(void *arg)
 	free(item);
 }
 
-const char *eu_variant_map_pair_get_key(eu_variant_map_pair_t *map_item)
+const char *eu_variant_map_pair_get_key(const eu_variant_map_pair_t *map_item)
 {
 	return map_item->key;
 }
 
-eu_variant_t *eu_variant_map_pair_get_val(eu_variant_map_pair_t *map_item)
+eu_variant_t *eu_variant_map_pair_get_val(const eu_variant_map_pair_t *map_item)
 {
 	return map_item->value;
 }
 
-eu_variant_map_t *eu_variant_map_pair_get_map(eu_variant_map_pair_t *map_item)
+eu_variant_map_t *eu_variant_map_pair_get_map(const eu_variant_map_pair_t *map_item)
 {
 	return map_item->map;
 }
@@ -144,7 +144,6 @@ bool eu_variant_map_delete(eu_variant_map_t *map, const char *key)
 	{
 		eu_variant_map_pair_t *item = eu_list_node_data(iter);
 		if (strcmp(item->key, key) == 0) {
-			eu_variant_map_pair_t *item = eu_list_node_data(iter);
 			eu_variant_map_pair_destroy(item);
 			eu_list_remove_node(map->items, iter);
 			return true;
@@ -162,7 +161,6 @@ eu_variant_t *eu_variant_map_take(eu_variant_map_t *map, const char *key)
 	{
 		eu_variant_map_pair_t *item = eu_list_node_data(iter);
 		if (strcmp(item->key, key) == 0) {
-			eu_variant_map_pair_t *item = eu_list_node_data(iter);
 			var = item->value;
 			item->value = NULL;
 			eu_variant_map_pair_destroy(item);
@@ -207,8 +205,8 @@ bool eu_variant_map_set_variant(eu_variant_map_t *map, const char *key, eu_varia
 		eu_variant_destroy(pair->value);
 		pair->value = var;
 	} else {
-		eu_variant_map_pair_t *pair = eu_variant_map_pair_create(key, var);
-		eu_variant_map_add_pair(map, pair);
+		eu_variant_map_pair_t *created = eu_variant_map_pair_create(key, var);
+		eu_variant_map_add_pair(map, created);
 	}
 
 	return true;
@@ -479,7 +477,7 @@ float eu_variant_map_get_float(eu_variant_map_t *map, const char *key)
 	if (item) {
 		return eu_variant_float(item->value);
 	}
-	return 0.0/0.0;
+	return NAN;
 }
 
 double eu_variant_map_get_double(eu_variant_map_t *map, const char *key)
@@ -488,7 +486,7 @@ double eu_variant_map_get_double(eu_variant_map_t *map, const char *key)
 	if (item) {
 		return eu_variant_double(item->value);
 	}
-	return 0.0/0.0;
+	return NAN;
 }
 
 char *eu_variant_map_get_char(eu_variant_map_t *map, const char *key)

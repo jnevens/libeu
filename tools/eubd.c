@@ -55,15 +55,15 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state)
 {
 	/* Get the input argument from argp_parse, which we
 	 know is a pointer to our arguments structure. */
-	struct arguments *arguments = state->input;
+	struct arguments *args = state->input;
 
 	switch (key)
 	{
 		case 'd':
-			arguments->daemonize = true;
+			args->daemonize = true;
 			break;
 		case 'v':
-			arguments->verbose = true;
+			args->verbose = true;
 			break;
 		case ARGP_KEY_ARG:
 			break;
@@ -165,7 +165,7 @@ static void eubd_message_handle_register_client(eu_socket_t *client, eu_bus_mess
 	eu_socket_write(client, newmsg, eu_bus_message_size(newmsg));
 }
 
-static void eubd_message_handle_request_object_local(eu_socket_t *client, eu_bus_message_t *msg)
+static void eubd_message_handle_request_object_local(eu_socket_t *client, const eu_bus_message_t *msg)
 {
 	json_object *jobj = eu_object_serialize(root_object, eu_object_serialize_attrs_name_only);
 	const char *json = json_object_to_json_string(jobj);
@@ -216,10 +216,10 @@ static void eubd_message_handle_request_object_forward(eu_socket_t *client, eu_b
 	if (reg_path) {
 		eu_socket_write(reg_path->socket, new, eu_bus_message_size(new));
 
-		request_object_pending_t *req = calloc(1, sizeof(request_object_pending_t));
-		req->id = new->trans_id;
-		req->socket = client;
-		eu_list_append(requests_pending, req);
+		request_object_pending_t *pending = calloc(1, sizeof(request_object_pending_t));
+		pending->id = new->trans_id;
+		pending->socket = client;
+		eu_list_append(requests_pending, pending);
 	} else {
 		// TODO: respond path not found!
 	}
@@ -283,7 +283,6 @@ static void eubd_connection_callback(int fd, short int revents, void *arg)
 	size_t msg_header_size = sizeof(eu_bus_message_t);
 	eu_bus_message_t *msg = calloc(1, msg_header_size);
 	eu_socket_t *client = arg;
-	eu_event_t *event = eu_socket_get_userdata(client);
 
 	// read header
 	int rv = eu_socket_read(client, (uint8_t *) msg, msg_header_size);
@@ -291,10 +290,16 @@ static void eubd_connection_callback(int fd, short int revents, void *arg)
 		eu_log_err("Failed reading header!");
 	} else {
 		// read data
-		msg = realloc(msg, msg_header_size + msg->data_len);
-		rv = eu_socket_read(client, &((uint8_t *) msg)[msg_header_size],
-				msg->data_len);
-		if (rv != msg->data_len) {
+		size_t data_len = msg->data_len;
+		eu_bus_message_t *grown = realloc(msg, msg_header_size + data_len);
+		if (!grown) {
+			free(msg);
+			eu_log_err("Failed allocating message data");
+			return;
+		}
+		msg = grown;
+		rv = eu_socket_read(client, &((uint8_t *) msg)[msg_header_size], data_len);
+		if (rv != (int) data_len) {
 			eu_log_err("Failed reading message data");
 		}
 	}

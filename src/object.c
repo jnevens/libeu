@@ -94,7 +94,7 @@ eu_object_t *eu_object_create_path(eu_object_t *root, const char *path)
 	return root;
 }
 
-const char *eu_object_name(eu_object_t *obj)
+const char *eu_object_name(const eu_object_t *obj)
 {
 	if (!obj) {
 		return NULL;
@@ -103,7 +103,7 @@ const char *eu_object_name(eu_object_t *obj)
 	return obj->name;
 }
 
-eu_object_t *eu_object_get_parent(eu_object_t *obj)
+eu_object_t *eu_object_get_parent(const eu_object_t *obj)
 {
 	return obj->parent;
 }
@@ -220,7 +220,7 @@ void eu_object_set_userdata(eu_object_t *obj, void *userdata)
 	obj->userdata = userdata;
 }
 
-void *eu_object_get_userdata(eu_object_t *obj)
+void *eu_object_get_userdata(const eu_object_t *obj)
 {
 	return obj->userdata;
 }
@@ -365,13 +365,11 @@ bool eu_object_has_parameter(eu_object_t *obj, const char *name)
 		return false;
 	}
 
-	if (obj && name) {
-		eu_list_for_each(node, obj->parameters)
-		{
-			eu_parameter_t *parameter = eu_list_node_data(node);
-			if (strcmp(eu_parameter_name(parameter), name) == 0)
-				return true;
-		}
+	eu_list_for_each(node, obj->parameters)
+	{
+		eu_parameter_t *parameter = eu_list_node_data(node);
+		if (strcmp(eu_parameter_name(parameter), name) == 0)
+			return true;
 	}
 	return false;
 }
@@ -555,7 +553,7 @@ eu_object_t *eu_object_deserialize(eu_object_t *parent, json_object *jobj)
 		bool isInstance = json_object_get_boolean(jobj_isInstance);
 		uint32_t attrs = (isTemplate) ? eu_object_attr_template : eu_object_attr_none;
 		attrs |= (isInstance) ? eu_object_attr_instance : eu_object_attr_none;
-		obj = eu_object_create(parent, json_object_get_string(jobj_name), attrs);
+		obj = eu_object_create(parent, obj_name, attrs);
 
 		int child_count = json_object_array_length(jobj_children);
 		for (int i = 0; i < child_count; i++) {
@@ -582,7 +580,6 @@ void eu_object_print_path(eu_object_t *obj, uint32_t attrs)
 
 	if (!(attrs & eu_object_print_attrs_no_root) || obj->parent) {
 		printf("%s", obj->name);
-		obj = obj->parent;
 	}
 }
 

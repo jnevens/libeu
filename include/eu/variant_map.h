@@ -23,9 +23,9 @@
 /* variant map pair */
 eu_variant_map_pair_t *eu_variant_map_pair_create(const char *key, eu_variant_t *var);
 void eu_variant_map_pair_destroy(void *arg);
-const char *eu_variant_map_pair_get_key(eu_variant_map_pair_t *map_item);
-eu_variant_t *eu_variant_map_pair_get_val(eu_variant_map_pair_t *map_item);
-eu_variant_map_t *eu_variant_map_pair_get_map(eu_variant_map_pair_t *map_item);
+const char *eu_variant_map_pair_get_key(const eu_variant_map_pair_t *map_item);
+eu_variant_t *eu_variant_map_pair_get_val(const eu_variant_map_pair_t *map_item);
+eu_variant_map_t *eu_variant_map_pair_get_map(const eu_variant_map_pair_t *map_item);
 
 /* variant map */
 eu_variant_map_t *eu_variant_map_create(void);

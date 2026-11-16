@@ -34,15 +34,15 @@ bool eu_socket_connect_tcp(eu_socket_t *sock, uint16_t port);
 bool eu_socket_connect_udp(eu_socket_t *sock, uint16_t port);
 
 bool eu_socket_listen(eu_socket_t *sock, int n);
-bool eu_socket_is_copy(eu_socket_t *sock);
-int eu_socket_get_fd(eu_socket_t *sock);
-eu_socket_type_e eu_socket_get_type(eu_socket_t *sock);
+bool eu_socket_is_copy(const eu_socket_t *sock);
+int eu_socket_get_fd(const eu_socket_t *sock);
+eu_socket_type_e eu_socket_get_type(const eu_socket_t *sock);
 bool eu_socket_set_blocking(eu_socket_t *sock, bool blocking);
 eu_socket_t *eu_socket_accept(eu_socket_t *sock);
 size_t eu_socket_write(eu_socket_t *sock, void *data, size_t len);
 ssize_t eu_socket_read(eu_socket_t *sock, void *data, size_t len);
 
 void eu_socket_set_userdata(eu_socket_t *sock, void *userdata);
-void *eu_socket_get_userdata(eu_socket_t *sock);
+void *eu_socket_get_userdata(const eu_socket_t *sock);
 
 #endif /* INCLUDE_EU_SOCKET_H_ */

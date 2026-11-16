@@ -44,9 +44,9 @@ void eu_variant_destroy(eu_variant_t *variant);
 //// void fut_cleanup_string(char** c);
 
 // info
-eu_variant_type_t eu_variant_type(eu_variant_t *variant);
-bool eu_variant_copy(eu_variant_t *dest, eu_variant_t *src);
-eu_variant_t *eu_variant_duplicate(eu_variant_t *variant);
+eu_variant_type_t eu_variant_type(const eu_variant_t *variant);
+bool eu_variant_copy(eu_variant_t *dest, const eu_variant_t *src);
+eu_variant_t *eu_variant_duplicate(const eu_variant_t *variant);
 
 // set
 bool eu_variant_set_bool(eu_variant_t *variant, bool data);

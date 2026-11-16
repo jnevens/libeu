@@ -108,7 +108,7 @@ void eu_event_destroy(eu_event_t *event)
 		event->deleted = true;
 }
 
-void *eu_event_get_userdata(eu_event_t *event)
+void *eu_event_get_userdata(const eu_event_t *event)
 {
 	return event->arg;
 }
@@ -186,7 +186,7 @@ void eu_event_loop_stop(void) {
 static void event_timer_callback(int fd, short int revents, void *arg)
 {
 	eu_event_timer_t *timer = arg;
-	bool keep_running = false;
+	bool repeat = false;
 	long long unsigned buf = 0;
 
 	ssize_t rv = read(timer->timerfd, &buf, sizeof(buf));
@@ -195,10 +195,10 @@ static void event_timer_callback(int fd, short int revents, void *arg)
 	}
 
 	if (timer->callback) {
-		keep_running = timer->callback(timer->arg);
+		repeat = timer->callback(timer->arg);
 	}
 
-	if(!keep_running) {
+	if(!repeat) {
 		eu_event_timer_destroy(timer);
 	}
 }

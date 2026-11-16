@@ -44,12 +44,12 @@ static error_t parse_opt(int key, char *arg, struct argp_state *state)
 {
 	/* Get the input argument from argp_parse, which we
 	 know is a pointer to our arguments structure. */
-	struct arguments *arguments = state->input;
+	struct arguments *args = state->input;
 
 	switch (key)
 	{
 		case 'v':
-			arguments->verbose = true;
+			args->verbose = true;
 			break;
 		case ARGP_KEY_ARG:
 			break;
@@ -86,6 +86,7 @@ int main(int argc, char *argv[])
 	eu_bus_conn_t *conn = eu_bus_connect("eubctl");
 	if(!conn) {
 		eu_log_err("Failed to connect to system bus");
+		return 1;
 	}
 	eu_bus_set_disconnect_handler(conn, eu_bus_disconnect_cb, NULL);
 	eu_object_t *root = eu_bus_register_client(conn, "Dummy");

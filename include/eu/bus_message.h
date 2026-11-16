@@ -62,11 +62,11 @@ eu_bus_message_t *eu_bus_message_create(eu_bus_msg_type_t type, void *data, size
 eu_bus_message_t *eu_bus_message_duplicate(eu_bus_message_t *orig);
 void eu_bus_message_destroy(eu_bus_message_t *msg);
 
-size_t eu_bus_message_size(eu_bus_message_t *msg);
-void *eu_bus_message_data(eu_bus_message_t *msg);
-size_t eu_bus_message_data_len(eu_bus_message_t *msg);
-uint32_t eu_bus_message_id(eu_bus_message_t *msg);
-eu_bus_msg_type_t eu_bus_message_type(eu_bus_message_t *msg);
+size_t eu_bus_message_size(const eu_bus_message_t *msg);
+void *eu_bus_message_data(const eu_bus_message_t *msg);
+size_t eu_bus_message_data_len(const eu_bus_message_t *msg);
+uint32_t eu_bus_message_id(const eu_bus_message_t *msg);
+eu_bus_msg_type_t eu_bus_message_type(const eu_bus_message_t *msg);
 
 
 #endif /* SRC_EU_MESSAGE_H_ */

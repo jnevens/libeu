@@ -63,7 +63,7 @@
 // object tree
 eu_object_t *eu_object_create(eu_object_t *parent, const char *name, uint32_t attr);
 eu_object_t *eu_object_create_path(eu_object_t *root, const char *path);
-eu_object_t *eu_object_get_parent(eu_object_t *obj);
+eu_object_t *eu_object_get_parent(const eu_object_t *obj);
 eu_object_t *eu_object_get_child(eu_object_t *obj, const char *name);
 eu_object_t *eu_object_get_child_path(eu_object_t *root, const char *path);
 void eu_object_destroy_child(eu_object_t *obj, const char *name);
@@ -72,12 +72,12 @@ eu_object_t *eu_object_get_last_child(eu_object_t *obj);
 eu_object_t *eu_object_get_next_child(eu_object_t *child);
 eu_object_t *eu_object_get_prev_child(eu_object_t *child);
 size_t eu_object_children_count(eu_object_t *obj);
-const char *eu_object_name(eu_object_t *obj);
+const char *eu_object_name(const eu_object_t *obj);
 void eu_object_destroy(eu_object_t *obj);
 
 // userdata
 void eu_object_set_userdata(eu_object_t *obj, void *userdata);
-void *eu_object_get_userdata(eu_object_t *obj);
+void *eu_object_get_userdata(const eu_object_t *obj);
 
 // template & instances
 eu_object_t *eu_object_create_instance(eu_object_t *template, const char *name);

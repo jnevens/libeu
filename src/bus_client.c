@@ -100,9 +100,16 @@ static eu_bus_message_t *bus_conn_read_message(eu_bus_conn_t *conn){
 	}
 
 	/* read data */
-	msg = realloc(msg, msg_header_size + msg->data_len);
-	rv = eu_socket_read(sock, &((uint8_t *) msg)[msg_header_size], msg->data_len);
-	if (rv != msg->data_len) {
+	size_t data_len = msg->data_len;
+	eu_bus_message_t *grown = realloc(msg, msg_header_size + data_len);
+	if (!grown) {
+		free(msg);
+		eu_log_err("Failed allocating message data");
+		return NULL;
+	}
+	msg = grown;
+	rv = eu_socket_read(sock, &((uint8_t *) msg)[msg_header_size], data_len);
+	if (rv != (int) data_len) {
 		eu_log_err("Failed reading message data");
 	}
 
@@ -164,6 +171,10 @@ void eu_bus_set_disconnect_handler(eu_bus_conn_t *conn, eu_bus_conn_disconnect_c
 
 eu_object_t *eu_bus_register_client(eu_bus_conn_t *conn, const char *path)
 {
+	if (!conn) {
+		return NULL;
+	}
+
 	/* create & send request */
 	eu_bus_message_t *msg = eu_bus_message_create(EU_BUS_REGISTER_CLIENT,
 			(uint8_t *) path, strlen(path) + 1);

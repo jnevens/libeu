@@ -1,2 +1,7 @@
 # Project-specific cppcheck suppressions (id:path).
 # Keep this file even when empty so scripts/cppcheck.sh can pass --suppressions-list.
+
+# argp_parser_t is fixed by <argp.h>: state cannot be const.
+constParameterCallback:tools/eubctl.c
+constParameterCallback:tools/eubd.c
+constParameterCallback:tools/eubdummy.c
