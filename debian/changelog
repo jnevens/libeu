@@ -1,3 +1,10 @@
+libeu (1.0.1-1) unstable; urgency=medium
+
+  * Fix realloc failure leaks in the bus client, eubd, and eubctl.
+  * Mark read-only API parameters const. SONAME stays libeu.so.0.
+
+ -- Jasper Nevens <jasper.nevens@linux.com>  Sun, 22 Nov 2026 22:06:00 +0100
+
 libeu (1.0.0-1) unstable; urgency=medium
 
   * First stable upstream release (libeu 1.0.0).
